@@ -1,0 +1,23 @@
+{
+  "Version": 1,
+  "Hash": "tEk594iF9sla5X2evVBeylr329YX+QPyy4kLgQrMMXI=",
+  "Source": "PicHub.Server",
+  "BasePath": "_content/PicHub.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\pichub.client\\pichub.client.esproj",
+      "Version": 2,
+      "Source": "pichub.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework;RuntimeIdentifier;SelfContained"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
