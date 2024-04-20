@@ -1,14 +1,25 @@
 import React from "react";
+import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 
 const HomeSideBar = () => {
   return (
-    <div style={{ width: "350px" }} className="ms-auto">
-      <ul className="list-group list-group-flush">
-        <li className="list-group-item">An item</li>
-        <li className="list-group-item">A second item</li>
-        <li className="list-group-item">A third item</li>
-        <li className="list-group-item">A fourth item</li>
-        <li className="list-group-item">And a fifth one</li>
+    <div>
+      <ul className="">
+        <li className="list-group-item">
+          <HomeSuggestDetails />
+        </li>
+        <li className="list-group-item">
+          <HomeSuggestDetails />
+        </li>
+        <li className="list-group-item">
+          <HomeSuggestDetails />
+        </li>
+        <li className="list-group-item">
+          <HomeSuggestDetails />
+        </li>
+        <li className="list-group-item">
+          <HomeSuggestDetails />
+        </li>
       </ul>
     </div>
   );
