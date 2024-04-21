@@ -1,6 +1,7 @@
 import Index from "./pages/Index/Index";
 import Login from "./pages/Login/Login";
 import PageDetails from "./pages/PageDetails/PageDetails";
+import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage";
 import Register from "./pages/Register/Register";
 
 const Routes = [
@@ -8,6 +9,7 @@ const Routes = [
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { path: "/page", element: <PageDetails /> },
+  { path: "/post", element: <PostDetailsPage /> },
 ];
 
 export default Routes;

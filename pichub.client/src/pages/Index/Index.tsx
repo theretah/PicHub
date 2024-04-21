@@ -11,16 +11,16 @@ const Index = () => {
       <div className="container mt-3">
         <div className="row">
           <div className="col-3"></div>
-          <div className="col-md-6 col-sm-12 col-xs-12">
+          <div className="col-md-6 col-sm-12">
             <HomePostsColumn />
           </div>
-          <div className="col-md-3 col-sm-0 col-xs-0">
+          <div className="col-md-3 col-sm-0">
             {" "}
             <HomeSideBar />
           </div>
         </div>
       </div>
-      <BottomBar />
+      <BottomBar currentPage="home" />
     </>
   );
 };

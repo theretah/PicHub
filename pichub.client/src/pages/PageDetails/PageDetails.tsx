@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import BottomBar from "../../components/BottomBar/BottomBar";
+import ProfileImage from "../../components/ProfileImage/ProfileImage";
+import { Link } from "react-router-dom";
 
 const PageDetails = () => {
   const [isFollowing, setIsFollowing] = useState(false);
@@ -13,15 +15,16 @@ const PageDetails = () => {
             <div className="card mb-3 border-0">
               <div className="row g-0">
                 <div className="col-md-4 d-flex justify-content-center">
-                  <img
-                    src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-                    className="img-fluid rounded-circle align-self-center"
-                    width={180}
-                    height={180}
-                    alt="..."
-                  />
+                  <div className="align-self-center">
+                    <ProfileImage
+                      imageUrl={
+                        "../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+                      }
+                      widthHeight={180}
+                    />
+                  </div>
                 </div>
-                <div className="col-xl-8 col-md-12 col-sm-12 col-xs-12">
+                <div className="col-xl-8 col-md-12 col-sm-12">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
                       <h5 className="card-title d-inline m-0 me-4">username</h5>
@@ -80,8 +83,11 @@ const PageDetails = () => {
                         <span className="fw-bold">8</span> following
                       </p>
                     </div>
-                    <p className="card-title fw-bold mt-3">Full Name</p>
-                    <p className="card-text">
+                    <p className="card-title fw-bold mb-0 mt-3">Full Name</p>
+                    <p className="card-text my-0 opacity-75">
+                      Personal account
+                    </p>
+                    <p className="card-text my-0">
                       This is a wider card with supporting text below as a
                       natural lead-in to additional content. This content is a
                       little bit longer.
@@ -100,7 +106,7 @@ const PageDetails = () => {
             </div>
             <ul className="nav nav-tabs justify-content-center">
               <li className="nav-item">
-                <a
+                <button
                   className={`nav-link text-dark ${
                     activeTab === "posts" ? "active" : ""
                   }`}
@@ -112,12 +118,25 @@ const PageDetails = () => {
                       activeTab === "posts" ? "text-dark" : "text-secondary"
                     }
                   >
-                    Posts
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="26"
+                      height="26"
+                      fill="currentColor"
+                      className="bi bi-list"
+                      viewBox="0 0 16 16"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
+                      />
+                    </svg>
+                    &nbsp; POSTS
                   </span>
-                </a>
+                </button>
               </li>
               <li className="nav-item">
-                <a
+                <button
                   className={`nav-link text-dark ${
                     activeTab === "reels" ? "active" : ""
                   }`}
@@ -128,12 +147,22 @@ const PageDetails = () => {
                       activeTab === "reels" ? "text-dark" : "text-secondary"
                     }
                   >
-                    Reels
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-film"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm4 0v6h8V1zm8 8H4v6h8zM1 1v2h2V1zm2 3H1v2h2zM1 7v2h2V7zm2 3H1v2h2zm-2 3v2h2v-2zM15 1h-2v2h2zm-2 3v2h2V4zm2 3h-2v2h2zm-2 3v2h2v-2zm2 3h-2v2h2z" />
+                    </svg>
+                    &nbsp; REELS
                   </span>
-                </a>
+                </button>
               </li>
               <li className="nav-item">
-                <a
+                <button
                   className={`nav-link text-dark ${
                     activeTab === "tagged" ? "active" : ""
                   }`}
@@ -144,16 +173,48 @@ const PageDetails = () => {
                       activeTab === "tagged" ? "text-dark" : "text-secondary"
                     }
                   >
-                    Tagged
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      fill="currentColor"
+                      className="bi bi-file-person"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M12 1a1 1 0 0 1 1 1v10.755S12 11 8 11s-5 1.755-5 1.755V2a1 1 0 0 1 1-1zM4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                      <path d="M8 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                    </svg>
+                    &nbsp; TAGGED
                   </span>
-                </a>
+                </button>
               </li>
             </ul>
           </div>
           <div className="col"></div>
         </div>
       </div>
-      <BottomBar />
+      <div className="container mt-3">
+        <div className="row">
+          <div className="col-lg-2 col-md-0 col-sm-0"></div>
+          <div className="col-lg-8 col-md-12 col-sm-12">
+            <div className="row">
+              {Array.from({ length: 7 }, () => (
+                <div className="col-4 p-1">
+                  <Link to={"/post"}>
+                    <img
+                      className="w-100"
+                      src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+                      alt=""
+                    />
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="col-lg-2 col-md-0 col-sm-0"></div>
+        </div>
+      </div>
+      <BottomBar currentPage="profile" />
     </>
   );
 };

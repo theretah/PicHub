@@ -1,16 +1,14 @@
 import React from "react";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 const HomeSuggestDetails = () => {
   return (
     <div className="card mb-3 border-0">
       <div className="row g-0">
         <div className="col-md-2">
-          <img
-            src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-            alt=""
-            height={45}
-            width={45}
-            className="rounded-circle border mx-auto"
+          <ProfileImage
+            imageUrl="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+            widthHeight={45}
           />
         </div>
         <div className="col-md-10">

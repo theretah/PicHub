@@ -14,6 +14,8 @@ import {
   MDBModalBody,
   MDBModalFooter,
 } from "mdb-react-ui-kit";
+import { Link } from "react-router-dom";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 const PostDetails = () => {
   const [modal, setModal] = useState(false);
@@ -26,12 +28,11 @@ const PostDetails = () => {
       <div className="card mb-1 border-0">
         <div className="row g-0">
           <div className="col-md-1">
-            <img
-              src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-              alt=""
-              height={40}
-              width={40}
-              className="rounded-circle border mx-auto"
+            <ProfileImage
+              imageUrl={
+                "../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+              }
+              widthHeight={40}
             />
           </div>
           <div className="col-md-11 d-flex">
@@ -75,7 +76,9 @@ const PostDetails = () => {
                         </button>
                       </li>
                       <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn w-100 py-3">Go to post</button>
+                        <Link to={"/post"} className="btn w-100 py-3">
+                          Go to post
+                        </Link>
                       </li>
                       <li className="list-group-item align-self-center w-100 p-0">
                         <button className="btn w-100 py-3">Share to</button>
@@ -90,13 +93,6 @@ const PostDetails = () => {
                       </li>
                     </ul>
                   </MDBModalBody>
-
-                  {/* <MDBModalFooter>
-                    <MDBBtn color="secondary" onClick={toggleOpen}>
-                      Close
-                    </MDBBtn>
-                    <MDBBtn>Save changes</MDBBtn>
-                  </MDBModalFooter> */}
                 </MDBModalContent>
               </MDBModalDialog>
             </MDBModal>

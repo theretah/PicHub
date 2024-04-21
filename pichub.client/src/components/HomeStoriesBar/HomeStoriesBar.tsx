@@ -5,7 +5,7 @@ const HomeStoriesBar = () => {
     <div className="container-fluid fixed-top position-static">
       <div className="row bg-dark">
         <div className="col"></div>
-        <div className="col-md-6 col-sm-12 col-xs-12">
+        <div className="col-md-6 col-sm-12">
           <ul className="nav justify-content-center py-3">
             <li className="nav-item justify-content-center mx-2">
               <StoryCircle />
