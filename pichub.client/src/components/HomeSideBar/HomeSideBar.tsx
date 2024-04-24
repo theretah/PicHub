@@ -4,22 +4,20 @@ import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 const HomeSideBar = () => {
   return (
     <div>
-      <ul className="">
-        <li className="list-group-item">
+      <ul className="p-0">
+        <div className="row">
+          <div className="col-8 d-flex">
+            <div className="row align-self-center">
+              <span className="text-secondary fw-bold">Suggested for you</span>
+            </div>
+          </div>
+          <div className="col p-0 d-flex justify-content-end">
+            <button className="btn btn-dark fw-bold">See all</button>
+          </div>
+        </div>
+        {Array.from({ length: 5 }, () => (
           <HomeSuggestDetails />
-        </li>
-        <li className="list-group-item">
-          <HomeSuggestDetails />
-        </li>
-        <li className="list-group-item">
-          <HomeSuggestDetails />
-        </li>
-        <li className="list-group-item">
-          <HomeSuggestDetails />
-        </li>
-        <li className="list-group-item">
-          <HomeSuggestDetails />
-        </li>
+        ))}
       </ul>
     </div>
   );

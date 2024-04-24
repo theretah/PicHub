@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ShareButton from "../ShareButton/ShareButton";
 import ChatButton from "../ChatButtton/ChatButton";
 import LikeButton from "../LikeButton/LikeButton";
@@ -20,22 +20,48 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 const PostDetails = () => {
   const [modal, setModal] = useState(false);
 
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(536);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 768);
+    };
+
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   const toggleOpen = () => {
     setModal(!modal);
   };
+
+  function handleLikeButton() {
+    if (isLiked) {
+      setLikes(likes - 1);
+    } else {
+      setLikes(likes + 1);
+    }
+    setIsLiked(!isLiked);
+  }
+
   return (
-    <div className="card mx-auto border-0" style={{ width: "470px" }}>
-      <div className="card mb-1 border-0">
+    <div className="card mx-auto border-0 text-bg-dark">
+      <div className="card mb-1 border-0 text-bg-dark">
         <div className="row g-0">
-          <div className="col-md-1">
+          <div className="d-flex">
             <ProfileImage
               imageUrl={
                 "../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
               }
-              widthHeight={40}
+              widthHeight={isSmallScreen ? 40 : 50}
             />
-          </div>
-          <div className="col-md-11 d-flex">
             <div className="card-body p-0 align-self-center">
               <p className="card-title ms-2 my-0 fw-bold">username</p>
             </div>
@@ -105,16 +131,18 @@ const PostDetails = () => {
         alt="..."
       />
       <div className="card-body px-0">
-        <div className="d-flex">
-          <div className="flex-grow-1">
-            <LikeButton />
+        <div className="row">
+          <div className="col-4 d-flex justify-content-between">
+            <LikeButton isLiked={isLiked} handleLikeBtn={handleLikeButton} />
             <ChatButton />
             <ShareButton />
           </div>
-          <SaveButton />
+          <div className="col-8 d-flex justify-content-end">
+            <SaveButton />
+          </div>
         </div>
 
-        <p className="card-title fw-bold mt-3">186 likes</p>
+        <p className="card-title fw-bold mt-3">{likes} likes</p>
         <p className="card-title fw-bold">username</p>
         <p className="card-title">
           <a href="" className="text-decoration-none text-dark">

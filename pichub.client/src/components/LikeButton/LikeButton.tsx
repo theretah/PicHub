@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 
-const LikeButton = () => {
-  const [isLiked, setIsLiked] = useState(false);
+interface Props {
+  isLiked: boolean;
+  handleLikeBtn: () => void;
+}
+
+const LikeButton = ({ isLiked, handleLikeBtn }: Props) => {
   return (
-    <a onClick={() => setIsLiked(!isLiked)} className={`btn p-0`}>
+    <a onClick={handleLikeBtn} className={`btn p-0`}>
       {isLiked ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
