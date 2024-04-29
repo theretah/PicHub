@@ -7,7 +7,7 @@ interface Props {
 
 const LikeButton = ({ isLiked, handleLikeBtn }: Props) => {
   return (
-    <a onClick={handleLikeBtn} className={`btn p-0`}>
+    <a onClick={handleLikeBtn} className={`btn text-light p-0`}>
       {isLiked ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"

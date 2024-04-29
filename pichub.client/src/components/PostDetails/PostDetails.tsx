@@ -52,7 +52,7 @@ const PostDetails = () => {
   }
 
   return (
-    <div className="card mx-auto border-0 text-bg-dark">
+    <div className="card mx-auto border-0 text-bg-dark p-0">
       <div className="card mb-1 border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
@@ -65,7 +65,7 @@ const PostDetails = () => {
             <div className="card-body p-0 align-self-center">
               <p className="card-title ms-2 my-0 fw-bold">username</p>
             </div>
-            <button className="btn text-dark d-flex" onClick={toggleOpen}>
+            <button className="btn text-light d-flex" onClick={toggleOpen}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="26"
@@ -127,7 +127,7 @@ const PostDetails = () => {
       </div>
       <img
         src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-        className="card-img-top border rounded"
+        className="card-img-top rounded"
         alt="..."
       />
       <div className="card-body px-0">
@@ -145,12 +145,12 @@ const PostDetails = () => {
         <p className="card-title fw-bold mt-3">{likes} likes</p>
         <p className="card-title fw-bold">username</p>
         <p className="card-title">
-          <a href="" className="text-decoration-none text-dark">
+          <a href="" className="text-decoration-none text-light opacity-75">
             View all comments
           </a>
         </p>
         <p className="card-title">
-          <a href="" className="text-decoration-none text-dark">
+          <a href="" className="text-decoration-none text-light opacity-75">
             Add a comment
           </a>
         </p>

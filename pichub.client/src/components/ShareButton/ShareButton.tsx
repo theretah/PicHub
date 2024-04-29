@@ -2,7 +2,7 @@ import React from "react";
 
 const ShareButton = () => {
   return (
-    <a href="" className={`btn p-0`}>
+    <a href="" className={`btn text-light p-0`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="26"

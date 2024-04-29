@@ -19,7 +19,9 @@ const HomeSuggestDetails = () => {
         </div>
       </div>
       <div className="col-3 p-0 d-flex justify-content-end">
-        <button className="btn btn-primary  align-self-center">Follow</button>
+        <button className="btn btn-primary p-1 align-self-center">
+          Follow
+        </button>
       </div>
     </div>
   );

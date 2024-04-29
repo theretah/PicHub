@@ -12,48 +12,53 @@ interface Props {
 }
 
 const BottomBar = ({ currentPage }: Props) => {
-  const [activePage, setAcitvePage] = useState(currentPage);
+  const [activePage, setActivePage] = useState(currentPage);
 
   return (
-    <div className="container-fluid fixed-bottom">
-      <div className="row bg-dark">
+    <div
+      className="container-fluid position-fixed bottom-0 bg-dark"
+      style={{
+        height: 45,
+      }}
+    >
+      <div className="row">
         <div className="col"></div>
         <div className="col-xl-4 col-lg-6 col-md-8 col-sm-12">
           <ul className="nav justify-content-around">
             <li className="nav-item mx-2">
               <HomeButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("home")}
+                handleButton={() => setActivePage("home")}
               />
             </li>
             <li className="nav-item mx-2">
               <ExploreButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("search")}
+                handleButton={() => setActivePage("explore")}
               />
             </li>
             <li className="nav-item mx-2">
               <CreatePostButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("createPost")}
+                handleButton={() => setActivePage("createPost")}
               />
             </li>
             <li className="nav-item mx-2">
               <ReelsButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("reels")}
+                handleButton={() => setActivePage("reels")}
               />
             </li>
             <li className="nav-item mx-2">
               <MessagesButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("messages")}
+                handleButton={() => setActivePage("messages")}
               />
             </li>
             <li className="nav-item mx-2">
               <ProfileButton
                 activePage={activePage}
-                handleButton={() => setAcitvePage("profile")}
+                handleButton={() => setActivePage("profile")}
               />
             </li>
           </ul>

@@ -7,9 +7,6 @@ const HomePostsColumn = () => {
     <>
       <div className="row mx-auto" style={{ maxWidth: 475 }}>
         <PostDetails />
-        <PostDetails />
-        <PostDetails />
-        <PostDetails />
       </div>
     </>
   );

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const SaveButton = () => {
   const [isSaved, setIsSaved] = useState(false);
   return (
-    <a className={`btn p-0`} onClick={() => setIsSaved(!isSaved)}>
+    <a className={`btn p-0 text-light`} onClick={() => setIsSaved(!isSaved)}>
       {isSaved ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
