@@ -11,32 +11,47 @@ interface Props {
 }
 
 const Layout = ({ children, currentPage }: Props) => {
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [leftBarWidth, setLeftBarWidth] = useState(100);
+  let initialIsSmall = window.innerWidth <= 768;
+  let initialIsLarge = window.innerWidth > 1266;
+  let initialLeftBarWidth = initialIsSmall ? 0 : initialIsLarge ? 200 : 65;
+
+  const [isSmallScreen, setIsSmallScreen] = useState(initialIsSmall);
+  const [isLargeScreen, setIsLargeScreen] = useState(initialIsLarge);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [leftBarWidth, setLeftBarWidth] = useState(initialLeftBarWidth);
+  const [contentWidth, setContentWidth] = useState(
+    window.innerWidth - initialLeftBarWidth
+  );
+
+  let initialPaddingBottom = initialIsSmall ? 45 : 0;
+  const [bottomBarHeight, setBottomBarHeight] = useState(initialPaddingBottom);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 768);
-      setLeftBarWidth(window.innerWidth > 1265 ? 200 : 75);
+      setWindowWidth(window.innerWidth);
+      setIsSmallScreen(windowWidth <= 768);
+      setIsLargeScreen(windowWidth > 1266);
+      setLeftBarWidth(isSmallScreen ? 0 : isLargeScreen ? 200 : 65);
+
+      setBottomBarHeight(isSmallScreen ? 45 : 0);
+      setContentWidth(windowWidth - leftBarWidth);
     };
 
     handleResize();
+
     window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [windowWidth]);
 
   return (
-    <div
-      className="container-fluid position-relative"
-      style={{ minHeight: "100%" }}
-    >
+    <div className="container-fluid">
       <div className="row">
         {!isSmallScreen && (
           <div
-            className="col-md-1 col-lg-1 col-xl-2 position-fixed border-end pt-3 bg-dark min-vh-100"
+            className="position-fixed border-end pt-3 bg-dark px-auto"
             style={{ width: leftBarWidth }}
           >
             <LeftSideBar currentPage={currentPage} />
@@ -44,10 +59,12 @@ const Layout = ({ children, currentPage }: Props) => {
         )}
 
         <div
-          className="col-md-11 col-lg-11 col-xl-10 col-sm-12 min-vh-100 position-relative min-vh-100"
-          style={{ paddingBottom: 45 }}
+          className="col"
+          style={{
+            marginLeft: leftBarWidth,
+          }}
         >
-          <div className="row">{children}</div>
+          {children}
         </div>
         {isSmallScreen && <BottomBar currentPage={currentPage} />}
       </div>

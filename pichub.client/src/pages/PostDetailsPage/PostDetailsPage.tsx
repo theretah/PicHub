@@ -50,7 +50,7 @@ const PostDetailsPage = () => {
   return (
     <Layout currentPage="">
       {isSmallScreen && (
-        <div className="row  mx-auto">
+        <div className="row mx-auto">
           <PostDetails />
         </div>
       )}

@@ -22,11 +22,13 @@ interface Props {
 }
 const LeftSideBar = ({ currentPage }: Props) => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activePage, setActivePage] = useState(currentPage);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsLargeScreen(window.innerWidth > 1266);
+      setWindowWidth(window.innerWidth);
+      setIsLargeScreen(windowWidth > 1266);
     };
 
     handleResize();
@@ -36,23 +38,19 @@ const LeftSideBar = ({ currentPage }: Props) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [windowWidth]);
 
   return (
-    <div className="">
-      <ul className="list-group w-100" style={{ height: 650 }}>
-        <div className="row">
-          <div className="list-group-item bg-dark border-0">
-            <h1
-              className={`text-light px-0 d-flex  ${
-                isLargeScreen
-                  ? "justify-content-start"
-                  : "justify-content-center"
-              }`}
-            >
-              {isLargeScreen ? "PicHub" : "P"}
-            </h1>
-          </div>
+    <>
+      <ul className="list-group" style={{ height: 650 }}>
+        <div className="list-group-item bg-dark border-0">
+          <h1
+            className={`text-light px-0 d-flex  ${
+              isLargeScreen ? "justify-content-start" : "justify-content-center"
+            }`}
+          >
+            {isLargeScreen ? "PicHub" : "P"}
+          </h1>
         </div>
         <div
           className="d-flex flex-column justify-content-between"
@@ -107,7 +105,7 @@ const LeftSideBar = ({ currentPage }: Props) => {
           isLargeScreen={isLargeScreen}
         />
       </div>
-    </div>
+    </>
   );
 };
 
