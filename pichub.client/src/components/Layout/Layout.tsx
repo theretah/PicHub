@@ -11,30 +11,25 @@ interface Props {
 }
 
 const Layout = ({ children, currentPage }: Props) => {
-  let initialIsSmall = window.innerWidth <= 768;
-  let initialIsLarge = window.innerWidth > 1266;
-  let initialLeftBarWidth = initialIsSmall ? 0 : initialIsLarge ? 200 : 65;
+  const md = 768;
+  const xl = 1200;
 
-  const [isSmallScreen, setIsSmallScreen] = useState(initialIsSmall);
-  const [isLargeScreen, setIsLargeScreen] = useState(initialIsLarge);
+  let initialLeftBarWidth =
+    window.innerWidth >= xl ? 200 : window.innerWidth < md ? 0 : 65;
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [leftBarWidth, setLeftBarWidth] = useState(initialLeftBarWidth);
-  const [contentWidth, setContentWidth] = useState(
-    window.innerWidth - initialLeftBarWidth
-  );
 
-  let initialPaddingBottom = initialIsSmall ? 45 : 0;
+  let initialPaddingBottom = window.innerWidth < md ? 45 : 0;
   const [bottomBarHeight, setBottomBarHeight] = useState(initialPaddingBottom);
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setIsSmallScreen(windowWidth <= 768);
-      setIsLargeScreen(windowWidth > 1266);
-      setLeftBarWidth(isSmallScreen ? 0 : isLargeScreen ? 200 : 65);
 
-      setBottomBarHeight(isSmallScreen ? 45 : 0);
-      setContentWidth(windowWidth - leftBarWidth);
+      setBottomBarHeight(windowWidth < md ? 45 : 0);
+
+      setLeftBarWidth(windowWidth >= xl ? 200 : windowWidth < md ? 0 : 65);
     };
 
     handleResize();
@@ -49,9 +44,9 @@ const Layout = ({ children, currentPage }: Props) => {
   return (
     <div className="container-fluid">
       <div className="row">
-        {!isSmallScreen && (
+        {windowWidth >= md && (
           <div
-            className="position-fixed border-end pt-3 bg-dark px-auto"
+            className="position-fixed border-end pt-3 bg-dark px-auto min-vh-100"
             style={{ width: leftBarWidth }}
           >
             <LeftSideBar currentPage={currentPage} />
@@ -59,14 +54,15 @@ const Layout = ({ children, currentPage }: Props) => {
         )}
 
         <div
-          className="col"
+          className="col min-vh-100"
           style={{
             marginLeft: leftBarWidth,
+            paddingBottom: bottomBarHeight,
           }}
         >
           {children}
         </div>
-        {isSmallScreen && <BottomBar currentPage={currentPage} />}
+        {windowWidth < md && <BottomBar currentPage={currentPage} />}
       </div>
     </div>
   );

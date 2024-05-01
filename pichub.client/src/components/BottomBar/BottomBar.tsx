@@ -23,7 +23,7 @@ const BottomBar = ({ currentPage }: Props) => {
     >
       <div className="row">
         <div className="col"></div>
-        <div className="col-xl-4 col-lg-6 col-md-8 col-sm-12">
+        <div className="col-sm-12">
           <ul className="nav justify-content-around">
             <li className="nav-item mx-2">
               <HomeButton

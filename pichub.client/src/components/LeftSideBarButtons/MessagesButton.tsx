@@ -1,7 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const MessagesButton = ({ activePage, isLargeScreen, handleButton }: Props) => {
+const MessagesButton = ({
+  activePage,
+  isExtraLargeScreen,
+  handleButton,
+}: Props) => {
   return (
     <Link
       to={"/messages"}
@@ -9,13 +13,7 @@ const MessagesButton = ({ activePage, isLargeScreen, handleButton }: Props) => {
       className="btn btn-dark w-100"
     >
       <div className="row">
-        <div
-          className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0 ${
-            window.innerWidth > 1199 && window.innerWidth < 1266
-              ? "col-xl-12"
-              : ""
-          }`}
-        >
+        <div className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0`}>
           {activePage === "messages" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +38,7 @@ const MessagesButton = ({ activePage, isLargeScreen, handleButton }: Props) => {
             </svg>
           )}
         </div>
-        {isLargeScreen && (
+        {isExtraLargeScreen && (
           <div className="col d-flex align-items-center px-0">
             <span
               className={`text-light ${

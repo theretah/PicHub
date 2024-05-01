@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import BottomBar from "../../components/BottomBar/BottomBar";
 import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 
@@ -21,9 +20,9 @@ const Explore = () => {
 
   return (
     <Layout currentPage={"explore"}>
-      <div className="row">
-        <div className="col-xl-2 col-lg-1 col-md-1"></div>
-        <div className="col-xl-10 col-lg-11 col-md-11 col-sm-12 col-12">
+      <div className="row p-1">
+        <div className="col"></div>
+        <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12">
           <div className="row">
             {isSmallScreen && (
               <div className="mb-3 px-1">
@@ -48,6 +47,7 @@ const Explore = () => {
             ))}
           </div>
         </div>
+        <div className="col"></div>
       </div>
     </Layout>
   );

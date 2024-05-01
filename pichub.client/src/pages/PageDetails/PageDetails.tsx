@@ -16,7 +16,7 @@ const PageDetails = () => {
           <div className="col-md-12 col-lg-8 p-0">
             <div className="card mb-3 border-0 text-bg-dark">
               <div className="row g-0">
-                <div className="col-md-4 d-flex justify-content-center">
+                <div className="col-md-4 col-sm-2 d-flex justify-content-center">
                   <div className="align-self-center">
                     <ProfileImage
                       imageUrl={
@@ -26,7 +26,7 @@ const PageDetails = () => {
                     />
                   </div>
                 </div>
-                <div className="col-xl-8 col-md-12 col-sm-12">
+                <div className="col-xl-8 col-md-12 col-sm-10">
                   <div className="card-body">
                     <div className="d-flex align-items-center">
                       <h5 className="card-title d-inline m-0 me-4">username</h5>

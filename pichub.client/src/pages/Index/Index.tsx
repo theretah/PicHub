@@ -24,22 +24,22 @@ const Index = () => {
 
   return (
     <Layout currentPage={"home"}>
-      <div className="col px-0">
+      <div className="row px-0">
+        <div className="col-xl-2 col-lg-0"></div>
         <div
-          className={`col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 ${
-            !isSmallScreen ? "mx-auto" : ""
+          className={`col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 ${
+            isSmallScreen ? "mx-auto" : ""
           }`}
         >
           <HomeStoriesBar />
           <HomePostsColumn />
         </div>
         {!isLargeScreen && (
-          <div className="col-xl-3 col-lg-0 col-md-0 col-sm-0 col-0">
+          <div className="col-xl-4 col-lg-0 col-md-0 col-sm-0 col-0">
             <HomeSideBar />
           </div>
         )}
       </div>
-      {/* <div className="col-xl-2"></div> */}
     </Layout>
   );
 };

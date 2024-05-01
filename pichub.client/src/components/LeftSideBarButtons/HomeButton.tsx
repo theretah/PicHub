@@ -1,17 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const HomeButton = ({ activePage, isLargeScreen, handleButton }: Props) => {
+const HomeButton = ({
+  activePage,
+  isExtraLargeScreen,
+  handleButton,
+}: Props) => {
   return (
     <Link to={"/"} onClick={handleButton} className="btn btn-dark w-100">
       <div className="row">
-        <div
-          className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0 ${
-            window.innerWidth > 1199 && window.innerWidth < 1266
-              ? "col-xl-12"
-              : ""
-          }`}
-        >
+        <div className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0`}>
           {activePage === "home" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +34,7 @@ const HomeButton = ({ activePage, isLargeScreen, handleButton }: Props) => {
             </svg>
           )}
         </div>
-        {isLargeScreen && (
+        {isExtraLargeScreen && (
           <div className="col d-flex align-items-center px-0">
             <span
               className={`text-light ${activePage === "home" ? "fw-bold" : ""}`}

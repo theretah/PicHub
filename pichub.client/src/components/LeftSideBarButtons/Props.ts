@@ -1,5 +1,5 @@
 interface Props {
   activePage: string;
-  isLargeScreen: boolean;
+  isExtraLargeScreen: boolean;
   handleButton: () => void;
 }

@@ -3,7 +3,7 @@ import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 
 const HomeSideBar = () => {
   return (
-    <ul className="p-0" style={{ minWidth: 300 }}>
+    <ul className="p-0" style={{ width: 280 }}>
       <div className="row">
         <div className="col-8 d-flex">
           <div className="row align-self-center">

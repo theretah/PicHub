@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
+
 import HomeButton from "../LeftSideBarButtons/HomeButton";
 import ProfileButton from "../LeftSideBarButtons/ProfileButton";
 import ExploreButton from "../LeftSideBarButtons/ExploreButton";
@@ -9,26 +9,26 @@ import MessagesButton from "../LeftSideBarButtons/MessagesButton";
 import NotificationsButton from "../LeftSideBarButtons/NotificationsButton";
 import CreatePostButton from "../LeftSideBarButtons/CreatePostButton";
 import MoreButton from "../LeftSideBarButtons/MoreButton";
-import {
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalBody,
-} from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
 
 interface Props {
   currentPage: string;
 }
 const LeftSideBar = ({ currentPage }: Props) => {
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const xl = 1200;
+
+  let initialIsExtraLarge = window.innerWidth >= xl;
+
+  const [isExtraLargeScreen, setIsExtraLargeScreen] =
+    useState(initialIsExtraLarge);
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activePage, setActivePage] = useState(currentPage);
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setIsLargeScreen(windowWidth > 1266);
+
+      setIsExtraLargeScreen(windowWidth >= xl);
     };
 
     handleResize();
@@ -46,10 +46,12 @@ const LeftSideBar = ({ currentPage }: Props) => {
         <div className="list-group-item bg-dark border-0">
           <h1
             className={`text-light px-0 d-flex  ${
-              isLargeScreen ? "justify-content-start" : "justify-content-center"
+              isExtraLargeScreen
+                ? "justify-content-start"
+                : "justify-content-center"
             }`}
           >
-            {isLargeScreen ? "PicHub" : "P"}
+            {isExtraLargeScreen ? "PicHub" : "P"}
           </h1>
         </div>
         <div
@@ -59,42 +61,42 @@ const LeftSideBar = ({ currentPage }: Props) => {
           <HomeButton
             handleButton={() => setActivePage("home")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <SearchButton
             handleButton={() => setActivePage("search")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <ExploreButton
             handleButton={() => setActivePage("explore")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <ReelsButton
             handleButton={() => setActivePage("reels")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <MessagesButton
             handleButton={() => setActivePage("messages")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <NotificationsButton
             handleButton={() => setActivePage("notifications")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <CreatePostButton
             handleButton={() => setActivePage("createPost")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
           <ProfileButton
             handleButton={() => setActivePage("profile")}
             activePage={activePage}
-            isLargeScreen={isLargeScreen}
+            isExtraLargeScreen={isExtraLargeScreen}
           />
         </div>
       </ul>
@@ -102,7 +104,7 @@ const LeftSideBar = ({ currentPage }: Props) => {
         <MoreButton
           handleButton={() => setActivePage(activePage)}
           activePage={activePage}
-          isLargeScreen={isLargeScreen}
+          isExtraLargeScreen={isExtraLargeScreen}
         />
       </div>
     </>
