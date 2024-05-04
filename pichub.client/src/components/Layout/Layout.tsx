@@ -4,6 +4,7 @@ import HomePostsColumn from "../HomePostsColumn/HomePostsColumn";
 import HomeSideBar from "../HomeSideBar/HomeSideBar";
 import HomeStoriesBar from "../HomeStoriesBar/HomeStoriesBar";
 import LeftSideBar from "../LeftSideBar/LeftSideBar";
+import SearchPanel from "../SearchPanel/SearchPanel";
 
 interface Props {
   children: ReactNode;
@@ -41,8 +42,14 @@ const Layout = ({ children, currentPage }: Props) => {
     };
   }, [windowWidth]);
 
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="container-fluid">
+    <div className="container-fluid position-relative">
+      <SearchPanel isOpen={false} />
       <div className="row">
         {windowWidth >= md && (
           <div

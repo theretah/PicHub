@@ -24,7 +24,7 @@ const Index = () => {
 
   return (
     <Layout currentPage={"home"}>
-      <div className="row px-0">
+      <div className="row px-0" style={{ zIndex: 1 }}>
         <div className="col-xl-2 col-lg-0"></div>
         <div
           className={`col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12 ${

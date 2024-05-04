@@ -1,14 +1,15 @@
 import React, { useState } from "react";
+import PostControlButtonProps from "./PostControlButtonProps";
 
-const SaveButton = () => {
+const SaveButton = ({ size }: PostControlButtonProps) => {
   const [isSaved, setIsSaved] = useState(false);
   return (
     <a className={`btn p-0 text-light`} onClick={() => setIsSaved(!isSaved)}>
       {isSaved ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="26"
-          height="26"
+          width={size}
+          height={size}
           fill="currentColor"
           className="bi bi-save-fill"
           viewBox="0 0 16 16"
@@ -18,8 +19,8 @@ const SaveButton = () => {
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="26"
-          height="26"
+          width={size}
+          height={size}
           fill="currentColor"
           className="bi bi-save"
           viewBox="0 0 16 16"

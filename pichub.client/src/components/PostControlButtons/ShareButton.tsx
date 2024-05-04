@@ -1,12 +1,12 @@
 import React from "react";
-
-const ShareButton = () => {
+import PostControlButtonProps from "./PostControlButtonProps";
+const ShareButton = ({ size }: PostControlButtonProps) => {
   return (
     <a href="" className={`btn text-light p-0`}>
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="26"
-        height="26"
+        width={size}
+        height={size}
         fill="currentColor"
         className="bi bi-send"
         viewBox="0 0 16 16"

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
+import { useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
 
 interface Props {
   isOpen: boolean;
 }
+
 const SearchPanel = ({ isOpen }: Props) => {
   const xl = 1200;
   const transformSmall = "translate(55px, -138px)";
@@ -42,21 +42,10 @@ const SearchPanel = ({ isOpen }: Props) => {
 
   return (
     <div
-      className={`rounded-end border-end bg-dark ${
-        isOpen ? "show position-fixed m-0 vh-100" : ""
+      className={`dropdown-menu rounded-end border-end bg-dark position-absolute m-0 vh-100 ${
+        isOpen ? "show" : ""
       }`}
-      style={
-        isOpen
-          ? {
-              transform: transform,
-              width: 400,
-            }
-          : {
-              width: 0,
-              height: 0,
-              visibility: "hidden",
-            }
-      }
+      style={{ transform: transform, width: 400 }}
       data-popper-placement="right-start"
     >
       <div className="p-3">
@@ -77,9 +66,9 @@ const SearchPanel = ({ isOpen }: Props) => {
         <h5 className="text-light">Recent</h5>
       </div>
       <div className="container">
-        <SearchRecord />
-        <SearchRecord />
-        <SearchRecord />
+        {Array.from({ length: 5 }, () => (
+          <SearchRecord />
+        ))}
       </div>
     </div>
   );

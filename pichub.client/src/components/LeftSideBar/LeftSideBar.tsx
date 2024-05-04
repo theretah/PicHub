@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import HomeButton from "../LeftSideBarButtons/HomeButton";
 import ProfileButton from "../LeftSideBarButtons/ProfileButton";

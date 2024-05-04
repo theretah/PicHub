@@ -14,7 +14,7 @@ const PageDetails = () => {
         <div className="row">
           <div className="col"></div>
           <div className="col-md-12 col-lg-8 p-0">
-            <div className="card mb-3 border-0 text-bg-dark">
+            <div className="mb-3 border-0 text-bg-dark">
               <div className="row g-0">
                 <div className="col-md-4 col-sm-2 d-flex justify-content-center">
                   <div className="align-self-center">
@@ -27,9 +27,9 @@ const PageDetails = () => {
                   </div>
                 </div>
                 <div className="col-xl-8 col-md-12 col-sm-10">
-                  <div className="card-body">
+                  <div className="">
                     <div className="d-flex align-items-center">
-                      <h5 className="card-title d-inline m-0 me-4">username</h5>
+                      <h5 className=" d-inline m-0 me-4">username</h5>
                       {isFollowing ? (
                         <button
                           className="btn btn-secondary me-1 py-1"
@@ -85,8 +85,8 @@ const PageDetails = () => {
                         <span className="fw-bold">8</span> Following
                       </p>
                     </div>
-                    <p className="card-title fw-bold mb-0 mt-3">Full Name</p>
-                    <p className="card-text my-0 opacity-75">
+                    <p className="fw-bold mb-0 mt-3">Full Name</p>
+                    <p className="my-0 text-light opacity-75">
                       Personal account
                     </p>
                     <p className="card-text my-0">
@@ -95,7 +95,7 @@ const PageDetails = () => {
                       little bit longer.
                     </p>
                     <p className="card-text">
-                      <small className="text-light opacity-75">
+                      <small className="text-light" style={{ opacity: "75%" }}>
                         Followed by
                       </small>
                       <a
@@ -111,7 +111,7 @@ const PageDetails = () => {
             </div>
 
             <ul className="nav nav-underline justify-content-center">
-              <li className="nav-item">
+              <button className="btn">
                 <a
                   className={`nav-link ${
                     activeTab === "posts" ? "border-bottom" : "opacity-75"
@@ -136,9 +136,9 @@ const PageDetails = () => {
                     &nbsp; POSTS
                   </span>
                 </a>
-              </li>
-              <li className="nav-item">
-                <button
+              </button>
+              <button className="btn">
+                <a
                   className={`nav-link ${
                     activeTab === "reels" ? "border-bottom" : "opacity-75"
                   }`}
@@ -158,8 +158,8 @@ const PageDetails = () => {
                     </svg>
                     &nbsp; REELS
                   </span>
-                </button>
-              </li>
+                </a>
+              </button>
               <li className="nav-item">
                 <button
                   className={`nav-link ${

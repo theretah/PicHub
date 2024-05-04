@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import ShareButton from "../ShareButton/ShareButton";
-import ChatButton from "../ChatButtton/ChatButton";
-import LikeButton from "../LikeButton/LikeButton";
+import ShareButton from "../PostControlButtons/ShareButton";
+import ChatButton from "../PostControlButtons/ChatButton";
+import LikeButton from "../PostControlButtons/LikeButton";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
-import SaveButton from "../SaveButton/SaveButton";
+import SaveButton from "../PostControlButtons/SaveButton";
 import {
   MDBBtn,
   MDBModal,
@@ -52,8 +52,8 @@ const PostDetails = () => {
   }
 
   return (
-    <div className="card mx-auto border-0 text-bg-dark p-0">
-      <div className="card mb-1 border-0 text-bg-dark">
+    <div className="mx-auto border-0 text-bg-dark p-0">
+      <div className="mb-1 border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
             <ProfileImage
@@ -63,7 +63,13 @@ const PostDetails = () => {
               widthHeight={isSmallScreen ? 40 : 50}
             />
             <div className="card-body p-0 align-self-center">
-              <p className="card-title ms-2 my-0 fw-bold">username</p>
+              <span className="card-title ms-2 my-0 fw-bold align-self-center">
+                username
+              </span>
+              &nbsp; &nbsp;
+              <button className="p-0 btn text-light opacity-75 text-decoration-none align-self-center">
+                Following
+              </button>
             </div>
             <button className="btn text-light d-flex" onClick={toggleOpen}>
               <svg
@@ -132,13 +138,17 @@ const PostDetails = () => {
       />
       <div className="card-body px-0">
         <div className="row">
-          <div className="col-4 d-flex justify-content-between">
-            <LikeButton isLiked={isLiked} handleLikeBtn={handleLikeButton} />
-            <ChatButton />
-            <ShareButton />
+          <div className="col-3 d-flex justify-content-between">
+            <LikeButton
+              size={22}
+              isLiked={isLiked}
+              handleLikeBtn={handleLikeButton}
+            />
+            <ChatButton size={22} />
+            <ShareButton size={22} />
           </div>
-          <div className="col-8 d-flex justify-content-end">
-            <SaveButton />
+          <div className="col d-flex justify-content-end">
+            <SaveButton size={22} />
           </div>
         </div>
 

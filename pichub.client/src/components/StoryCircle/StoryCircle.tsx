@@ -7,7 +7,7 @@ const StoryCircle = () => {
       className="btn p-0 text-light"
       style={{ width: widthAndHeight + 10 }}
     >
-      <div className="card text-bg-dark">
+      <div className="text-bg-dark">
         <img
           src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
           alt=""

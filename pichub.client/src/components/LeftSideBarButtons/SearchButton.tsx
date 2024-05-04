@@ -16,7 +16,7 @@ const SearchButton = ({
     <div className="btn-group dropend">
       <button
         onClick={toggleDropdown}
-        className="btn btn-dark w-100 rounded"
+        className={`btn btn-dark w-100 rounded ${isOpen && "show"}`}
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
