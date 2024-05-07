@@ -8,7 +8,7 @@ const Register = () => {
         <div className="col-xl-4 col-lg-6 col-sm-12">
           <form className="border py-2 px-5 mb-3">
             <h1 className="text-center my-5">PicHub</h1>
-            <p className="text-center text-secondary">
+            <p className="text-center text-gray">
               Sign up to see photos and videos from your friends.
             </p>
             <div className="mb-2">

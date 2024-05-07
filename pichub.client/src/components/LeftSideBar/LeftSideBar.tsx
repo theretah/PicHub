@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import HomeButton from "../LeftSideBarButtons/HomeButton";
 import ProfileButton from "../LeftSideBarButtons/ProfileButton";
@@ -12,8 +12,9 @@ import MoreButton from "../LeftSideBarButtons/MoreButton";
 
 interface Props {
   currentPage: string;
+  leftBarWidth: number;
 }
-const LeftSideBar = ({ currentPage }: Props) => {
+const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const xl = 1200;
 
   let initialIsExtraLarge = window.innerWidth >= xl;
@@ -23,11 +24,9 @@ const LeftSideBar = ({ currentPage }: Props) => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [activePage, setActivePage] = useState(currentPage);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-
       setIsExtraLargeScreen(windowWidth >= xl);
     };
 
@@ -41,18 +40,24 @@ const LeftSideBar = ({ currentPage }: Props) => {
   }, [windowWidth]);
 
   return (
-    <>
-      <ul className="list-group" style={{ height: 650 }}>
+    <div
+      className="position-fixed border-end pt-3 bg-dark px-auto vh-100 m-0"
+      style={{
+        width: leftBarWidth,
+      }}
+    >
+      <ul className="list-group" style={{ height: 700 }}>
         <div className="list-group-item bg-dark border-0">
-          <h1
-            className={`text-light px-0 d-flex  ${
+          <span
+            className={`text-light px-0 d-flex ${
               isExtraLargeScreen
                 ? "justify-content-start"
                 : "justify-content-center"
             }`}
+            style={{ fontSize: 36 }}
           >
             {isExtraLargeScreen ? "PicHub" : "P"}
-          </h1>
+          </span>
         </div>
         <div
           className="d-flex flex-column justify-content-between"
@@ -100,14 +105,14 @@ const LeftSideBar = ({ currentPage }: Props) => {
           />
         </div>
       </ul>
-      <div className="mt-5">
+      <div className="mt-auto">
         <MoreButton
           handleButton={() => setActivePage(activePage)}
           activePage={activePage}
           isExtraLargeScreen={isExtraLargeScreen}
         />
       </div>
-    </>
+    </div>
   );
 };
 

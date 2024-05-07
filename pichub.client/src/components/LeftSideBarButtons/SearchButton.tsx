@@ -1,19 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import SearchPanel from "../SearchPanel/SearchPanel";
 
-const SearchButton = ({
-  activePage,
-  isExtraLargeScreen,
-  handleButton,
-}: Props) => {
+const SearchButton = ({ activePage, isExtraLargeScreen }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="btn-group dropend">
+    <div className="btn-group dropend" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className={`btn btn-dark w-100 rounded ${isOpen && "show"}`}
@@ -21,7 +35,11 @@ const SearchButton = ({
         aria-expanded="false"
       >
         <div className="row">
-          <div className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0`}>
+          <div
+            className={`col-12 col-md-12 col-sm-12 col-lg-12 ${
+              isExtraLargeScreen ? "col-xl-3" : "col-xl-12"
+            }  px-0`}
+          >
             {activePage === "search" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -39,7 +57,7 @@ const SearchButton = ({
                 width="22"
                 height="22"
                 fill="currentColor"
-                className="bi bi-search opacity-75"
+                className="bi bi-search text-gray"
                 viewBox="0 0 16 16"
               >
                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />

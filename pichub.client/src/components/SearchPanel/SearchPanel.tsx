@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
 
 interface Props {
@@ -7,8 +7,8 @@ interface Props {
 
 const SearchPanel = ({ isOpen }: Props) => {
   const xl = 1200;
-  const transformSmall = "translate(55px, -138px)";
-  const transformLarge = "translate(190px, -138px)";
+  const transformSmall = "translate(50px, -140px)";
+  const transformLarge = "translate(185px, -140px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [transform, setTransform] = useState(
@@ -42,16 +42,15 @@ const SearchPanel = ({ isOpen }: Props) => {
 
   return (
     <div
-      className={`dropdown-menu rounded-end border-end bg-dark position-absolute m-0 vh-100 ${
-        isOpen ? "show" : ""
+      className={`border-end rounded-0 bg-dark m-0 vh-100 position-fixed ${
+        isOpen ? "visible d-block" : "invisible"
       }`}
       style={{ transform: transform, width: 400 }}
-      data-popper-placement="right-start"
     >
-      <div className="p-3">
+      <div className="px-3 py-1 mt-4">
         <h3 className="text-light">Search</h3>
       </div>
-      <div className="p-3">
+      <div className="px-3 py-1">
         <input
           type="text"
           className="form-control"
@@ -60,9 +59,9 @@ const SearchPanel = ({ isOpen }: Props) => {
         />
       </div>
 
-      <hr className="text-light" />
+      <hr className="text-gray" />
 
-      <div className="row p-3">
+      <div className="row px-3 py-1">
         <h5 className="text-light">Recent</h5>
       </div>
       <div className="container">

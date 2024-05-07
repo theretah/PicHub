@@ -31,7 +31,7 @@ const ProfileButton = ({
               width="22"
               height="22"
               fill="currentColor"
-              className="bi bi-person-circle opacity-75"
+              className="bi bi-person-circle text-gray"
               viewBox="0 0 16 16"
             >
               <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />

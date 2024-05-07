@@ -7,7 +7,6 @@ interface Props {
 
 const ExploreSearchPanel = ({ isOpen }: Props) => {
   const panelWidth = 350;
-  let i = 5;
   const [marginLeft, setMarginLeft] = useState(
     (window.innerWidth - panelWidth) / 2
   );

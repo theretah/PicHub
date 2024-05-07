@@ -67,8 +67,8 @@ const PostDetails = () => {
                 username
               </span>
               &nbsp; &nbsp;
-              <button className="p-0 btn text-light opacity-75 text-decoration-none align-self-center">
-                Following
+              <button className="p-0 btn text-decoration-none align-self-center">
+                <span className="text-gray">Following</span>
               </button>
             </div>
             <button className="btn text-light d-flex" onClick={toggleOpen}>
@@ -155,18 +155,16 @@ const PostDetails = () => {
         <p className="card-title fw-bold mt-3">{likes} likes</p>
         <p className="card-title fw-bold">username</p>
         <p className="card-title">
-          <a href="" className="text-decoration-none text-light opacity-75">
+          <a href="" className="text-decoration-none text-gray">
             View all comments
           </a>
         </p>
         <p className="card-title">
-          <a href="" className="text-decoration-none text-light opacity-75">
+          <a href="" className="text-decoration-none text-gray">
             Add a comment
           </a>
         </p>
       </div>
-      <hr />
-      <br />
     </div>
   );
 };

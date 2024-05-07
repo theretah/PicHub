@@ -1,8 +1,5 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import BottomBar from "../BottomBar/BottomBar";
-import HomePostsColumn from "../HomePostsColumn/HomePostsColumn";
-import HomeSideBar from "../HomeSideBar/HomeSideBar";
-import HomeStoriesBar from "../HomeStoriesBar/HomeStoriesBar";
 import LeftSideBar from "../LeftSideBar/LeftSideBar";
 import SearchPanel from "../SearchPanel/SearchPanel";
 
@@ -42,22 +39,11 @@ const Layout = ({ children, currentPage }: Props) => {
     };
   }, [windowWidth]);
 
-  const [isOpen, setIsOpen] = useState(false);
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="container-fluid position-relative">
-      <SearchPanel isOpen={false} />
+    <div className="container-fluid">
       <div className="row">
         {windowWidth >= md && (
-          <div
-            className="position-fixed border-end pt-3 bg-dark px-auto min-vh-100"
-            style={{ width: leftBarWidth }}
-          >
-            <LeftSideBar currentPage={currentPage} />
-          </div>
+          <LeftSideBar currentPage={currentPage} leftBarWidth={leftBarWidth} />
         )}
 
         <div

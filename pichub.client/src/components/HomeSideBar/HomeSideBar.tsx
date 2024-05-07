@@ -7,7 +7,7 @@ const HomeSideBar = () => {
       <div className="row">
         <div className="col-8 d-flex">
           <div className="row align-self-center">
-            <span className="text-secondary fw-bold">Suggested for you</span>
+            <span className="text-gray fw-bold">Suggested for you</span>
           </div>
         </div>
         <div className="col p-0 d-flex justify-content-end">

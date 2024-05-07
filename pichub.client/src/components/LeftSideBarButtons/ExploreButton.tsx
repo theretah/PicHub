@@ -9,7 +9,11 @@ const ExploreButton = ({
   return (
     <Link to={"/explore"} onClick={handleButton} className="btn btn-dark w-100">
       <div className="row">
-        <div className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0`}>
+        <div
+          className={`col-12 col-md-12 col-sm-12 col-lg-12 ${
+            isExtraLargeScreen ? "col-xl-3" : "col-xl-12"
+          }  px-0`}
+        >
           {activePage === "explore" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -27,7 +31,7 @@ const ExploreButton = ({
               width="22"
               height="22"
               fill="currentColor"
-              className="bi bi-compass opacity-75"
+              className="bi bi-compass text-gray"
               viewBox="0 0 16 16"
             >
               <path d="M8 16.016a7.5 7.5 0 0 0 1.962-14.74A1 1 0 0 0 9 0H7a1 1 0 0 0-.962 1.276A7.5 7.5 0 0 0 8 16.016m6.5-7.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0" />

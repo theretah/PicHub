@@ -16,7 +16,7 @@ const SearchRecord = () => {
             <span className="fw-bold">username</span>
           </div>
           <div className="row">
-            <span className="text-light opacity-75">
+            <span className="text-light text-gray">
               FullName - 32M Followers
             </span>
           </div>

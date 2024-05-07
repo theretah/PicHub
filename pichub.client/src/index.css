@@ -72,4 +72,6 @@ button:focus-visible {
   min-height: 100%;
 } */
 
-
+.text-gray{
+  color:rgb(165 179 193) !important
+}

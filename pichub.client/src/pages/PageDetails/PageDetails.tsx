@@ -86,7 +86,7 @@ const PageDetails = () => {
                       </p>
                     </div>
                     <p className="fw-bold mb-0 mt-3">Full Name</p>
-                    <p className="my-0 text-light opacity-75">
+                    <p className="my-0 text-light text-gray">
                       Personal account
                     </p>
                     <p className="card-text my-0">
@@ -111,10 +111,10 @@ const PageDetails = () => {
             </div>
 
             <ul className="nav nav-underline justify-content-center">
-              <button className="btn">
-                <a
+              <li className="nav-item">
+                <button
                   className={`nav-link ${
-                    activeTab === "posts" ? "border-bottom" : "opacity-75"
+                    activeTab === "posts" ? "border-bottom" : "text-gray"
                   }`}
                   onClick={() => setActiveTab("posts")}
                   style={{ fontSize: fontSize }}
@@ -135,12 +135,12 @@ const PageDetails = () => {
                     </svg>
                     &nbsp; POSTS
                   </span>
-                </a>
-              </button>
-              <button className="btn">
-                <a
+                </button>
+              </li>
+              <li className="nav-item">
+                <button
                   className={`nav-link ${
-                    activeTab === "reels" ? "border-bottom" : "opacity-75"
+                    activeTab === "reels" ? "border-bottom" : "text-gray"
                   }`}
                   onClick={() => setActiveTab("reels")}
                   style={{ fontSize: fontSize }}
@@ -158,12 +158,12 @@ const PageDetails = () => {
                     </svg>
                     &nbsp; REELS
                   </span>
-                </a>
-              </button>
+                </button>
+              </li>
               <li className="nav-item">
                 <button
                   className={`nav-link ${
-                    activeTab === "tagged" ? "border-bottom" : "opacity-75"
+                    activeTab === "tagged" ? "border-bottom" : "text-gray"
                   }`}
                   onClick={() => setActiveTab("tagged")}
                   style={{ fontSize: fontSize }}
@@ -187,7 +187,7 @@ const PageDetails = () => {
               <li className="nav-item">
                 <button
                   className={`nav-link ${
-                    activeTab === "saved" ? "border-bottom" : "opacity-75"
+                    activeTab === "saved" ? "border-bottom" : "text-gray"
                   }`}
                   onClick={() => setActiveTab("saved")}
                   style={{ fontSize: fontSize }}

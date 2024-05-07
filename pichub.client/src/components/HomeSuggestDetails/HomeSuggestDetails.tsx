@@ -15,7 +15,7 @@ const HomeSuggestDetails = () => {
           <p className="m-0 fw-bold text-light">username</p>
         </div>
         <div className="row">
-          <small className="text-secondary">Suggested for you</small>
+          <small className="text-gray">Suggested for you</small>
         </div>
       </div>
       <div className="col-3 p-0 d-flex justify-content-end">
