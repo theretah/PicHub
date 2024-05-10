@@ -6,7 +6,7 @@ const HomeSuggestDetails = () => {
     <div className="row my-3">
       <div className="col-2">
         <ProfileImage
-          imageUrl="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+          imageUrl="../../../public/images/profiles/square.png"
           widthHeight={45}
         />
       </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 const StoryCircle = () => {
   const widthAndHeight = 65;
@@ -8,13 +9,17 @@ const StoryCircle = () => {
       style={{ width: widthAndHeight + 10 }}
     >
       <div className="text-bg-dark">
-        <img
-          src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+        <ProfileImage
+          imageUrl="../../../public/images/profiles/v.jpg"
+          widthHeight={widthAndHeight}
+        />
+        {/* <img
+          src=""
           alt=""
           height={widthAndHeight}
           width={widthAndHeight}
           className="rounded-circle border border-2 mx-auto"
-        />
+        /> */}
         <div className="card-body p-0">
           <p className="card-text" style={{ fontSize: ".85rem" }}>
             username...

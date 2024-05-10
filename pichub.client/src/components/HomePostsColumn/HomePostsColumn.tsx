@@ -5,9 +5,8 @@ const HomePostsColumn = () => {
     <>
       <div className="row mx-auto" style={{ maxWidth: 475 }}>
         {Array.from({ length: 5 }, () => (
-          <div>
+          <div className="p-0 mb-4">
             <PostDetails />
-            <br />
           </div>
         ))}
       </div>

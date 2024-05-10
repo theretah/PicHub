@@ -41,7 +41,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
 
   return (
     <div
-      className="position-fixed border-end pt-3 bg-dark px-auto vh-100 m-0"
+      className="position-fixed border-gray border-end pt-3 bg-dark px-auto vh-100 m-0"
       style={{
         width: leftBarWidth,
       }}

@@ -5,6 +5,7 @@ import SearchPanel from "../../components/SearchPanel/SearchPanel";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 
 const Explore = () => {
+  const [postHeight, setPostHeight] = useState(window.innerWidth / 3);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -20,6 +21,7 @@ const Explore = () => {
     };
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
+      setPostHeight(window.innerWidth / 3);
     };
 
     handleResize();
@@ -62,9 +64,12 @@ const Explore = () => {
               <div className="col-4 p-1">
                 <Link to={"/post"}>
                   <img
-                    className="w-100"
-                    src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+                    className="object-fit-cover w-100"
+                    src="../../../public/images/profiles/h.jpg"
                     alt=""
+                    style={{
+                      aspectRatio: 1,
+                    }}
                   />
                 </Link>
               </div>

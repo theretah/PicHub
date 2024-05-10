@@ -75,3 +75,7 @@ button:focus-visible {
 .text-gray{
   color:rgb(165 179 193) !important
 }
+
+.border-gray{
+  border-color: rgb(75, 82, 88) !important
+}

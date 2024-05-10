@@ -1,14 +1,15 @@
 import React from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import { Link } from "react-router-dom";
 
 const SearchRecord = () => {
   return (
-    <a href="" className="text-decoration-none">
+    <Link to={"/page"} className="text-decoration-none">
       <div className="row py-2 my-1">
         <div className="col-2 d-flex align-items-center">
           <ProfileImage
             widthHeight={40}
-            imageUrl="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
+            imageUrl="../../../public/images/profiles/square.png"
           />
         </div>
         <div className="col-8 text-light px-0">
@@ -36,7 +37,7 @@ const SearchRecord = () => {
           </button>
         </div>
       </div>
-    </a>
+    </Link>
   );
 };
 

@@ -53,13 +53,11 @@ const PostDetails = () => {
 
   return (
     <div className="mx-auto border-0 text-bg-dark p-0">
-      <div className="mb-1 border-0 text-bg-dark">
+      <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
             <ProfileImage
-              imageUrl={
-                "../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-              }
+              imageUrl={"../../../public/images/profiles/square.png"}
               widthHeight={isSmallScreen ? 40 : 50}
             />
             <div className="card-body p-0 align-self-center">
@@ -132,8 +130,8 @@ const PostDetails = () => {
         </div>
       </div>
       <img
-        src="../../../public/images/profiles/8ed3d547-94ff-48e1-9f20-8c14a7030a02_2000x2000.png"
-        className="card-img-top rounded"
+        src="../../../public/images/profiles/v.jpg"
+        className="card-img-top rounded my-1"
         alt="..."
       />
       <div className="card-body px-0">
