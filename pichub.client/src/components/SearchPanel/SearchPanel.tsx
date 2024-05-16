@@ -3,12 +3,13 @@ import SearchRecord from "../SearchRecord/SearchRecord";
 
 interface Props {
   isOpen: boolean;
+  activePage: string;
 }
 
-const SearchPanel = ({ isOpen }: Props) => {
+const SearchPanel = ({ isOpen, activePage }: Props) => {
   const xl = 1200;
-  const transformSmall = "translate(50px, -140px)";
-  const transformLarge = "translate(185px, -140px)";
+  const transformSmall = "translate(53px, -140px)";
+  const transformLarge = "translate(188px, -140px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [transform, setTransform] = useState(
@@ -23,7 +24,9 @@ const SearchPanel = ({ isOpen }: Props) => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
       setTransform(
-        windowWidth >= xl
+        activePage == "messages"
+          ? transformSmall
+          : windowWidth >= xl
           ? transformLarge
           : windowWidth < xl
           ? transformSmall
@@ -42,10 +45,10 @@ const SearchPanel = ({ isOpen }: Props) => {
 
   return (
     <div
-      className={`border-end rounded-0 bg-dark m-0 vh-100 position-fixed ${
+      className={`border-end border-gray rounded-end bg-dark m-0 vh-100 position-fixed z-3 ${
         isOpen ? "visible d-block" : "invisible"
       }`}
-      style={{ transform: transform, width: 400 }}
+      style={{ transform: transform, width: 412 }}
     >
       <div className="px-3 py-1 mt-4">
         <h3 className="text-light">Search</h3>

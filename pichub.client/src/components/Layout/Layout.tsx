@@ -26,8 +26,11 @@ const Layout = ({ children, currentPage }: Props) => {
       setWindowWidth(window.innerWidth);
 
       setBottomBarHeight(windowWidth < md ? 45 : 0);
-
-      setLeftBarWidth(windowWidth >= xl ? 200 : windowWidth < md ? 0 : 65);
+      if (currentPage == "messages") {
+        setLeftBarWidth(windowWidth < md ? 0 : 65);
+      } else {
+        setLeftBarWidth(windowWidth >= xl ? 200 : windowWidth < md ? 0 : 65);
+      }
     };
 
     handleResize();
@@ -40,8 +43,8 @@ const Layout = ({ children, currentPage }: Props) => {
   }, [windowWidth]);
 
   return (
-    <div className="container-fluid">
-      <div className="row">
+    <div className="container-fluid z-1">
+      <div className="row p-0">
         {windowWidth >= md && (
           <LeftSideBar currentPage={currentPage} leftBarWidth={leftBarWidth} />
         )}

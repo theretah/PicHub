@@ -19,15 +19,16 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
 
   let initialIsExtraLarge = window.innerWidth >= xl;
 
-  const [isExtraLargeScreen, setIsExtraLargeScreen] =
-    useState(initialIsExtraLarge);
+  const [activePage, setActivePage] = useState(currentPage);
+  const [isExtraLargeScreen, setIsExtraLargeScreen] = useState(
+    initialIsExtraLarge && activePage != "messages"
+  );
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [activePage, setActivePage] = useState(currentPage);
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setIsExtraLargeScreen(windowWidth >= xl);
+      setIsExtraLargeScreen(windowWidth >= xl && activePage != "messages");
     };
 
     handleResize();
@@ -41,10 +42,14 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
 
   return (
     <div
-      className="position-fixed border-gray border-end pt-3 bg-dark px-auto vh-100 m-0"
-      style={{
-        width: leftBarWidth,
-      }}
+      className="position-fixed border-gray border-end pt-3 bg-dark px-auto vh-100 m-0 z-3"
+      style={
+        activePage == "messages"
+          ? { width: 65 }
+          : {
+              width: leftBarWidth,
+            }
+      }
     >
       <ul className="list-group" style={{ height: 700 }}>
         <div className="list-group-item bg-dark border-0">

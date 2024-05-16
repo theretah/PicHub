@@ -25,7 +25,7 @@ const Login = () => {
   return (
     <div className="container-fluid bg-white min-vh-100">
       <div className="row d-flex justify-content-center">
-        <div style={windowWidth > sm ? { width: 400 } : {}}>
+        <div style={{ width: 400 }}>
           <form className="border py-2 px-5 mb-3 mt-5 text-bg-white">
             <h1 className="text-center my-5">PicHub</h1>
             <div className="mb-2">

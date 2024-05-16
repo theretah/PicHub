@@ -12,11 +12,13 @@ import {
 const PageDetails = () => {
   const md = 768;
   const sm = 576;
+  const fontSize = 12;
 
   const [isFollowing, setIsFollowing] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isMedium, setIsMedium] = useState(window.innerWidth < md);
   const [isExtraSmall, setIsExtraSmall] = useState(window.innerWidth < sm);
+  const [activeTab, setActiveTab] = useState("posts");
 
   useEffect(() => {
     const handleResize = () => {
@@ -107,7 +109,7 @@ const PageDetails = () => {
                           <div className="row">
                             <h5 className="d-inline m-0 me-4">username</h5>
                           </div>
-                          <div className="row">
+                          <div className="row mt-2">
                             <div className="col">
                               {isFollowing ? (
                                 <button
@@ -140,7 +142,7 @@ const PageDetails = () => {
                               <button className="btn btn-secondary me-1 py-1">
                                 Message
                               </button>
-                              <button className="btn text-light py-1">
+                              <button className="btn text-light py-1 px-0">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   width="22"
@@ -165,9 +167,11 @@ const PageDetails = () => {
                   >
                     <div className="p-0">
                       <div className="row d-flex align-items-center">
-                        <div className="col-sm-4 col-md-4">
-                          <h5 className="d-inline m-0 me-4">username</h5>
-                        </div>
+                        {windowWidth > 768 && (
+                          <div className="col-sm-4 col-md-4">
+                            <h5 className="d-inline m-0 me-4">username</h5>
+                          </div>
+                        )}
 
                         {windowWidth >= md && (
                           <div className="col-sm-8 col-md-8">
@@ -217,7 +221,11 @@ const PageDetails = () => {
                           </div>
                         )}
                       </div>
-                      <div className="d-flex justify-content-between mt-3 w-75">
+                      <div
+                        className={`d-flex justify-content-between mt-3 ${
+                          windowWidth > 768 ? "w-75" : ""
+                        }`}
+                      >
                         <p className="card-title d-inline fs-6">
                           <span className="fw-bold">1,655</span> Posts
                         </p>
@@ -257,129 +265,137 @@ const PageDetails = () => {
                 </div>
               </div>
 
-              {/* <ul className="nav nav-underline justify-content-center">
-              <li className="nav-item">
-                <button
-                  className={`nav-link ${
-                    activeTab === "posts" ? "border-bottom" : "text-gray"
-                  }`}
-                  onClick={() => setActiveTab("posts")}
-                  style={{ fontSize: fontSize }}
-                >
-                  <span className={`text-light`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      fill="currentColor"
-                      className="bi bi-list"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
-                      />
-                    </svg>
-                    &nbsp; POSTS
-                  </span>
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className={`nav-link ${
-                    activeTab === "reels" ? "border-bottom" : "text-gray"
-                  }`}
-                  onClick={() => setActiveTab("reels")}
-                  style={{ fontSize: fontSize }}
-                >
-                  <span className={`text-light`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      fill="currentColor"
-                      className="bi bi-film"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm4 0v6h8V1zm8 8H4v6h8zM1 1v2h2V1zm2 3H1v2h2zM1 7v2h2V7zm2 3H1v2h2zm-2 3v2h2v-2zM15 1h-2v2h2zm-2 3v2h2V4zm2 3h-2v2h2zm-2 3v2h2v-2zm2 3h-2v2h2z" />
-                    </svg>
-                    &nbsp; REELS
-                  </span>
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className={`nav-link ${
-                    activeTab === "tagged" ? "border-bottom" : "text-gray"
-                  }`}
-                  onClick={() => setActiveTab("tagged")}
-                  style={{ fontSize: fontSize }}
-                >
-                  <span className={`text-light`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      fill="currentColor"
-                      className="bi bi-person-badge"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                      <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492z" />
-                    </svg>
-                    &nbsp; TAGGED
-                  </span>
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className={`nav-link ${
-                    activeTab === "saved" ? "border-bottom" : "text-gray"
-                  }`}
-                  onClick={() => setActiveTab("saved")}
-                  style={{ fontSize: fontSize }}
-                >
-                  <span className={`text-light`}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      fill="currentColor"
-                      className="bi bi-save"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1z" />
-                    </svg>
-                    &nbsp; SAVED
-                  </span>
-                </button>
-              </li>
-            </ul> */}
+              <ul className="nav nav-underline justify-content-center">
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "posts"
+                        ? "border-bottom text-light"
+                        : "text-gray"
+                    }`}
+                    onClick={() => setActiveTab("posts")}
+                    style={{ fontSize: fontSize }}
+                  >
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        className="bi bi-list"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"
+                        />
+                      </svg>
+                      &nbsp; POSTS
+                    </span>
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "reels"
+                        ? "border-bottom text-light"
+                        : "text-gray"
+                    }`}
+                    onClick={() => setActiveTab("reels")}
+                    style={{ fontSize: fontSize }}
+                  >
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        className="bi bi-film"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1zm4 0v6h8V1zm8 8H4v6h8zM1 1v2h2V1zm2 3H1v2h2zM1 7v2h2V7zm2 3H1v2h2zm-2 3v2h2v-2zM15 1h-2v2h2zm-2 3v2h2V4zm2 3h-2v2h2zm-2 3v2h2v-2zm2 3h-2v2h2z" />
+                      </svg>
+                      &nbsp; REELS
+                    </span>
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "tagged"
+                        ? "border-bottom text-light"
+                        : "text-gray"
+                    }`}
+                    onClick={() => setActiveTab("tagged")}
+                    style={{ fontSize: fontSize }}
+                  >
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        className="bi bi-person-badge"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M6.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                        <path d="M4.5 0A2.5 2.5 0 0 0 2 2.5V14a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2.5A2.5 2.5 0 0 0 11.5 0zM3 2.5A1.5 1.5 0 0 1 4.5 1h7A1.5 1.5 0 0 1 13 2.5v10.795a4.2 4.2 0 0 0-.776-.492C11.392 12.387 10.063 12 8 12s-3.392.387-4.224.803a4.2 4.2 0 0 0-.776.492z" />
+                      </svg>
+                      &nbsp; TAGGED
+                    </span>
+                  </button>
+                </li>
+                <li className="nav-item">
+                  <button
+                    className={`nav-link ${
+                      activeTab === "saved"
+                        ? "border-bottom text-light"
+                        : "text-gray"
+                    }`}
+                    onClick={() => setActiveTab("saved")}
+                    style={{ fontSize: fontSize }}
+                  >
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="22"
+                        height="22"
+                        fill="currentColor"
+                        className="bi bi-save"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1z" />
+                      </svg>
+                      &nbsp; SAVED
+                    </span>
+                  </button>
+                </li>
+              </ul>
             </div>
             <div className="col"></div>
           </div>
         </div>
-        {/* <div className="container-fluid mt-3">
-        <div className="row">
-          <div className="col"></div>
-          <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
-            <div className="row">
-              {Array.from({ length: 7 }, () => (
-                <div className="col-4 p-1">
-                  <Link to={"/post"}>
-                    <img
-                      className="w-100"
-                      src="../../../public/images/profiles/square.png"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-              ))}
+        <div className="container-fluid mt-3">
+          <div className="row">
+            <div className="col"></div>
+            <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
+              <div className="row">
+                {Array.from({ length: 7 }, () => (
+                  <div className="col-4 p-1">
+                    <Link to={"/post"}>
+                      <img
+                        className="w-100"
+                        src="../../../public/images/profiles/square.png"
+                        alt=""
+                      />
+                    </Link>
+                  </div>
+                ))}
+              </div>
             </div>
+            <div className="col"></div>
           </div>
-          <div className="col"></div>
         </div>
-      </div> */}
       </Layout>
     </>
   );

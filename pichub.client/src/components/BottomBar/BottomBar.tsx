@@ -16,7 +16,7 @@ const BottomBar = ({ currentPage }: Props) => {
 
   return (
     <div
-      className="container-fluid position-fixed bottom-0 bg-dark"
+      className="container-fluid position-fixed bottom-0 bg-dark z-2"
       style={{
         height: 45,
       }}

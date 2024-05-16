@@ -13,7 +13,11 @@ const MessagesButton = ({
       className="btn btn-dark w-100"
     >
       <div className="row">
-        <div className={`col-12 col-md-12 col-sm-12 col-lg-12 col-xl-3 px-0`}>
+        <div
+          className={`col-12 col-md-12 col-sm-12 col-lg-12 ${
+            activePage == "messages" ? "col-xl-12" : "col-xl-3"
+          } px-0`}
+        >
           {activePage === "messages" ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"

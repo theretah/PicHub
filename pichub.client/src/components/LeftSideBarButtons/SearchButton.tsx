@@ -37,8 +37,8 @@ const SearchButton = ({ activePage, isExtraLargeScreen }: Props) => {
         <div className="row">
           <div
             className={`col-12 col-md-12 col-sm-12 col-lg-12 ${
-              isExtraLargeScreen ? "col-xl-3" : "col-xl-12"
-            }  px-0`}
+              activePage == "messages" ? "col-xl-12" : "col-xl-3"
+            } px-0`}
           >
             {activePage === "search" ? (
               <svg
@@ -77,7 +77,7 @@ const SearchButton = ({ activePage, isExtraLargeScreen }: Props) => {
           )}
         </div>
       </button>
-      <SearchPanel isOpen={isOpen} />
+      <SearchPanel isOpen={isOpen} activePage={activePage} />
     </div>
   );
 };
