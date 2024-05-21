@@ -20,7 +20,6 @@ const Routes = [
   { path: "/messages", element: <Messages /> },
   { path: "/createPost", element: <CreatePost /> },
   { path: "/reels", element: <Reels /> },
-  { path: "/search", element: <Search /> },
   { path: "/notifications", element: <Notifications /> },
 ];
 

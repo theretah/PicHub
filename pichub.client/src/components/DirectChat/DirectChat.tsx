@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import DirectChatMessage from "./DirectChatMessage";
+
 interface Props {
   isSmall: boolean;
+  inboxWidth: number;
+  windowWidth: number;
 }
-const DirectChat = ({ isSmall }: Props) => {
+const DirectChat = ({ isSmall, inboxWidth, windowWidth }: Props) => {
   const [messageText, setMessageText] = useState("");
+  const [marginLeft, setMarginLeft] = useState(isSmall ? 0 : 65);
   return (
     <div className="col pe-0">
-      <div className="row border-bottom border-gray p-2">
+      <div className="row border-bottom border-gray p-2 z-2">
         <div
           className="d-flex justify-content-between w-100 p-0"
           style={{ width: 45, height: 45 }}
@@ -72,7 +76,7 @@ const DirectChat = ({ isSmall }: Props) => {
       </div>
       <div
         className="row overflow-y-auto"
-        style={{ height: isSmall ? "78vh" : "83vh" }}
+        style={{ height: isSmall ? "81vh" : "83vh" }}
       >
         {Array.from({ length: 3 }, () => (
           <DirectChatMessage sender={1} />
@@ -87,7 +91,7 @@ const DirectChat = ({ isSmall }: Props) => {
           <DirectChatMessage sender={0} />
         ))}
       </div>
-      <div className="row p-2">
+      <div className="row p-2 ">
         <div className="input-group border border-gray rounded-pill">
           <button className="btn text-light p-2">
             <svg

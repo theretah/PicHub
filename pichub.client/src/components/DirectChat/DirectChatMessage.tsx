@@ -1,92 +1,65 @@
-import {
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalBody,
-} from "mdb-react-ui-kit";
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import DirectChatMessageButton from "./DirectChatMessageButton";
 
 interface Props {
   sender: number;
 }
-interface BtnProps {
-  onPointerEnter: () => void;
-  onPointerLeave: () => void;
-  onClick: () => void;
-}
-
-const DirectChatMessageButton = ({
-  onPointerEnter,
-  onPointerLeave,
-  onClick,
-}: BtnProps) => {
-  return (
-    <div
-      className="h-100"
-      onPointerEnter={onPointerEnter}
-      onPointerLeave={onPointerLeave}
-    >
-      <button
-        className="btn p-0 text-light"
-        style={{ width: 30, height: 30 }}
-        onClick={onClick}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          fill="currentColor"
-          className="bi bi-three-dots-vertical"
-          viewBox="0 0 16 16"
-        >
-          <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-        </svg>
-      </button>
-    </div>
-  );
-};
 
 const DirectChatMessage = ({ sender }: Props) => {
   const [buttonVisible, setButtonVisible] = useState(false);
-  const [modal, setModal] = useState(false);
 
   function onEnter() {
+    setButtonVisible(true);
+  }
+  function onClick() {
     setButtonVisible(true);
   }
   function onLeave() {
     setButtonVisible(false);
   }
 
-  const toggleOpen = () => {
-    setModal(!modal);
-  };
+  const divRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (divRef.current && !divRef.current.contains(event.target as Node)) {
+        setButtonVisible(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [divRef]);
+
   return (
     <>
-      <div className="row mt-2">
+      {/* <div className="row mt-2">
         <div className="col d-flex justify-content-center">
-          <span className="text-light">5/16/2024</span>
+          <span className="text-gray" style={{ fontSize: 13 }}>
+            Jan 11, 2024, 10:21PM
+          </span>
         </div>
-      </div>
+      </div> */}
       <div
         className={`d-flex mt-1 ${
           sender == 1 ? "justify-content-end" : "justify-content-start"
         }`}
+        onPointerEnter={onEnter}
+        onPointerLeave={onLeave}
+        ref={divRef}
       >
         {sender === 1 && buttonVisible && (
-          <DirectChatMessageButton
-            onPointerEnter={onEnter}
-            onPointerLeave={onLeave}
-            onClick={toggleOpen}
-          />
+          <DirectChatMessageButton sender={sender} />
         )}
         <div
-          style={{ width: "55%" }}
-          onPointerEnter={onEnter}
-          onPointerLeave={onLeave}
+          style={{ width: window.innerWidth < 768 ? "85%" : "65%" }}
+          onClick={onClick}
         >
           <div
-            className={`card text-light ${sender == 1 && ""}`}
+            className={`card p-1 text-light ${sender == 1 && ""}`}
             style={
               sender == 1
                 ? {
@@ -106,53 +79,8 @@ const DirectChatMessage = ({ sender }: Props) => {
           </div>
         </div>
         {sender === 0 && buttonVisible && (
-          <>
-            <DirectChatMessageButton
-              onPointerEnter={onEnter}
-              onPointerLeave={onLeave}
-              onClick={toggleOpen}
-            />
-          </>
+          <DirectChatMessageButton sender={sender} />
         )}
-        <MDBModal open={modal} onClose={() => setModal(false)} tabIndex="-1">
-          <MDBModalDialog>
-            <MDBModalContent>
-              <MDBModalBody className="p-0">
-                <ul className="list-group list-group-flush p-0 rounded bg-dark">
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button className="btn text-danger w-100 fw-bold py-3">
-                      Report
-                    </button>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button className="btn text-danger w-100 fw-bold py-3">
-                      Unfollow
-                    </button>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button className="btn w-100 py-3">Add to favorites</button>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <Link to={"/post"} className="btn w-100 py-3">
-                      Go to post
-                    </Link>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button className="btn w-100 py-3">Share to</button>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button className="btn w-100 py-3">Copy link</button>
-                  </li>
-                  <li className="list-group-item align-self-center w-100 p-0">
-                    <button onClick={toggleOpen} className="btn w-100 py-3">
-                      Cancel
-                    </button>
-                  </li>
-                </ul>
-              </MDBModalBody>
-            </MDBModalContent>
-          </MDBModalDialog>
-        </MDBModal>
       </div>
     </>
   );

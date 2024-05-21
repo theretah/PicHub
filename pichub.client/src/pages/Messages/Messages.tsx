@@ -36,8 +36,13 @@ const Messages = () => {
 
   return (
     <Layout currentPage={"messages"}>
-      <div className="container-fluid min-vh-100">
-        <div className="row min-vh-100">
+      <div className="container-fluid">
+        <div
+          className="row"
+          style={
+            windowWidth < 768 ? { height: "94vh" } : { minHeight: "100vh" }
+          }
+        >
           <div
             className="border-end border-gray p-0 position-relative z-1"
             style={{ width: inboxWidth }}
@@ -126,7 +131,11 @@ const Messages = () => {
             </div>
           </div>
           {activeMessage ? (
-            <DirectChat isSmall={windowWidth < 768} />
+            <DirectChat
+              isSmall={windowWidth < 768}
+              inboxWidth={inboxWidth}
+              windowWidth={windowWidth}
+            />
           ) : (
             <div className="col d-flex justify-content-center align-items-center">
               <div className="text-center">

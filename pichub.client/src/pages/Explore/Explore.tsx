@@ -40,26 +40,26 @@ const Explore = () => {
 
   return (
     <Layout currentPage={"explore"}>
-      <div className="row p-1">
+      <div className="row">
         <div className="col"></div>
         <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12">
-          <div className="row">
-            {isSmallScreen && (
+          {isSmallScreen && (
+            <div className="row py-2 border-bottom border-gray px-1">
               <div className="p-0" ref={dropdownRef}>
                 <div className="mx-auto px-1 w-100">
                   <input
                     onClick={() => toggleSearchPanel()}
                     type="text"
-                    className="form-control"
+                    className="form-control text-light border-0"
                     placeholder="Search"
-                    style={{ borderRadius: 8 }}
+                    style={{ borderRadius: 8, backgroundColor: "#323436" }}
                   />
                 </div>
                 <ExploreSearchPanel isOpen={isOpen} />
               </div>
-            )}
-          </div>
-          <div className="row mt-2">
+            </div>
+          )}
+          <div className={`row p-1`}>
             {Array.from({ length: 7 }, () => (
               <div className="col-4 p-1">
                 <Link to={"/post"}>

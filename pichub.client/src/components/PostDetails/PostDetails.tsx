@@ -130,9 +130,10 @@ const PostDetails = () => {
         </div>
       </div>
       <img
-        src="../../../public/images/profiles/v.jpg"
-        className="card-img-top rounded my-1"
+        src="../../../public/images/profiles/h.jpg"
+        className="card-img-top rounded my-1 object-fit-contain"
         alt="..."
+        style={{ aspectRatio: 1 }}
       />
       <div className="card-body px-0">
         <div className="row">

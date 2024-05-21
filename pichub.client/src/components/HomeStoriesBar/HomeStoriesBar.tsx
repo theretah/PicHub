@@ -6,16 +6,16 @@ const HomeStoriesBar = () => {
     storiesBar.style.overflow = "auto";
   }
   return (
-    <div className="container-fluid fixed-top position-static px-0">
+    <div className="w-100 fixed-top position-static px-0">
       <div className="row">
         <ul
           id="storiesBar"
           className="pt-2 pb-1 overflow-x-scroll mx-auto px-0"
           style={{
             whiteSpace: "nowrap",
-            width: 500,
             msOverflowStyle: "none",
             scrollbarWidth: "none",
+            width: 500,
           }}
         >
           {Array.from({ length: 15 }, () => (

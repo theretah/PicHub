@@ -8,6 +8,10 @@ import {
   MDBModalContent,
   MDBModalBody,
 } from "mdb-react-ui-kit";
+import Posts from "./Posts";
+import Reels from "./Reels";
+import Tagged from "./Tagged";
+import Saved from "./Saved";
 
 const PageDetails = () => {
   const md = 768;
@@ -380,17 +384,15 @@ const PageDetails = () => {
             <div className="col"></div>
             <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
               <div className="row">
-                {Array.from({ length: 7 }, () => (
-                  <div className="col-4 p-1">
-                    <Link to={"/post"}>
-                      <img
-                        className="w-100"
-                        src="../../../public/images/profiles/square.png"
-                        alt=""
-                      />
-                    </Link>
-                  </div>
-                ))}
+                {activeTab == "posts" ? (
+                  <Posts />
+                ) : activeTab == "reels" ? (
+                  <Reels />
+                ) : activeTab == "tagged" ? (
+                  <Tagged />
+                ) : (
+                  <Saved />
+                )}
               </div>
             </div>
             <div className="col"></div>

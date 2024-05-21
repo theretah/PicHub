@@ -50,7 +50,7 @@ const Layout = ({ children, currentPage }: Props) => {
         )}
 
         <div
-          className="col min-vh-100"
+          className="col min-vh-100 "
           style={{
             marginLeft: leftBarWidth,
             paddingBottom: bottomBarHeight,

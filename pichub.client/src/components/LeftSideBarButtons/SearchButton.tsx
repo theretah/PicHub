@@ -27,7 +27,7 @@ const SearchButton = ({ activePage, isExtraLargeScreen }: Props) => {
   }, []);
 
   return (
-    <div className="btn-group dropend" ref={dropdownRef}>
+    <div className="btn-group" ref={dropdownRef}>
       <button
         onClick={toggleDropdown}
         className={`btn btn-dark w-100 rounded ${isOpen && "show"}`}

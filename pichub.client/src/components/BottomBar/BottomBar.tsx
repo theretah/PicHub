@@ -16,15 +16,15 @@ const BottomBar = ({ currentPage }: Props) => {
 
   return (
     <div
-      className="container-fluid position-fixed bottom-0 bg-dark z-2"
+      className="container-fluid position-fixed bottom-0 bg-dark z-2 border-top border-gray"
       style={{
         height: 45,
       }}
     >
       <div className="row">
-        <div className="col"></div>
-        <div className="col-sm-12">
-          <ul className="nav justify-content-around">
+        <div className="col-0"></div>
+        <div className="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+          <ul className="nav justify-content-between mx-auto">
             <li className="nav-item mx-2">
               <HomeButton
                 activePage={activePage}
@@ -63,7 +63,7 @@ const BottomBar = ({ currentPage }: Props) => {
             </li>
           </ul>
         </div>
-        <div className="col"></div>
+        <div className="col-0"></div>
       </div>
     </div>
   );
