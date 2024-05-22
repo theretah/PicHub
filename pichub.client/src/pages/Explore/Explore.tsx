@@ -39,7 +39,7 @@ const Explore = () => {
   };
 
   return (
-    <Layout currentPage={"explore"}>
+    <Layout currentPage={"Explore"}>
       <div className="row">
         <div className="col"></div>
         <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12 col-12">

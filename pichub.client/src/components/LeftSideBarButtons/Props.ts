@@ -1,5 +1,5 @@
-interface Props {
+export interface Props {
   activePage: string;
-  isExtraLargeScreen: boolean;
+  showFullButton: boolean;
   handleButton: () => void;
 }

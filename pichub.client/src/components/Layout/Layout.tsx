@@ -26,7 +26,7 @@ const Layout = ({ children, currentPage }: Props) => {
       setWindowWidth(window.innerWidth);
 
       setBottomBarHeight(windowWidth < md ? 45 : 0);
-      if (currentPage == "messages") {
+      if (currentPage == "Messages") {
         setLeftBarWidth(windowWidth < md ? 0 : 65);
       } else {
         setLeftBarWidth(windowWidth >= xl ? 200 : windowWidth < md ? 0 : 65);

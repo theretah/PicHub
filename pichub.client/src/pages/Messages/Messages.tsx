@@ -35,7 +35,7 @@ const Messages = () => {
   }, [windowWidth]);
 
   return (
-    <Layout currentPage={"messages"}>
+    <Layout currentPage={"Messages"}>
       <div className="container-fluid">
         <div
           className="row"

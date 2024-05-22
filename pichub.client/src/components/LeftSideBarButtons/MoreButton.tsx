@@ -1,14 +1,11 @@
 import React from "react";
+import { Props } from "./Props";
 
-const MoreButton = ({ activePage, isExtraLargeScreen }: Props) => {
+const MoreButton = ({ activePage, showFullButton, handleButton }: Props) => {
   return (
-    <button className="btn btn-dark w-100">
+    <button className="btn btn-dark w-100" onClick={handleButton}>
       <div className="row">
-        <div
-          className={`col-12 col-md-12 col-sm-12 col-lg-12 ${
-            activePage == "messages" ? "col-xl-12" : "col-xl-3"
-          } px-0`}
-        >
+        <div className={`${showFullButton ? "col-3" : "col"} px-0`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="22"
@@ -23,7 +20,7 @@ const MoreButton = ({ activePage, isExtraLargeScreen }: Props) => {
             />
           </svg>
         </div>
-        {isExtraLargeScreen && (
+        {showFullButton && (
           <div className="col d-flex align-items-center px-0">
             <span
               className={`text-light ${

@@ -43,7 +43,7 @@ const Index = () => {
   };
 
   return (
-    <Layout currentPage={"home"}>
+    <Layout currentPage={"Home"}>
       <>
         {isSmallScreen && (
           <div className="row border-bottom border-gray py-2">

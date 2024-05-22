@@ -77,7 +77,7 @@ const PageDetails = () => {
         </div>
       )}
 
-      <Layout currentPage="profile">
+      <Layout currentPage="Profile">
         <div
           className={`container-fluid ${windowWidth >= md ? "mt-5" : "mt-3"}`}
         >

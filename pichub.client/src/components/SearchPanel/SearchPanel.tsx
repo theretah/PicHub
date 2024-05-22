@@ -8,30 +8,14 @@ interface Props {
 
 const SearchPanel = ({ isOpen, activePage }: Props) => {
   const xl = 1200;
-  const transformSmall = "translate(53px, -140px)";
-  const transformLarge = "translate(188px, -140px)";
+  const translate = "translate(53px, -140px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const [transform, setTransform] = useState(
-    window.innerWidth >= xl
-      ? transformLarge
-      : window.innerWidth < xl
-      ? transformSmall
-      : ""
-  );
+  const [transform, setTransform] = useState(translate);
 
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setTransform(
-        activePage == "messages"
-          ? transformSmall
-          : windowWidth >= xl
-          ? transformLarge
-          : windowWidth < xl
-          ? transformSmall
-          : ""
-      );
     };
 
     handleResize();

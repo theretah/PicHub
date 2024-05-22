@@ -76,7 +76,7 @@ const DirectChat = ({ isSmall, inboxWidth, windowWidth }: Props) => {
       </div>
       <div
         className="row overflow-y-auto"
-        style={{ height: isSmall ? "81vh" : "83vh" }}
+        style={{ height: isSmall ? "78vh" : "83vh" }}
       >
         {Array.from({ length: 3 }, () => (
           <DirectChatMessage sender={1} />
