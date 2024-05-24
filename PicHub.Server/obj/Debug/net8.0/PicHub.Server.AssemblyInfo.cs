@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.AspNetCore.Identity.UI.UIFrameworkAttribute("Bootstrap5")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72b1fcd0ed6438fe372a082e80195d28b829376f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e68967928c9c00b3723ee9e5d07d7880e29956d5")]
 [assembly: System.Reflection.AssemblyProductAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -19,8 +19,6 @@ const PostDetailsPage = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(538);
-  const imageWidth = 600;
-  const imageHeight = 600;
 
   useEffect(() => {
     const handleResize = () => {

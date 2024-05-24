@@ -1,26 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import AuthContext from "../../context/AuthContext";
+import { useFormAction } from "react-router-dom";
 
 const Login = () => {
-  const sm = 576;
-  const md = 768;
-  const lg = 992;
-  const xl = 1200;
-
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [windowWidth]);
+  const context = useContext(AuthContext);
 
   return (
     <div className="container-fluid bg-white min-vh-100">

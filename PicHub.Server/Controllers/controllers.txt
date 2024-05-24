@@ -1,0 +1,22 @@
+Account
+    Register
+    Login
+    Logout
+    Remove Account
+    Change Username
+
+Post
+    Like
+    Unlike
+    Save
+    Unsave
+    Post Comment
+    Remove Comment
+    Like Comment
+    Share
+
+Message
+    Send
+    Reply
+    Like
+    Block
