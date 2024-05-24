@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from "react";
 import SearchPanel from "../SearchPanel/SearchPanel";
 import { Props } from "./Props";
 
-const SearchButton = ({ activePage, showFullButton, handleButton }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+const SearchButton = ({
+  activePage,
+  showFullButton,
+  handleButton,
+  handleClickOutsideButton,
+  isOpen,
+}: Props) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -16,7 +17,7 @@ const SearchButton = ({ activePage, showFullButton, handleButton }: Props) => {
         dropdownRef.current &&
         !dropdownRef.current.contains(event.target as Node)
       ) {
-        setIsOpen(false);
+        handleClickOutsideButton();
       }
     };
 
@@ -27,9 +28,9 @@ const SearchButton = ({ activePage, showFullButton, handleButton }: Props) => {
   }, []);
 
   return (
-    <div className="btn-group" ref={dropdownRef} onClick={handleButton}>
+    <div className="btn-group" ref={dropdownRef}>
       <button
-        onClick={toggleDropdown}
+        onClick={handleButton}
         className={`btn btn-dark w-100 rounded ${isOpen && "show"}`}
         data-bs-toggle="dropdown"
         aria-expanded="false"
@@ -60,7 +61,7 @@ const SearchButton = ({ activePage, showFullButton, handleButton }: Props) => {
               </svg>
             )}
           </div>
-          {showFullButton && (
+          {showFullButton && activePage != "Messages" && (
             <div className="col d-flex align-items-center px-0">
               <span className={`text-light`}>Search</span>
             </div>

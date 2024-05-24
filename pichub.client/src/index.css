@@ -79,7 +79,9 @@ button:focus-visible {
 .border-gray{
   border-color: rgb(75, 82, 88) !important
 }
-
+.bg-gray{
+  background-color: #343a40 !important;
+}
 .list-group-item-dark-custom {
   --bs-list-group-color: var(--bs-dark-text-emphasis);
   --bs-list-group-bg: var(--bs-dark-bg);

@@ -20,7 +20,7 @@ const MoreButton = ({ activePage, showFullButton, handleButton }: Props) => {
             />
           </svg>
         </div>
-        {showFullButton && (
+        {showFullButton && activePage != "Messages" && (
           <div className="col d-flex align-items-center px-0">
             <span
               className={`text-light ${

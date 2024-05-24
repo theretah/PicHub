@@ -74,10 +74,10 @@ const BottomBar = ({ currentPage }: Props) => {
             </BottomBarButton>
             <BottomBarButton
               activePage={currentPage}
-              buttonText="Create Post"
+              buttonText="Create"
               to="/createPost"
             >
-              {currentPage === "Create Post" ? (
+              {currentPage === "Create" ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="26"

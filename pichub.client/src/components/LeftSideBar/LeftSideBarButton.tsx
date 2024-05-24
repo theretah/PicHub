@@ -19,10 +19,14 @@ const LeftSideBarButton = ({
   return (
     <Link to={to} className="btn btn-dark w-100">
       <div className="row">
-        <div className={`${showFullButton ? "col-3" : "col"} px-0`}>
+        <div
+          className={`${
+            showFullButton && window.innerWidth >= 1200 ? "col-3" : "col"
+          } px-0`}
+        >
           {children}
         </div>
-        {showFullButton && (
+        {showFullButton && activePage != "Messages" && (
           <div className="col d-flex align-items-center px-0">
             <span
               className={`text-light ${

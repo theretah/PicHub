@@ -10,30 +10,56 @@ interface Props {
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const xl = 1200;
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchRef = useRef(searchOpen);
+
   const [settingsOpen, setSettingsOpen] = useState(false);
 
-  const [activePage, setActivePage] = useState(currentPage);
-
-  const [leftSideBarExpanded, setLeftSideBarExpanded] = useState(
-    searchOpen || settingsOpen
-  );
-
-  const [isExtraLargeScreen, setIsExtraLargeScreen] = useState(
-    window.innerWidth >= xl
-  );
-
   const [showFullButton, setShowFullButton] = useState(
-    isExtraLargeScreen && !leftSideBarExpanded && activePage != "Messages"
+    window.innerWidth >= xl &&
+      !searchOpen &&
+      !settingsOpen &&
+      currentPage != "Messages"
   );
+
+  function handleSearchButton() {
+    setSettingsOpen(false);
+    let oldSearchOpenValue = !searchOpen;
+    if (!searchRef.current) {
+      setSearchOpen(oldSearchOpenValue);
+      searchRef.current = oldSearchOpenValue;
+      console.log(
+        `Button IsExtraLargeScreen: ${window.innerWidth >= xl}, SearchOpen: ${
+          searchRef.current
+        }`
+      );
+      console.log(window.innerWidth);
+      setShowFullButton(window.innerWidth >= xl && !searchRef.current);
+    }
+  }
+
+  function handleSearchOutside() {
+    if (searchRef.current) {
+      setSearchOpen(false);
+      searchRef.current = false;
+      console.log(
+        `Outside IsExtraLargeScreen: ${window.innerWidth >= xl}, SearchOpen: ${
+          searchRef.current
+        }`
+      );
+      console.log(window.innerWidth);
+      setShowFullButton(window.innerWidth >= xl && !searchRef.current);
+    }
+  }
 
   useEffect(() => {
     const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-      setIsExtraLargeScreen(windowWidth >= xl);
-      setShowFullButton(isExtraLargeScreen);
+      setShowFullButton(
+        window.innerWidth >= xl &&
+          !searchRef.current &&
+          currentPage != "Messages"
+      );
     };
 
     handleResize();
@@ -43,16 +69,16 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [windowWidth]);
+  }, [window.innerWidth]);
 
   return (
     <div
       className="position-fixed border-gray border-end pt-3 bg-dark px-auto vh-100 m-0 z-3"
       style={
-        !showFullButton
-          ? { width: 65 }
+        showFullButton
+          ? { width: leftBarWidth }
           : {
-              width: leftBarWidth,
+              width: 65,
             }
       }
     >
@@ -60,13 +86,13 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
         <div className="list-group-item bg-dark border-0">
           <span
             className={`text-light px-0 d-flex ${
-              showFullButton
+              showFullButton && currentPage != "Messages"
                 ? "justify-content-start"
                 : "justify-content-center"
             }`}
             style={{ fontSize: 36 }}
           >
-            {showFullButton ? "PicHub" : "P"}
+            {showFullButton && currentPage != "Messages" ? "PicHub" : "P"}
           </span>
         </div>
         <div
@@ -74,12 +100,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
           style={{ height: "60%" }}
         >
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Home"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/"
           >
-            {activePage === "Home" ? (
+            {currentPage === "Home" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -105,24 +131,20 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
           </LeftSideBarButton>
 
           <SearchButton
-            handleButton={() => {
-              setSettingsOpen(false);
-              setSearchOpen(!searchOpen);
-              if (isExtraLargeScreen) {
-                setShowFullButton(!showFullButton);
-              }
-            }}
-            activePage={activePage}
-            showFullButton={showFullButton}
+            isOpen={searchOpen}
+            handleButton={handleSearchButton}
+            handleClickOutsideButton={handleSearchOutside}
+            activePage={currentPage}
+            showFullButton={showFullButton && currentPage != "Messages"}
           />
 
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Explore"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/explore"
           >
-            {activePage === "Explore" ? (
+            {currentPage === "Explore" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -148,12 +170,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Reels"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/reels"
           >
-            {activePage === "Reels" ? (
+            {currentPage === "Reels" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -178,12 +200,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Messages"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/messages"
           >
-            {activePage === "Messages" ? (
+            {currentPage === "Messages" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -208,12 +230,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Notifications"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/notifications"
           >
-            {activePage === "Notifications" ? (
+            {currentPage === "Notifications" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -241,12 +263,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
           <LeftSideBarButton
-            activePage={activePage}
-            buttonText="Create Post"
-            showFullButton={showFullButton}
+            activePage={currentPage}
+            buttonText="Create"
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/createPost"
           >
-            {activePage === "Create Post" ? (
+            {currentPage === "Create" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -272,12 +294,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
           <LeftSideBarButton
-            activePage={activePage}
+            activePage={currentPage}
             buttonText="Profile"
-            showFullButton={showFullButton}
+            showFullButton={showFullButton && currentPage != "Messages"}
             to="/page"
           >
-            {activePage === "Profile" ? (
+            {currentPage === "Profile" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="22"
@@ -311,16 +333,23 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
           </LeftSideBarButton>
         </div>
       </ul>
-      <div className="mt-auto">
+      {/* <div className="mt-auto">
         <MoreButton
           handleButton={() => {
             setSearchOpen(false);
             setSettingsOpen(!settingsOpen);
+            if (isExtraLargeScreen) {
+              setShowFullButton(!showFullButton);
+            }
           }}
-          activePage={activePage}
-          showFullButton={showFullButton}
+          activePage={currentPage}
+          showFullButton={showFullButton && currentPage != "Messages"}
+          handleClickOutsideButton={() => {
+            setSettingsOpen(false);
+            setShowFullButton(true);
+          }}
         />
-      </div>
+      </div> */}
     </div>
   );
 };
