@@ -47,42 +47,68 @@ const CreatePost = () => {
     <Layout currentPage="Create">
       <div
         className={`mx-auto mt-3 shadow-lg ${
-          isSmallScreen ? "p-3" : "p-0 border border-secondary rounded"
+          isSmallScreen ? "p-1" : "p-0 border border-secondary rounded"
         }`}
         style={!isSmallScreen ? { width: 802, height: 487 } : {}}
       >
         <div className={`${isSmallScreen ? "w-100" : "row h-100"} g-0`}>
+          {isSmallScreen && (
+            <div className="mb-2">
+              <ProfileImage
+                imageUrl={"../../../public/images/profiles/square.png"}
+                widthHeight={30}
+              />
+              &nbsp;
+              <span className="fw-bold align-self-center text-light">
+                username
+              </span>
+            </div>
+          )}
           <div
             className={`${
-              isSmallScreen ? "row mb-4" : "col-8 border-end border-secondary"
+              isSmallScreen ? "row" : "col-8 border-end border-secondary h-100"
             } d-flex justify-content-center`}
           >
             {selectedPicture ? (
-              <img
-                src={selectedPictureSrc?.toString()}
-                className="img-fluid mx-auto object-fit-cover"
-                alt="..."
-              />
+              <>
+                <button className="btn" onClick={handleSelectFileButton}>
+                  <img
+                    src={selectedPictureSrc?.toString()}
+                    className="mx-auto object-fit-contain"
+                    alt="..."
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  hidden
+                  accept="image/*"
+                  onInput={handleFileInput}
+                />
+              </>
             ) : (
               <div className="d-flex justify-content-center align-items-center">
                 <div className="w-100 text-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width={isSmallScreen ? "200" : "96"}
-                    height={isSmallScreen ? "200" : "96"}
-                    fill="currentColor"
-                    className="bi bi-image text-light"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-                    <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z" />
-                  </svg>
-                  <p className="text-light mt-2 fs-5">Drag photos here</p>
                   <button
-                    className="btn btn-primary mt-1 py-1"
+                    className="btn mt-1 py-1"
                     onClick={handleSelectFileButton}
                   >
-                    Select from computer
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width={isSmallScreen ? "200" : "96"}
+                      height={isSmallScreen ? "200" : "96"}
+                      fill="currentColor"
+                      className="bi bi-image text-light"
+                      viewBox="0 0 16 16"
+                    >
+                      <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+                      <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z" />
+                    </svg>
+                    <p className="text-light mt-2 fs-5">Drag photos here</p>
+                    <span className="btn btn-primary">
+                      Select from computer
+                    </span>
                   </button>
                   <input
                     type="file"
@@ -97,14 +123,16 @@ const CreatePost = () => {
           </div>
           <div className={`${isSmallScreen ? "row" : "col"} p-2`}>
             <div className="card-body bg-dark text-light border-0">
-              <div className="">
-                <ProfileImage
-                  imageUrl={"../../../public/images/profiles/square.png"}
-                  widthHeight={30}
-                />
-                &nbsp;
-                <span className="fw-bold align-self-center">username</span>
-              </div>
+              {!isSmallScreen && (
+                <div>
+                  <ProfileImage
+                    imageUrl={"../../../public/images/profiles/square.png"}
+                    widthHeight={30}
+                  />
+                  &nbsp;
+                  <span className="fw-bold align-self-center">username</span>
+                </div>
+              )}
               <div className="overflow-y-auto mt-2" style={{ height: 265 }}>
                 <textarea
                   className="form-control h-100 border-0 text-light bg-gray"

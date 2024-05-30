@@ -1,33 +1,23 @@
 import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import AuthContext from "./AuthContext";
+import AuthContext, { UserData } from "./AuthContext";
 
 interface IAuthProviderProps {
   children: ReactNode;
 }
 
-export interface ILoginProps {
-  userData: object;
-  token: object;
-}
-
 export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userData, setUserData] = useState({});
-  const [token, setToken] = useState({});
 
-  const login = ({ userData, token }: ILoginProps) => {
-    setToken(token);
+  const login = (userData: UserData) => {
     setUserData(userData);
     setIsAuthenticated(true);
-    localStorage.setItem("user", JSON.stringify({ token }));
   };
 
   // Dependencies to be reconsidered
   const logout = useCallback(() => {
-    setToken({});
     setUserData({});
     setIsAuthenticated(false);
-    localStorage.removeItem("user");
   }, []);
 
   useEffect(() => {
@@ -53,9 +43,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, userData, token, login, logout }}
-    >
+    <AuthContext.Provider value={{ isAuthenticated, userData, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

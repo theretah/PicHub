@@ -1,13 +1,15 @@
 import { createContext } from "react";
-import { ILoginProps } from "./AuthProvider";
 
-interface IAuthContext {
+export interface UserData {
+  userName: string;
+  password: string;
+}
+interface AuthContextType {
   isAuthenticated: boolean;
-  userData: object;
-  token: object;
-  login: ({ userData, token }: ILoginProps) => void;
+  userData: UserData;
+  login: (userName: string) => void;
   logout: () => void;
 }
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export default AuthContext;

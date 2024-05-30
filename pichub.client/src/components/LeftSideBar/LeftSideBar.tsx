@@ -29,12 +29,6 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
     if (!searchRef.current) {
       setSearchOpen(oldSearchOpenValue);
       searchRef.current = oldSearchOpenValue;
-      console.log(
-        `Button IsExtraLargeScreen: ${window.innerWidth >= xl}, SearchOpen: ${
-          searchRef.current
-        }`
-      );
-      console.log(window.innerWidth);
       setShowFullButton(window.innerWidth >= xl && !searchRef.current);
     }
   }

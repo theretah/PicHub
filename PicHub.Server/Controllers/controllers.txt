@@ -5,6 +5,11 @@ Account
     Remove Account
     Change Username
 
+User
+    GetFollowers
+    GetFollowing
+    
+
 Post
     Like
     Unlike

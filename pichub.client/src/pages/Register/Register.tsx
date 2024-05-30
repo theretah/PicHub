@@ -1,74 +1,111 @@
-import React, { useEffect, useState } from "react";
+import React, { isValidElement, useContext, useEffect, useState } from "react";
+import AuthContext from "../../context/AuthContext";
+import { useFormAction } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios, { AxiosResponse } from "axios";
+
+interface FormData {
+  email: string;
+  fullName: string;
+  userName: string;
+  password: string;
+}
 
 const Register = () => {
-  const sm = 576;
-  const md = 768;
-  const lg = 992;
-  const xl = 1200;
+  const authContext = useContext(AuthContext);
+  const { register, handleSubmit } = useForm<FormData>();
 
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const registerUser = useMutation({
+    mutationFn: async (registerData: FormData) => {
+      const registerResponse = axios.post(
+        "/api/account/register",
+        registerData
+      );
+      console.log(registerResponse);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
+      interface LoginData {
+        userName: string;
+        password: string;
+      }
+      const loginData: LoginData = {
+        userName: registerData.userName,
+        password: registerData.password,
+      };
 
-    handleResize();
+      const loginResponse = axios.post("/api/account/login", loginData);
+      authContext?.login(loginData);
+    },
+  });
 
-    window.addEventListener("resize", handleResize);
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
+    await registerUser.mutate(data);
+    alert(`${data.userName} registered successfully!`);
+  };
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [windowWidth]);
   return (
     <div className="container-fluid bg-white min-vh-100">
       <div className="row d-flex justify-content-center">
         <div style={{ width: 400 }}>
-          <form className="border py-2 px-5 mb-3 mt-5 text-bg-white">
+          <form
+            className="border py-2 px-5 mb-3 mt-5 text-bg-white"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <h1 className="text-center my-5">PicHub</h1>
             <p className="text-center text-secondary">
               Sign up to see photos and videos from your friends.
             </p>
             <div className="mb-2">
               <input
+                id="email"
+                {...register("email", {
+                  required: "Email is required.",
+                })}
                 type="email"
                 className="form-control"
-                id="email"
                 placeholder="Phone Number or Email"
               />
             </div>
             <div className="mb-2">
               <input
+                id="fullName"
+                {...register("fullName", {
+                  required: "Full name is required.",
+                })}
                 type="text"
                 className="form-control"
-                id="fullName"
                 placeholder="Full Name"
               />
             </div>
             <div className="mb-2">
               <input
+                id="userName"
+                {...register("userName", {
+                  required: "Username is required.",
+                })}
                 type="text"
                 className="form-control"
-                id="userName"
                 placeholder="Username"
               />
             </div>
             <div className="mb-3">
               <input
+                id="password"
+                {...register("password", {
+                  required: "Password is required.",
+                })}
                 type="password"
                 className="form-control"
-                id="password"
                 placeholder="Password"
               />
             </div>
             <div className="mb-3">
-              <button className="btn btn-primary w-100" disabled={true}>
-                Next
+              <button className="btn btn-primary w-100" type="submit">
+                Register
               </button>
             </div>
           </form>
-          <div className="border py-3 px-5  text-bg-white">
+          <div className="border py-3 px-5 text-bg-white">
             <p className="text-center m-0">
               <span>Have an account? </span>
               <a href="/login" className="text-primary text-decoration-none">

@@ -28,7 +28,7 @@ const Login = () => {
               />
             </div>
             <div className="mb-3">
-              <button className="btn btn-primary w-100" disabled={true}>
+              <button className="btn btn-primary w-100" type="submit">
                 Log in
               </button>
             </div>

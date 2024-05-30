@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace PicHub.Server.Controllers
 {
@@ -29,8 +26,16 @@ namespace PicHub.Server.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            var result = await signInManager
-                .PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+            SignInResult result = new();
+            if (model.Username != null)
+            {
+                result = await signInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: false, lockoutOnFailure: false);
+            }
+            if (model.Email != null)
+            {
+                result = await signInManager
+                   .PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
+            }
 
             if (result.Succeeded)
             {
@@ -69,16 +74,16 @@ namespace PicHub.Server.Controllers
         }
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromForm] RegisterViewModel registerForm)
+        public async Task<IActionResult> Register(RegisterViewModel registerForm)
         {
             var user = CreateUser();
 
             user.FullName = registerForm.FullName;
-            user.UserName = registerForm.Email;
+            user.UserName = registerForm.Username;
             user.Email = registerForm.Email;
-            user.PhoneNumber = registerForm.Phone;
+            // user.PhoneNumber = registerForm.Phone;
             user.EmailConfirmed = true;
-            user.PhoneNumberConfirmed = true;
+            // user.PhoneNumberConfirmed = true;
             user.RegistrationDate = DateTime.Now;
 
             var result = await userManager.CreateAsync(user, registerForm.Password);
