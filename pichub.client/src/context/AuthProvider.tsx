@@ -7,39 +7,60 @@ import React, {
 } from "react";
 import AuthContext, { LoginData, User } from "./AuthContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("user")
+  );
+  const navigate = useNavigate();
 
-  const login = (userData: LoginData) => {
+  const login = (loginData: LoginData) => {
+    axios.post(`/api/account/login`, loginData);
     axios
-      .get(`/api/account/getbyusername?userName=${userData.userName}`)
+      .get(`/api/account/getbyusername?userName=${loginData.userName}`)
       .then((res) => {
         setUser(res.data);
         setIsAuthenticated(true);
+        localStorage.setItem("user", res.data);
       });
+    setToken(token);
   };
 
   const logout = () => {
-    axios.post(`/api/account/logout`);
-    setUser(null);
-    setIsAuthenticated(false);
+    if (user) {
+      axios.post(`/api/account/logout`);
+      setUser(null);
+      setIsAuthenticated(false);
+
+      setToken(null);
+      localStorage.removeItem("user");
+    }
   };
 
   useEffect(() => {
-    if (isAuthenticated)
+    const storedUser = localStorage.getItem("user");
+    console.log("Stored user: ", storedUser);
+    if (storedUser)
       axios.get(`/api/account/getloggedinuser`).then((res) => {
-        console.log(res);
         setUser(res.data);
         setIsAuthenticated(true);
+
+        setToken(storedUser);
       });
-  }, []);
+    else {
+      navigate("/login");
+    }
+  }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, token, login, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -2,6 +2,7 @@ import React from "react";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 
 const HomeSideBar = () => {
+  let i = 0;
   return (
     <ul className="p-0" style={{ width: 280 }}>
       <div className="row">
@@ -15,7 +16,7 @@ const HomeSideBar = () => {
         </div>
       </div>
       {Array.from({ length: 5 }, () => (
-        <HomeSuggestDetails />
+        <HomeSuggestDetails key={i++} />
       ))}
     </ul>
   );

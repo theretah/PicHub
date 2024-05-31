@@ -19,7 +19,8 @@ export interface LoginData {
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (loginData: LoginData) => void;
+  token: string | null;
+  login: (loginData: LoginData, newToken: string) => void;
   logout: () => void;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

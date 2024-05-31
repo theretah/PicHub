@@ -29,7 +29,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const { logout } = useAuth();
   function logoutUser() {
     logout();
-    navigate("/");
+    navigate("/login");
   }
 
   function handleSearchButton() {

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
-using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace PicHub.Server.Controllers
 {
@@ -26,16 +25,7 @@ namespace PicHub.Server.Controllers
         [Route("login")]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            SignInResult result = new();
-            if (model.Username != null)
-            {
-                result = await signInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: false, lockoutOnFailure: false);
-            }
-            if (model.Email != null)
-            {
-                result = await signInManager
-                   .PasswordSignInAsync(model.Email, model.Password, isPersistent: false, lockoutOnFailure: false);
-            }
+            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (result.Succeeded)
             {
@@ -79,7 +69,7 @@ namespace PicHub.Server.Controllers
             var user = CreateUser();
 
             user.FullName = registerForm.FullName;
-            user.UserName = registerForm.Username;
+            user.UserName = registerForm.UserName;
             user.Email = registerForm.Email;
             // user.PhoneNumber = registerForm.Phone;
             user.EmailConfirmed = true;

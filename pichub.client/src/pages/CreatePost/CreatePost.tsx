@@ -3,6 +3,7 @@ import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
 
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
+import axios from "axios";
 
 const CreatePost = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -43,6 +44,9 @@ const CreatePost = () => {
     }
   }
 
+  const addPost = () => {
+    axios.post(`/api/post/create`);
+  };
   return (
     <Layout currentPage="Create">
       <div

@@ -10,6 +10,7 @@ const SearchPanel = ({ isOpen, activePage }: Props) => {
   const xl = 1200;
   const translate = "translate(53px, -140px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  let i = 0;
 
   const [transform, setTransform] = useState(translate);
 
@@ -53,7 +54,7 @@ const SearchPanel = ({ isOpen, activePage }: Props) => {
       </div>
       <div className="container">
         {Array.from({ length: 5 }, () => (
-          <SearchRecord />
+          <SearchRecord key={i++} />
         ))}
       </div>
     </div>

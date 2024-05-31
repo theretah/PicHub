@@ -1,6 +1,7 @@
 import React from "react";
 import StoryCircle from "../StoryCircle/StoryCircle";
 const HomeStoriesBar = () => {
+  let i = 0;
   const storiesBar = document.getElementById("storiesBar");
   if (storiesBar) {
     storiesBar.style.overflow = "auto";
@@ -23,7 +24,7 @@ const HomeStoriesBar = () => {
               className="justify-content-center mx-1 d-inline"
               style={{ width: 75 }}
             >
-              <StoryCircle />
+              <StoryCircle key={i++} />
             </li>
           ))}
         </ul>

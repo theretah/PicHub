@@ -15,21 +15,21 @@ const Register = () => {
 
   const registerUser = useMutation({
     mutationFn: async (registerData: RegisterData) => {
-      axios.post("/api/account/register", registerData);
-
-      const loginData: LoginData = {
-        userName: registerData.userName,
-        password: registerData.password,
-      };
-      axios.post("/api/account/login", loginData);
-      login(loginData);
-      navigate("/");
+      const response = axios
+        .post("/api/account/register", registerData)
+        .then((res) => {
+          const loginData: LoginData = {
+            userName: registerData.userName,
+            password: registerData.password,
+          };
+          login(loginData, "");
+          navigate("/");
+        });
     },
   });
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     await registerUser.mutate(data);
-    alert(`${data.userName} registered successfully!`);
   };
 
   return (
@@ -92,6 +92,7 @@ const Register = () => {
               <button className="btn btn-primary w-100" type="submit">
                 Register
               </button>
+              <h5>Reza@16562181</h5>
             </div>
           </form>
           <div className="border py-3 px-5 text-bg-white">

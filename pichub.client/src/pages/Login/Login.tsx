@@ -13,8 +13,7 @@ const Login = () => {
 
   const loginUser = useMutation({
     mutationFn: async (loginData: LoginData) => {
-      axios.post("/api/account/login", loginData);
-      login(loginData);
+      login(loginData, "");
       navigate("/");
     },
   });
@@ -59,6 +58,7 @@ const Login = () => {
             </div>
             <div className="mb-3">
               <button className="btn w-100">Forgot password?</button>
+              <h5>Reza@16562181</h5>
             </div>
           </form>
           <div className="border py-3 px-5 text-bg-white">
