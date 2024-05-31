@@ -113,6 +113,13 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet]
+        [Route("getbyusername")]
+        public async Task<AppUser> GetUserByUsername(string userName)
+        {
+            return await userManager.FindByNameAsync(userName);
+        }
+
+        [HttpGet]
         [Route("getloggedinuser")]
         public async Task<AppUser> GetLoggedInUser()
         {

@@ -1,50 +1,54 @@
-import React, { ReactNode, useCallback, useEffect, useState } from "react";
-import AuthContext, { UserData } from "./AuthContext";
+import React, {
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import AuthContext, { LoginData, User } from "./AuthContext";
+import axios from "axios";
 
-interface IAuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userData, setUserData] = useState({});
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = (userData: UserData) => {
-    setUserData(userData);
-    setIsAuthenticated(true);
+  const login = (userData: LoginData) => {
+    axios
+      .get(`/api/account/getbyusername?userName=${userData.userName}`)
+      .then((res) => {
+        setUser(res.data);
+        setIsAuthenticated(true);
+      });
   };
 
-  // Dependencies to be reconsidered
-  const logout = useCallback(() => {
-    setUserData({});
+  const logout = () => {
+    axios.post(`/api/account/logout`);
+    setUser(null);
     setIsAuthenticated(false);
-  }, []);
+  };
 
   useEffect(() => {
-    const localStorageUser = localStorage.getItem("user");
-    const localStorageData = localStorageUser
-      ? JSON.parse(localStorageUser)
-      : null;
-
-    if (localStorageData) {
-      fetch(`/api/account/getloggedinuser`, {
-        headers: {
-          Authorization: `Bearer ${localStorageData}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          setIsAuthenticated(true);
-          setUserData(data);
-        });
-    } else {
-      setIsAuthenticated(false);
-    }
-  }, [isAuthenticated]);
+    if (isAuthenticated)
+      axios.get(`/api/account/getloggedinuser`).then((res) => {
+        console.log(res);
+        setUser(res.data);
+        setIsAuthenticated(true);
+      });
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userData, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const authContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

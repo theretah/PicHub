@@ -12,8 +12,11 @@ import Posts from "./Posts";
 import Reels from "./Reels";
 import Tagged from "./Tagged";
 import Saved from "./Saved";
+import { useAuth } from "../../context/useAuth";
+import axios from "axios";
 
 const PageDetails = () => {
+  const { user } = useAuth();
   const md = 768;
   const sm = 576;
   const fontSize = 12;
@@ -23,6 +26,10 @@ const PageDetails = () => {
   const [isMedium, setIsMedium] = useState(window.innerWidth < md);
   const [isExtraSmall, setIsExtraSmall] = useState(window.innerWidth < sm);
   const [activeTab, setActiveTab] = useState("posts");
+
+  // useEffect(() => {
+  //   axios.get("/api/account/getloggedinuser");
+  // }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -58,7 +65,7 @@ const PageDetails = () => {
               </svg>
             </Link>
             <Link to={"/login"} className="btn btn-dark text-light">
-              username &nbsp;
+              {user?.userName} &nbsp;
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -111,7 +118,9 @@ const PageDetails = () => {
                       >
                         <div className="row">
                           <div className="row">
-                            <h5 className="d-inline m-0 me-4">username</h5>
+                            <h5 className="d-inline m-0 me-4">
+                              {user?.userName}
+                            </h5>
                           </div>
                           <div className="row mt-2">
                             <div className="col">
@@ -173,7 +182,9 @@ const PageDetails = () => {
                       <div className="row d-flex align-items-center">
                         {windowWidth > 768 && (
                           <div className="col-sm-4 col-md-4">
-                            <h5 className="d-inline m-0 me-4">username</h5>
+                            <h5 className="d-inline m-0 me-4">
+                              {user?.userName}
+                            </h5>
                           </div>
                         )}
 
@@ -241,11 +252,7 @@ const PageDetails = () => {
                         </p>
                       </div>
 
-                      {isMedium ? (
-                        <p className="fw-bold mb-0 mt-3">Full Name</p>
-                      ) : (
-                        ""
-                      )}
+                      <p className="fw-bold mb-0 mt-3">{user?.fullName}</p>
 
                       <p className="my-0 text-light text-gray">
                         Personal account

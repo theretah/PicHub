@@ -1,44 +1,33 @@
-import React, { isValidElement, useContext, useEffect, useState } from "react";
-import AuthContext from "../../context/AuthContext";
-import { useFormAction } from "react-router-dom";
+import AuthContext, {
+  LoginData,
+  RegisterData,
+} from "../../context/AuthContext";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
-
-interface FormData {
-  email: string;
-  fullName: string;
-  userName: string;
-  password: string;
-}
+import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const authContext = useContext(AuthContext);
-  const { register, handleSubmit } = useForm<FormData>();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { register, handleSubmit } = useForm<RegisterData>();
 
   const registerUser = useMutation({
-    mutationFn: async (registerData: FormData) => {
-      const registerResponse = axios.post(
-        "/api/account/register",
-        registerData
-      );
-      console.log(registerResponse);
+    mutationFn: async (registerData: RegisterData) => {
+      axios.post("/api/account/register", registerData);
 
-      interface LoginData {
-        userName: string;
-        password: string;
-      }
       const loginData: LoginData = {
         userName: registerData.userName,
         password: registerData.password,
       };
-
-      const loginResponse = axios.post("/api/account/login", loginData);
-      authContext?.login(loginData);
+      axios.post("/api/account/login", loginData);
+      login(loginData);
+      navigate("/");
     },
   });
 
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
+  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     await registerUser.mutate(data);
     alert(`${data.userName} registered successfully!`);
   };

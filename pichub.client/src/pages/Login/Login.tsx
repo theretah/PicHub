@@ -1,29 +1,54 @@
-import React, { useContext, useEffect, useState } from "react";
-import AuthContext from "../../context/AuthContext";
-import { useFormAction } from "react-router-dom";
+import { LoginData } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useForm } from "react-hook-form";
+import { register } from "module";
 
 const Login = () => {
-  const context = useContext(AuthContext);
+  const { handleSubmit, register } = useForm<LoginData>();
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const loginUser = useMutation({
+    mutationFn: async (loginData: LoginData) => {
+      axios.post("/api/account/login", loginData);
+      login(loginData);
+      navigate("/");
+    },
+  });
 
   return (
     <div className="container-fluid bg-white min-vh-100">
       <div className="row d-flex justify-content-center">
         <div style={{ width: 400 }}>
-          <form className="border py-2 px-5 mb-3 mt-5 text-bg-white">
+          <form
+            className="border py-2 px-5 mb-3 mt-5 text-bg-white"
+            onSubmit={handleSubmit(async (data: LoginData) => {
+              await loginUser.mutate(data);
+            })}
+          >
             <h1 className="text-center my-5">PicHub</h1>
             <div className="mb-2">
               <input
-                type="email"
+                id="userName"
+                {...register("userName", {
+                  required: "Username is required.",
+                })}
+                type="text"
                 className="form-control"
-                id="email"
                 placeholder="Phone number, username, or email"
               />
             </div>
             <div className="mb-3">
               <input
+                id="password"
+                {...register("password", {
+                  required: "Password is required.",
+                })}
                 type="password"
                 className="form-control"
-                id="password"
                 placeholder="Password"
               />
             </div>
