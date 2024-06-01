@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
 import AuthContext, { LoginData, User } from "./AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -13,46 +7,63 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(
-    localStorage.getItem("user")
+    localStorage.getItem("token")
   );
+  const [user, setUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  const login = (loginData: LoginData) => {
-    axios.post(`/api/account/login`, loginData);
-    axios
+  const login = async (loginData: LoginData) => {
+    console.log("Log in");
+
+    await axios.post(`/api/account/login`, loginData).then((res) => {
+      const newToken = res.data.token;
+      localStorage.setItem("token", newToken);
+      setToken(newToken);
+    });
+
+    await axios
       .get(`/api/account/getbyusername?userName=${loginData.userName}`)
       .then((res) => {
         setUser(res.data);
         setIsAuthenticated(true);
-        localStorage.setItem("user", res.data);
+        localStorage.setItem("token", JSON.stringify(res.data));
       });
-    setToken(token);
   };
 
   const logout = () => {
+    console.log("Log out");
     if (user) {
       axios.post(`/api/account/logout`);
-      setUser(null);
-      setIsAuthenticated(false);
 
+      setIsAuthenticated(false);
+      setUser(null);
       setToken(null);
-      localStorage.removeItem("user");
+
+      localStorage.removeItem("token");
+
+      navigate("/login");
     }
   };
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    console.log("Stored user: ", storedUser);
-    if (storedUser)
-      axios.get(`/api/account/getloggedinuser`).then((res) => {
-        setUser(res.data);
-        setIsAuthenticated(true);
-
-        setToken(storedUser);
-      });
-    else {
+    if (isAuthenticated) {
+      axios
+        .get(`/api/account/getloggedinuser`)
+        .then((res) => {
+          if (res.data) {
+            console.log(res.data);
+            setUser(res.data);
+            setIsAuthenticated(true);
+          } else {
+            navigate("/login");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          navigate("/login");
+        });
+    } else {
       navigate("/login");
     }
   }, [isAuthenticated]);

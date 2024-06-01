@@ -22,7 +22,7 @@ const Register = () => {
             userName: registerData.userName,
             password: registerData.password,
           };
-          login(loginData, "");
+          login(loginData, res.data.token);
           navigate("/");
         });
     },
