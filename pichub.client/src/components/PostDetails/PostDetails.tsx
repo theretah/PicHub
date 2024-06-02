@@ -16,15 +16,48 @@ import {
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import { User } from "../../context/AuthContext";
+import { Post } from "../../interfaces/Post";
+import axios from "axios";
+interface Props {
+  authorId: string;
+  postId: number;
+}
+const PostDetails = ({ authorId, postId }: Props) => {
+  const [currentUser, setCurrentUser] = useState<User>();
+  const [author, setAuthor] = useState<User>();
+  const [post, setPost] = useState<Post>();
 
-const PostDetails = () => {
   const [modal, setModal] = useState(false);
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(536);
 
+  const getCurrentUser = () => {
+    axios.get(`/api/account/getloggedinuser`).then((res) => {
+      setCurrentUser(res.data);
+      console.log(res.data);
+    });
+  };
+
+  const getPostAuthor = () => {
+    axios.get(`/api/account/getbyid?id=${authorId}`).then((res) => {
+      setAuthor(res.data);
+    });
+  };
+
+  const getPost = () => {
+    axios.get(`/api/post/get?id=${postId}`).then((res) => {
+      setPost(res.data);
+    });
+  };
+
   useEffect(() => {
+    getCurrentUser();
+    getPostAuthor();
+    getPost();
+
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
     };
@@ -62,7 +95,7 @@ const PostDetails = () => {
             />
             <div className="card-body p-0 align-self-center">
               <span className="card-title ms-2 my-0 fw-bold align-self-center">
-                username
+                {author?.userName}
               </span>
               &nbsp; &nbsp;
               <button className="p-0 btn text-decoration-none align-self-center">
@@ -130,7 +163,7 @@ const PostDetails = () => {
         </div>
       </div>
       <img
-        src="../../../public/images/profiles/h.jpg"
+        src={`data:image/png;base64,${post?.photoContent}`}
         className="card-img-top rounded my-1 object-fit-contain"
         alt="..."
         style={{ aspectRatio: 1 }}
@@ -152,7 +185,7 @@ const PostDetails = () => {
         </div>
 
         <p className="card-title fw-bold mt-3">{likes} likes</p>
-        <p className="card-title fw-bold">username</p>
+        <p className="card-title fw-bold">{currentUser?.userName}</p>
         <p className="card-title">
           <a href="" className="text-decoration-none text-gray">
             View all comments

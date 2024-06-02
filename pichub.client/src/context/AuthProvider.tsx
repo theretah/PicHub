@@ -2,6 +2,7 @@ import React, { ReactNode, useContext, useEffect, useState } from "react";
 import AuthContext, { LoginData, User } from "./AuthContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { isatty } from "tty";
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
@@ -47,25 +48,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
-      axios
-        .get(`/api/account/getloggedinuser`)
-        .then((res) => {
-          if (res.data) {
-            console.log(res.data);
-            setUser(res.data);
-            setIsAuthenticated(true);
-          } else {
-            navigate("/login");
-          }
-        })
-        .catch((error) => {
-          console.log(error);
+    axios
+      .get(`/api/account/getloggedinuser`)
+      .then((res) => {
+        if (res.data) {
+          console.log(res.data);
+          setUser(res.data);
+          setIsAuthenticated(true);
+        } else {
           navigate("/login");
-        });
-    } else {
-      navigate("/login");
-    }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        navigate("/login");
+      });
   }, [isAuthenticated]);
 
   return (

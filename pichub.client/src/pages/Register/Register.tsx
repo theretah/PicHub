@@ -15,16 +15,14 @@ const Register = () => {
 
   const registerUser = useMutation({
     mutationFn: async (registerData: RegisterData) => {
-      const response = axios
-        .post("/api/account/register", registerData)
-        .then((res) => {
-          const loginData: LoginData = {
-            userName: registerData.userName,
-            password: registerData.password,
-          };
-          login(loginData, res.data.token);
-          navigate("/");
-        });
+      axios.post("/api/account/register", registerData).then((res) => {
+        const loginData: LoginData = {
+          userName: registerData.userName,
+          password: registerData.password,
+        };
+        login(loginData, res.data.token);
+        navigate("/");
+      });
     },
   });
 

@@ -4,17 +4,31 @@ import "./CreatePost.css";
 
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import axios from "axios";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { User } from "../../context/AuthContext";
 
+interface CreatePostProps {
+  Caption: string;
+  TurnOffComments: string;
+  ImageFile: File;
+}
 const CreatePost = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [currentUser, setCurrentUser] = useState<User>();
   const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
   const [selectedPictureSrc, setSelectedPictureSrc] = useState<
-    string | null | ArrayBuffer
-  >(``);
+    string | ArrayBuffer | null
+  >();
+  const navigate = useNavigate();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
 
   useEffect(() => {
+    console.log(register("ImageFile"));
+    getCurrentUser();
+
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 900);
     };
@@ -28,14 +42,15 @@ const CreatePost = () => {
     };
   }, []);
 
-  function handleSelectFileButton() {
-    fileInputRef.current?.click();
-  }
+  const handleSelectFileButton = () => {
+    document.getElementById("file-input")?.click();
+  };
 
   function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files ? event.target.files[0] : null;
     setSelectedPicture(file);
     if (file) {
+      setValue("ImageFile", file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedPictureSrc(reader.result);
@@ -44,8 +59,31 @@ const CreatePost = () => {
     }
   }
 
-  const addPost = () => {
-    axios.post(`/api/post/create`);
+  function getCurrentUser() {
+    axios.get(`/api/account/getloggedinuser`).then((res) => {
+      setCurrentUser(res.data);
+    });
+  }
+  const addPost = useMutation({
+    mutationFn: async (post: CreatePostProps) => {
+      const formData = new FormData();
+      formData.append("ImageFile", post.ImageFile);
+      formData.append("Caption", post.Caption);
+      formData.append("TurnOffComments", post.TurnOffComments);
+
+      axios
+        .post(`/api/post/create`, formData)
+        .then((res) => {
+          if (res.status == 200) navigate("/");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  });
+
+  const onSubmit: SubmitHandler<CreatePostProps> = async (data) => {
+    await addPost.mutate(data);
   };
   return (
     <Layout currentPage="Create">
@@ -55,7 +93,10 @@ const CreatePost = () => {
         }`}
         style={!isSmallScreen ? { width: 802, height: 487 } : {}}
       >
-        <div className={`${isSmallScreen ? "w-100" : "row h-100"} g-0`}>
+        <form
+          className={`${isSmallScreen ? "w-100" : "row h-100"} g-0`}
+          onSubmit={handleSubmit(onSubmit)}
+        >
           {isSmallScreen && (
             <div className="mb-2">
               <ProfileImage
@@ -64,7 +105,7 @@ const CreatePost = () => {
               />
               &nbsp;
               <span className="fw-bold align-self-center text-light">
-                username
+                {currentUser?.userName}
               </span>
             </div>
           )}
@@ -75,7 +116,11 @@ const CreatePost = () => {
           >
             {selectedPicture ? (
               <>
-                <button className="btn" onClick={handleSelectFileButton}>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={handleSelectFileButton}
+                >
                   <img
                     src={selectedPictureSrc?.toString()}
                     className="mx-auto object-fit-contain"
@@ -84,8 +129,8 @@ const CreatePost = () => {
                   />
                 </button>
                 <input
+                  id="file-input"
                   type="file"
-                  ref={fileInputRef}
                   hidden
                   accept="image/*"
                   onInput={handleFileInput}
@@ -95,6 +140,7 @@ const CreatePost = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <div className="w-100 text-center">
                   <button
+                    type="button"
                     className="btn mt-1 py-1"
                     onClick={handleSelectFileButton}
                   >
@@ -115,8 +161,8 @@ const CreatePost = () => {
                     </span>
                   </button>
                   <input
+                    id="file-input"
                     type="file"
-                    ref={fileInputRef}
                     hidden
                     accept="image/*"
                     onInput={handleFileInput}
@@ -134,11 +180,15 @@ const CreatePost = () => {
                     widthHeight={30}
                   />
                   &nbsp;
-                  <span className="fw-bold align-self-center">username</span>
+                  <span className="fw-bold align-self-center">
+                    {currentUser?.userName}
+                  </span>
                 </div>
               )}
               <div className="overflow-y-auto mt-2" style={{ height: 265 }}>
                 <textarea
+                  id="caption"
+                  {...register("Caption")}
                   className="form-control h-100 border-0 text-light bg-gray"
                   placeholder="Write a caption..."
                 ></textarea>
@@ -164,6 +214,7 @@ const CreatePost = () => {
                     type="checkbox"
                     role="switch"
                     id="flexSwitchCheckDefault"
+                    {...register("TurnOffComments")}
                   />
                 </div>
                 <p className="text-gray" style={{ fontSize: 12 }}>
@@ -172,11 +223,13 @@ const CreatePost = () => {
                 </p>
               </div>
               <div className="mt-2 d-flex justify-content-end">
-                <button className="btn btn-primary py-1">Share</button>
+                <button className="btn btn-primary py-1" type="submit">
+                  Share
+                </button>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </Layout>
   );
