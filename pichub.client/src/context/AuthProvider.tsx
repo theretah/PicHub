@@ -52,7 +52,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       .get(`/api/account/getloggedinuser`)
       .then((res) => {
         if (res.data) {
-          console.log(res.data);
           setUser(res.data);
           setIsAuthenticated(true);
         } else {

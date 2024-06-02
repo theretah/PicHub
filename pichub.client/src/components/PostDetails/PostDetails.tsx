@@ -14,7 +14,7 @@ import {
   MDBModalBody,
   MDBModalFooter,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { User } from "../../context/AuthContext";
 import { Post } from "../../interfaces/Post";
@@ -24,9 +24,9 @@ interface Props {
   postId: number;
 }
 const PostDetails = ({ authorId, postId }: Props) => {
+  const [post, setPost] = useState<Post>();
   const [currentUser, setCurrentUser] = useState<User>();
   const [author, setAuthor] = useState<User>();
-  const [post, setPost] = useState<Post>();
 
   const [modal, setModal] = useState(false);
 
@@ -139,9 +139,14 @@ const PostDetails = ({ authorId, postId }: Props) => {
                         </button>
                       </li>
                       <li className="list-group-item align-self-center w-100 p-0">
-                        <Link to={"/post"} className="btn w-100 py-3">
-                          Go to post
-                        </Link>
+                        {post && (
+                          <Link
+                            to={`/post/${post.id}`}
+                            className="btn w-100 py-3"
+                          >
+                            Go to post
+                          </Link>
+                        )}
                       </li>
                       <li className="list-group-item align-self-center w-100 p-0">
                         <button className="btn w-100 py-3">Share to</button>
@@ -185,7 +190,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
         </div>
 
         <p className="card-title fw-bold mt-3">{likes} likes</p>
-        <p className="card-title fw-bold">{currentUser?.userName}</p>
+        <p className="card-title fw-bold">{currentUser?.fullName}</p>
         <p className="card-title">
           <a href="" className="text-decoration-none text-gray">
             View all comments

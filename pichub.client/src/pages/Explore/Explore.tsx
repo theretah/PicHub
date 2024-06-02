@@ -3,14 +3,18 @@ import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 import SearchPanel from "../../components/SearchPanel/SearchPanel";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
+import { Post } from "../../interfaces/Post";
+import axios from "axios";
 
 const Explore = () => {
-  const [postHeight, setPostHeight] = useState(window.innerWidth / 3);
+  const [posts, setPosts] = useState<Post[]>();
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    getAllPosts();
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -21,7 +25,6 @@ const Explore = () => {
     };
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
-      setPostHeight(window.innerWidth / 3);
     };
 
     handleResize();
@@ -38,6 +41,11 @@ const Explore = () => {
     setIsOpen(!isOpen);
   };
 
+  const getAllPosts = () => {
+    axios.get(`/api/post/getall`).then((res) => {
+      setPosts(res.data);
+    });
+  };
   return (
     <Layout currentPage={"Explore"}>
       <div className="row">
@@ -60,12 +68,12 @@ const Explore = () => {
             </div>
           )}
           <div className={`row p-1`}>
-            {Array.from({ length: 7 }, () => (
+            {posts?.map((post) => (
               <div className="col-4 p-1">
-                <Link to={"/post"}>
+                <Link to={`/post/${post.id}`}>
                   <img
                     className="object-fit-cover w-100"
-                    src="../../../public/images/profiles/h.jpg"
+                    src={`data:image/png;base64,${post?.photoContent}`}
                     alt=""
                     style={{
                       aspectRatio: 1,

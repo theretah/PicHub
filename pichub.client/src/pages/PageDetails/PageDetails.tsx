@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import Layout from "../../components/Layout/Layout";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   MDBModal,
   MDBModalDialog,
@@ -12,26 +12,27 @@ import Posts from "./Posts";
 import Reels from "./Reels";
 import Tagged from "./Tagged";
 import Saved from "./Saved";
-import { useAuth } from "../../context/useAuth";
 import axios from "axios";
+import { User } from "../../context/AuthContext";
+import { Post } from "../../interfaces/Post";
 
 const PageDetails = () => {
-  const { user } = useAuth();
+  const { id } = useParams();
+  const [user, setUser] = useState<User>();
+
   const md = 768;
   const sm = 576;
   const fontSize = 12;
-
   const [isFollowing, setIsFollowing] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isMedium, setIsMedium] = useState(window.innerWidth < md);
   const [isExtraSmall, setIsExtraSmall] = useState(window.innerWidth < sm);
   const [activeTab, setActiveTab] = useState("posts");
 
-  // useEffect(() => {
-  //   axios.get("/api/account/getloggedinuser");
-  // }, []);
-
   useEffect(() => {
+    getUser();
+    console.log(user);
+
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
       setIsMedium(windowWidth < md);
@@ -47,6 +48,17 @@ const PageDetails = () => {
     };
   }, [windowWidth]);
 
+  const getUser = async () => {
+    if (id) {
+      await axios
+        .get(`/api/account/getbyid?id=${id}`)
+        .then((res) => setUser(res.data));
+    } else {
+      await axios.get("/api/account/getloggedinuser").then((res) => {
+        setUser(res.data);
+      });
+    }
+  };
   return (
     <>
       {isMedium && (
@@ -391,8 +403,8 @@ const PageDetails = () => {
             <div className="col"></div>
             <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
               <div className="row">
-                {activeTab == "posts" ? (
-                  <Posts />
+                {activeTab == "posts" && user ? (
+                  <Posts author={user} />
                 ) : activeTab == "reels" ? (
                   <Reels />
                 ) : activeTab == "tagged" ? (
