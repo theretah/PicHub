@@ -48,21 +48,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   useEffect(() => {
-    axios
-      .get(`/api/account/getloggedinuser`)
-      .then((res) => {
+    if (token)
+      axios.get(`/api/account/getloggedinuser`).then((res) => {
         if (res.data) {
           setUser(res.data);
           setIsAuthenticated(true);
         } else {
-          navigate("/login");
+          setUser(null);
+          setIsAuthenticated(false);
+          localStorage.removeItem("token");
         }
-      })
-      .catch((error) => {
-        console.log(error);
-        navigate("/login");
       });
-  }, [isAuthenticated]);
+  }, [token]);
 
   return (
     <AuthContext.Provider

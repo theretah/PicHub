@@ -25,7 +25,6 @@ interface Props {
 }
 const PostDetails = ({ authorId, postId }: Props) => {
   const [post, setPost] = useState<Post>();
-  const [currentUser, setCurrentUser] = useState<User>();
   const [author, setAuthor] = useState<User>();
 
   const [modal, setModal] = useState(false);
@@ -33,13 +32,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(536);
-
-  const getCurrentUser = () => {
-    axios.get(`/api/account/getloggedinuser`).then((res) => {
-      setCurrentUser(res.data);
-      console.log(res.data);
-    });
-  };
+  const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
 
   const getPostAuthor = () => {
     axios.get(`/api/account/getbyid?id=${authorId}`).then((res) => {
@@ -54,7 +47,6 @@ const PostDetails = ({ authorId, postId }: Props) => {
   };
 
   useEffect(() => {
-    getCurrentUser();
     getPostAuthor();
     getPost();
 
@@ -89,14 +81,20 @@ const PostDetails = ({ authorId, postId }: Props) => {
       <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
-            <ProfileImage
-              imageUrl={"../../../public/images/profiles/square.png"}
-              widthHeight={isSmallScreen ? 40 : 50}
-            />
+            <Link to={`/page/${authorId}`}>
+              <ProfileImage
+                imageUrl={"../../../public/images/profiles/square.png"}
+                widthHeight={isSmallScreen ? 40 : 50}
+              />
+            </Link>
+
             <div className="card-body p-0 align-self-center">
-              <span className="card-title ms-2 my-0 fw-bold align-self-center">
+              <Link
+                className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
+                to={`/page/${authorId}`}
+              >
                 {author?.userName}
-              </span>
+              </Link>
               &nbsp; &nbsp;
               <button className="p-0 btn text-decoration-none align-self-center">
                 <span className="text-gray">Following</span>
@@ -171,26 +169,51 @@ const PostDetails = ({ authorId, postId }: Props) => {
         src={`data:image/png;base64,${post?.photoContent}`}
         className="card-img-top rounded my-1 object-fit-contain"
         alt="..."
-        style={{ aspectRatio: 1 }}
       />
       <div className="card-body px-0">
         <div className="row">
-          <div className="col-3 d-flex justify-content-between">
-            <LikeButton
-              size={22}
-              isLiked={isLiked}
-              handleLikeBtn={handleLikeButton}
-            />
-            <ChatButton size={22} />
-            <ShareButton size={22} />
+          <div className="col-3 d-flex">
+            <div className="me-2">
+              <LikeButton
+                size={22}
+                isLiked={isLiked}
+                handleLikeBtn={handleLikeButton}
+              />
+            </div>
+            <div className="me-2">
+              <ChatButton size={22} />
+            </div>
+            <div className="me-2">
+              <ShareButton size={22} />
+            </div>
           </div>
           <div className="col d-flex justify-content-end">
             <SaveButton size={22} />
           </div>
         </div>
 
-        <p className="card-title fw-bold mt-3">{likes} likes</p>
-        <p className="card-title fw-bold">{currentUser?.fullName}</p>
+        <p className="card-title fw-bold mt-2">{likes} likes</p>
+        <Link
+          to={`/page/${authorId}`}
+          className="card-title fw-bold d-inline text-decoration-none"
+        >
+          {author?.userName}{" "}
+        </Link>
+        {isCaptionExpanded ? (
+          post?.caption
+        ) : (
+          <a
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              setIsCaptionExpanded(true);
+            }}
+            className="text-gray text-decoration-none py-0"
+          >
+            ...more
+          </a>
+        )}
+
         <p className="card-title">
           <a href="" className="text-decoration-none text-gray">
             View all comments

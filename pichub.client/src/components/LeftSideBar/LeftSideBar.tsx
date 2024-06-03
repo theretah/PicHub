@@ -5,6 +5,7 @@ import LeftSideBarButton from "./LeftSideBarButton";
 import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { User } from "../../context/AuthContext";
 
 interface Props {
   currentPage: string;
@@ -13,6 +14,7 @@ interface Props {
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const xl = 1200;
+  const { user } = useAuth();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef(searchOpen);
@@ -46,17 +48,20 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
     if (searchRef.current) {
       setSearchOpen(false);
       searchRef.current = false;
-      console.log(
-        `Outside IsExtraLargeScreen: ${window.innerWidth >= xl}, SearchOpen: ${
-          searchRef.current
-        }`
-      );
-      console.log(window.innerWidth);
       setShowFullButton(window.innerWidth >= xl && !searchRef.current);
     }
   }
 
+  // function getUser() {
+  //   axios.get(`/api/account/getloggedinuser`).then((res) => {
+  //     setUser(res.data);
+  //     console.log(`${user} from leftsideBar`);
+  //   });
+  // }
+
   useEffect(() => {
+    // getUser();
+
     const handleResize = () => {
       setShowFullButton(
         window.innerWidth >= xl &&
@@ -296,11 +301,12 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
               </svg>
             )}
           </LeftSideBarButton>
+
           <LeftSideBarButton
             activePage={currentPage}
             buttonText="Profile"
             showFullButton={showFullButton && currentPage != "Messages"}
-            to="/page"
+            to={user ? `/page` : "/login"}
           >
             {currentPage === "Profile" ? (
               <svg

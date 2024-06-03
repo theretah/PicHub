@@ -13,14 +13,17 @@ import ShareButton from "../../components/PostControlButtons/ShareButton";
 import SaveButton from "../../components/PostControlButtons/SaveButton";
 import Layout from "../../components/Layout/Layout";
 import "./PostDetailsPage.css";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
+import { useAuth } from "../../context/useAuth";
 
 const PostDetailsPage = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
   const { id } = useParams();
   const [post, setPost] = useState<Post>();
-
   const [modal, setModal] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -57,6 +60,11 @@ const PostDetailsPage = () => {
       setPost(res.data);
     });
   };
+
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} />;
+  }
+
   return (
     <Layout currentPage="">
       <div className="mt-2">
@@ -160,10 +168,13 @@ const PostDetailsPage = () => {
                   </div>
                   <hr className="my-0 mx-0" />
                   <div className="overflow-y-auto p-2" style={{ height: 275 }}>
-                    <div className="mt-2">
-                      <ProfileImage
-                        imageUrl={"../../../public/images/profiles/square.png"}
-                        widthHeight={40}
+                    {/* <div className="mt-2">
+                      <img
+                        src={"../../../public/images/profiles/square.png"}
+                        alt=""
+                        height={40} 
+                        width={40}
+                        className="rounded-circle object-fit-contain"
                       />
                       &nbsp;
                       <span className="fw-bold align-self-center">
@@ -172,40 +183,26 @@ const PostDetailsPage = () => {
                       &nbsp; &nbsp;
                       <span className="text-gray">3h</span>
                     </div>
-                    <br />
-                    <p>
-                      This is a wider card with supporting text below as a
-                      natural lead-in to additional content. This content is a
-                      little bit longer. This is a wider card with supporting
-                      text below as a natural lead-in to additional content.
-                      This content is a little bit longer. This is a wider card
-                      with supporting text below as a natural lead-in to
-                      additional content. This content is a little bit longer.
-                      This is a wider card with supporting text below as a
-                      natural lead-in to additional content. This content is a
-                      little bit longer. This is a wider card with supporting
-                      text below as a natural lead-in to additional content.
-                      This content is a little bit longer. This is a wider card
-                      with supporting text below as a natural lead-in to
-                      additional content. This content is a little bit longer.
-                      This is a wider card with supporting text below as a
-                      natural lead-in to additional content. This content is a
-                      little bit longer. This is a wider card with supporting
-                      text below as a natural lead-in to additional content.
-                      This content is a little bit longer.
-                    </p>
+                    <br /> */}
+                    <p>{post?.caption}</p>
                   </div>
                   <hr className="my-0" />
                   <div className="p-2">
                     <div className="row">
-                      <div className="col-5 d-flex justify-content-between">
-                        <LikeButton
-                          isLiked={isLiked}
-                          handleLikeBtn={handleLikeButton}
-                          size={22}
-                        />
-                        <ChatButton size={22} />
-                        <ShareButton size={22} />
+                      <div className="col-5 d-flex">
+                        <div className="me-2">
+                          <LikeButton
+                            size={22}
+                            isLiked={isLiked}
+                            handleLikeBtn={handleLikeButton}
+                          />
+                        </div>
+                        <div className="me-2">
+                          <ChatButton size={22} />
+                        </div>
+                        <div className="me-2">
+                          <ShareButton size={22} />
+                        </div>
                       </div>
                       <div className="col d-flex justify-content-end">
                         <SaveButton size={22} />

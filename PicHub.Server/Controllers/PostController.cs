@@ -28,11 +28,11 @@ namespace PicHub.Server.Controllers
         [HttpGet("getall")]
         public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            return unit.Posts.GetAll();
+            return unit.Posts.GetAll().OrderByDescending(p => p.CreateDate);
         }
 
         [HttpGet("getallbyauthor")]
-        public async Task<IEnumerable<Post>> GetAllPosts(string authorId)
+        public async Task<IEnumerable<Post>> GetAllPostsByAuthor(string authorId)
         {
             return unit.Posts.Find(p => p.AuthorId == authorId);
         }

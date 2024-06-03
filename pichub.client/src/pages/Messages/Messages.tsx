@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import BottomBar from "../../components/BottomBar/BottomBar";
 import Layout from "../../components/Layout/Layout";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import HomeSuggestDetails from "../../components/HomeSuggestDetails/HomeSuggestDetails";
 import MessageRecord from "../../components/MessageRecord/MessageRecord";
 import DirectChat from "../../components/DirectChat/DirectChat";
+import { useAuth } from "../../context/useAuth";
 
 const Messages = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const md = 768;
   const xl = 1200;
   const [activeMessage, setActiveMessage] = useState(false);
@@ -33,6 +36,10 @@ const Messages = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [windowWidth]);
+
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} />;
+  }
 
   return (
     <Layout currentPage={"Messages"}>

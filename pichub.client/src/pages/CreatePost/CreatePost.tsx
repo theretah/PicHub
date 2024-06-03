@@ -6,8 +6,9 @@ import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { User } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 interface CreatePostProps {
   Caption: string;
@@ -15,13 +16,15 @@ interface CreatePostProps {
   ImageFile: File;
 }
 const CreatePost = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [currentUser, setCurrentUser] = useState<User>();
   const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
   const [selectedPictureSrc, setSelectedPictureSrc] = useState<
     string | ArrayBuffer | null
   >();
-  const navigate = useNavigate();
 
   const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
 
@@ -85,6 +88,11 @@ const CreatePost = () => {
   const onSubmit: SubmitHandler<CreatePostProps> = async (data) => {
     await addPost.mutate(data);
   };
+
+  if (!isAuthenticated) {
+    return <Navigate to={"/login"} />;
+  }
+
   return (
     <Layout currentPage="Create">
       <div
