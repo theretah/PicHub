@@ -4,10 +4,11 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import MessageRecord from "../../components/MessageRecord/MessageRecord";
 import DirectChat from "../../components/DirectChat/DirectChat";
 import { useAuth } from "../../context/useAuth";
+import useAuthStore from "../../store";
 
 const Messages = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token } = useAuthStore();
   const md = 768;
   const xl = 1200;
   const [activeMessage, setActiveMessage] = useState(false);
@@ -17,13 +18,6 @@ const Messages = () => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [inboxWidth, setInboxWidth] = useState(initialInboxWidth);
-  const [userIsAuthenticated, setUserIsAuthenticated] =
-    useState(isAuthenticated);
-
-  useEffect(() => {
-    setUserIsAuthenticated(isAuthenticated);
-    console.log(userIsAuthenticated);
-  }, [token]);
 
   useEffect(() => {
     const handleResize = () => {

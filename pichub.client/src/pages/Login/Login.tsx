@@ -5,15 +5,16 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { register } from "module";
+import useAuthStore from "../../store";
 
 const Login = () => {
   const { handleSubmit, register } = useForm<LoginData>();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuthStore();
 
   const loginUser = useMutation({
     mutationFn: async (loginData: LoginData) => {
-      login(loginData, "");
+      login(loginData);
       navigate("/");
     },
   });

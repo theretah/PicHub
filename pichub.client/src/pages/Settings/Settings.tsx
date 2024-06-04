@@ -6,6 +6,7 @@ import "./Settings.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import useAuthStore from "../../store";
 
 interface EditProfileProps {
   FullName: string;
@@ -16,8 +17,7 @@ interface EditProfileProps {
 }
 
 const Settings = () => {
-  const { isAuthenticated, user } = useAuth();
-
+  const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

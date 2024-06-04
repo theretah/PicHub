@@ -1,16 +1,13 @@
-import AuthContext, {
-  LoginData,
-  RegisterData,
-} from "../../context/AuthContext";
+import { LoginData, RegisterData } from "../../context/AuthContext";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosResponse } from "axios";
-import { useAuth } from "../../context/useAuth";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../store";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuthStore();
   const { register, handleSubmit } = useForm<RegisterData>();
 
   const registerUser = useMutation({
@@ -20,7 +17,7 @@ const Register = () => {
           userName: registerData.userName,
           password: registerData.password,
         };
-        login(loginData, res.data.token);
+        login(loginData);
         navigate("/");
       });
     },

@@ -1,62 +1,53 @@
 import { create } from "zustand";
 import { LoginData, User } from "./context/AuthContext";
 import axios from "axios";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface AuthStore {
   isAuthenticated: boolean;
   user: User | null;
   token: string | null;
-  login: (loginData: LoginData, newToken: string) => void;
+  login: (loginData: LoginData) => Promise<void>;
   logout: () => void;
 }
-const [isAuthenticated, setIsAuthenticated] = useState(false);
-const [token, setToken] = useState<string | null>(
-  localStorage.getItem("token")
-);
-const [user, setUser] = useState<User | null>(null);
-const navigate = useNavigate();
 
-const login = async (loginData: LoginData) => {
-  console.log("Log in");
+const useAuthStore = create<AuthStore>((set) => ({
+  isAuthenticated: !!localStorage.getItem("token"),
+  token: localStorage.getItem("user"),
+  user: JSON.parse(localStorage.getItem("user") || "null"),
 
-  await axios.post(`/api/account/login`, loginData).then((res) => {
-    const newToken = res.data.token;
-    localStorage.setItem("token", newToken);
-    setToken(newToken);
-  });
+  login: async (loginData: LoginData) => {
+    try {
+      await axios
+        .post(`/api/account/login`, loginData)
+        .then((loginResponse) => {
+          const newToken = loginResponse.data.token;
+          localStorage.setItem("token", newToken);
 
-  await axios
-    .get(`/api/account/getbyusername?userName=${loginData.userName}`)
-    .then((res) => {
-      setUser(res.data);
-      setIsAuthenticated(true);
-      localStorage.setItem("token", JSON.stringify(res.data));
-    });
-};
+          axios
+            .get(`/api/account/getbyusername?userName=${loginData.userName}`)
+            .then((userResponse) => {
+              localStorage.setItem("user", JSON.stringify(userResponse.data));
+              console.log(userResponse.data);
+              set({
+                isAuthenticated: true,
+                token: newToken,
+                user: userResponse.data,
+              });
+            });
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  },
 
-const logout = () => {
-  console.log("Log out");
-  if (user) {
+  logout: async () => {
     axios.post(`/api/account/logout`);
 
-    setIsAuthenticated(false);
-    setUser(null);
-    setToken(null);
-
     localStorage.removeItem("token");
-
-    navigate("/login");
-  }
-};
-
-const useAuthStore = create<AuthStore>(() => ({
-  isAuthenticated,
-  login,
-  logout,
-  token,
-  user,
+    localStorage.removeItem("user");
+    set({ isAuthenticated: false, user: null, token: null });
+  },
 }));
 
 export default useAuthStore;

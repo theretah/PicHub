@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
 import { User } from "../../context/AuthContext";
 import { useAuth } from "../../context/useAuth";
+import useAuthStore from "../../store";
 
 interface CreatePostProps {
   Caption: string;
@@ -16,7 +17,7 @@ interface CreatePostProps {
   ImageFile: File;
 }
 const CreatePost = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuthStore();
   const navigate = useNavigate();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);

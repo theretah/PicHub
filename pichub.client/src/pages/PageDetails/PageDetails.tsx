@@ -15,6 +15,7 @@ import Saved from "./Saved";
 import axios from "axios";
 import { User } from "../../context/AuthContext";
 import { useAuth } from "../../context/useAuth";
+import useAuthStore from "../../store";
 
 const EditProfileButton = () => {
   return (
@@ -60,7 +61,7 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
 const PageDetails = () => {
   const { id } = useParams();
   const [pageUser, setPageUser] = useState<User>();
-  const { user } = useAuth();
+  const { user } = useAuthStore();
 
   const [userIsOwner, setUserIsOwner] = useState(pageUser?.id == user?.id);
 

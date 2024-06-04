@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import MoreButton from "../LeftSideBarButtons/MoreButton";
 import SearchButton from "../LeftSideBarButtons/SearchButton";
 import LeftSideBarButton from "./LeftSideBarButton";
 import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { User } from "../../context/AuthContext";
+import useAuthStore from "../../store";
 
 interface Props {
   currentPage: string;
@@ -14,7 +12,7 @@ interface Props {
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const xl = 1200;
-  const { user } = useAuth();
+  const { logout, user } = useAuthStore();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef(searchOpen);
@@ -28,7 +26,6 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       currentPage != "Messages"
   );
 
-  const { logout } = useAuth();
   function logoutUser() {
     logout();
     navigate("/login");
