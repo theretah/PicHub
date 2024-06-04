@@ -94,8 +94,10 @@ const PostDetailsPage = () => {
                 <div className="card-body bg-dark text-light border-0">
                   <div className="d-flex justify-content-start p-2">
                     <ProfileImage
-                      imageUrl={"../../../public/images/profiles/v.jpg"}
-                      widthHeight={40}
+                      imageUrl={
+                        "../../../public/images/profiles/default-profile.jpg"
+                      }
+                      widthHeight={35}
                     />
                     &nbsp;
                     <span className="fw-bold align-self-center">username</span>
@@ -214,8 +216,10 @@ const PostDetailsPage = () => {
                     <p className="text-gray p-0">3 hours ago</p>
                     <div className="d-flex">
                       <ProfileImage
-                        imageUrl={"../../../public/images/profiles/square.png"}
-                        widthHeight={40}
+                        imageUrl={
+                          "../../../public/images/profiles/default-profile.jpg"
+                        }
+                        widthHeight={35}
                       />
                       <input
                         id="commentText"

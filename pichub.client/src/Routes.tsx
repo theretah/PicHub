@@ -8,6 +8,7 @@ import PageDetails from "./pages/PageDetails/PageDetails";
 import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage";
 import Reels from "./pages/Reels/Reels";
 import Register from "./pages/Register/Register";
+import Settings from "./pages/Settings/Settings";
 
 const Routes = [
   { path: "/", element: <Index /> },
@@ -22,6 +23,7 @@ const Routes = [
   { path: "/createPost", element: <CreatePost /> },
   { path: "/reels", element: <Reels /> },
   { path: "/notifications", element: <Notifications /> },
+  { path: "/settings", element: <Settings /> },
 ];
 
 export default Routes;

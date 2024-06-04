@@ -11,7 +11,7 @@ const ProfileImage = ({ widthHeight, imageUrl }: Props) => {
       alt=""
       height={widthHeight}
       width={widthHeight}
-      className="rounded-circle border object-fit-contain"
+      className="rounded-circle object-fit-contain"
     />
   );
 };

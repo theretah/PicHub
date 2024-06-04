@@ -14,11 +14,55 @@ import Tagged from "./Tagged";
 import Saved from "./Saved";
 import axios from "axios";
 import { User } from "../../context/AuthContext";
-import { Post } from "../../interfaces/Post";
+import { useAuth } from "../../context/useAuth";
+
+const EditProfileButton = () => {
+  return (
+    <Link className="btn btn-secondary me-1 py-1 ms-auto" to={"/settings"}>
+      Edit Profile
+    </Link>
+  );
+};
+const MessageButton = () => {
+  return <button className="btn btn-secondary me-1 py-1">Message</button>;
+};
+
+interface FollowButtonProps {
+  isFollowing: boolean;
+  follow: () => void;
+  unFollow: () => void;
+}
+const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
+  return isFollowing ? (
+    <button className="btn btn-secondary me-1 py-1" onClick={unFollow}>
+      Following&nbsp;
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        fill="currentColor"
+        className="bi bi-chevron-down"
+        viewBox="0 0 16 16"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
+        />
+      </svg>
+    </button>
+  ) : (
+    <button className="btn btn-primary me-1 py-1" onClick={follow}>
+      Follow
+    </button>
+  );
+};
 
 const PageDetails = () => {
   const { id } = useParams();
-  const [user, setUser] = useState<User>();
+  const [pageUser, setPageUser] = useState<User>();
+  const { user } = useAuth();
+
+  const [userIsOwner, setUserIsOwner] = useState(pageUser?.id == user?.id);
 
   const md = 768;
   const sm = 576;
@@ -30,9 +74,6 @@ const PageDetails = () => {
   const [activeTab, setActiveTab] = useState("posts");
 
   useEffect(() => {
-    getUser();
-    console.log(user);
-
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
       setIsMedium(windowWidth < md);
@@ -48,17 +89,17 @@ const PageDetails = () => {
     };
   }, [windowWidth]);
 
-  const getUser = async () => {
-    if (id) {
-      await axios
-        .get(`/api/account/getbyid?id=${id}`)
-        .then((res) => setUser(res.data));
-    } else {
-      await axios.get("/api/account/getloggedinuser").then((res) => {
-        setUser(res.data);
-      });
-    }
+  useEffect(() => {
+    getPageUser();
+  }, [userIsOwner, id]);
+
+  const getPageUser = async () => {
+    await axios.get(`/api/account/getbyid?id=${id}`).then((res) => {
+      setPageUser(res.data);
+      setUserIsOwner(res.data.id == user?.id);
+    });
   };
+
   return (
     <>
       {isMedium && (
@@ -77,7 +118,7 @@ const PageDetails = () => {
               </svg>
             </Link>
             <Link to={"/login"} className="btn btn-dark text-light">
-              {user?.userName} &nbsp;
+              {pageUser?.userName} &nbsp;
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -117,7 +158,9 @@ const PageDetails = () => {
                       style={windowWidth >= md ? { width: 180 } : {}}
                     >
                       <ProfileImage
-                        imageUrl={"../../../public/images/profiles/square.png"}
+                        imageUrl={
+                          "../../../public/images/profiles/default-profile.jpg"
+                        }
                         widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
                       />
                     </div>
@@ -129,44 +172,24 @@ const PageDetails = () => {
                         }
                       >
                         <div className="row">
-                          <div className="row">
-                            <h5 className="d-inline m-0 me-4">
-                              {user?.userName}
-                            </h5>
-                          </div>
                           <div className="row mt-2">
-                            <div className="col">
-                              {isFollowing ? (
-                                <button
-                                  className="btn btn-secondary me-1 py-1"
-                                  onClick={() => setIsFollowing(!isFollowing)}
-                                >
-                                  Following&nbsp;
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="16"
-                                    height="16"
-                                    fill="currentColor"
-                                    className="bi bi-chevron-down"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <path
-                                      fill-rule="evenodd"
-                                      d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
-                                    />
-                                  </svg>
-                                </button>
+                            <div className="col d-flex align-items-center">
+                              <span className="h5 m-0 me-4">
+                                {pageUser?.userName}
+                              </span>
+                              {userIsOwner ? (
+                                <EditProfileButton />
                               ) : (
-                                <button
-                                  className="btn btn-primary me-1 py-1"
-                                  onClick={() => setIsFollowing(!isFollowing)}
-                                >
-                                  Follow
-                                </button>
+                                <>
+                                  <FollowButton
+                                    follow={() => setIsFollowing(true)}
+                                    unFollow={() => setIsFollowing(false)}
+                                    isFollowing={isFollowing}
+                                  />
+                                  <MessageButton />
+                                </>
                               )}
-                              <button className="btn btn-secondary me-1 py-1">
-                                Message
-                              </button>
+
                               <button className="btn text-light py-1 px-0">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -195,44 +218,26 @@ const PageDetails = () => {
                         {windowWidth > 768 && (
                           <div className="col-sm-4 col-md-4">
                             <h5 className="d-inline m-0 me-4">
-                              {user?.userName}
+                              {pageUser?.userName}
                             </h5>
                           </div>
                         )}
 
                         {windowWidth >= md && (
                           <div className="col-sm-8 col-md-8">
-                            {isFollowing ? (
-                              <button
-                                className="btn btn-secondary me-1 py-1"
-                                onClick={() => setIsFollowing(!isFollowing)}
-                              >
-                                Following&nbsp;
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="16"
-                                  height="16"
-                                  fill="currentColor"
-                                  className="bi bi-chevron-down"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path
-                                    fill-rule="evenodd"
-                                    d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"
-                                  />
-                                </svg>
-                              </button>
+                            {userIsOwner ? (
+                              <EditProfileButton />
                             ) : (
-                              <button
-                                className="btn btn-primary me-1 py-1"
-                                onClick={() => setIsFollowing(!isFollowing)}
-                              >
-                                Follow
-                              </button>
+                              <>
+                                <FollowButton
+                                  follow={() => setIsFollowing(true)}
+                                  unFollow={() => setIsFollowing(false)}
+                                  isFollowing={isFollowing}
+                                />
+                                <MessageButton />
+                              </>
                             )}
-                            <button className="btn btn-secondary me-1 py-1">
-                              Message
-                            </button>
+
                             <button className="btn text-light py-1">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -264,7 +269,7 @@ const PageDetails = () => {
                         </p>
                       </div>
 
-                      <p className="fw-bold mb-0 mt-3">{user?.fullName}</p>
+                      <p className="fw-bold mb-0 mt-3">{pageUser?.fullName}</p>
 
                       <p className="my-0 text-light text-gray">
                         Personal account
@@ -403,8 +408,8 @@ const PageDetails = () => {
             <div className="col"></div>
             <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
               <div className="row">
-                {activeTab == "posts" && user ? (
-                  <Posts author={user} />
+                {activeTab == "posts" && pageUser ? (
+                  <Posts author={pageUser} />
                 ) : activeTab == "reels" ? (
                   <Reels />
                 ) : activeTab == "tagged" ? (

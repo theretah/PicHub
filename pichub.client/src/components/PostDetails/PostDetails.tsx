@@ -83,8 +83,8 @@ const PostDetails = ({ authorId, postId }: Props) => {
           <div className="d-flex">
             <Link to={`/page/${authorId}`}>
               <ProfileImage
-                imageUrl={"../../../public/images/profiles/square.png"}
-                widthHeight={isSmallScreen ? 40 : 50}
+                imageUrl={"../../../public/images/profiles/default-profile.jpg"}
+                widthHeight={isSmallScreen ? 25 : 40}
               />
             </Link>
 

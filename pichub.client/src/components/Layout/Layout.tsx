@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import BottomBar from "../BottomBar/BottomBar";
 import LeftSideBar from "../LeftSideBar/LeftSideBar";
 import SearchPanel from "../SearchPanel/SearchPanel";
+import { useAuth } from "../../context/useAuth";
 
 interface Props {
   children: ReactNode;

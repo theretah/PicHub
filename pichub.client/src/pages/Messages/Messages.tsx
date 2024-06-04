@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import BottomBar from "../../components/BottomBar/BottomBar";
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import ProfileImage from "../../components/ProfileImage/ProfileImage";
-import HomeSuggestDetails from "../../components/HomeSuggestDetails/HomeSuggestDetails";
 import MessageRecord from "../../components/MessageRecord/MessageRecord";
 import DirectChat from "../../components/DirectChat/DirectChat";
 import { useAuth } from "../../context/useAuth";
 
 const Messages = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, token } = useAuth();
   const md = 768;
   const xl = 1200;
   const [activeMessage, setActiveMessage] = useState(false);
@@ -20,6 +17,13 @@ const Messages = () => {
 
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [inboxWidth, setInboxWidth] = useState(initialInboxWidth);
+  const [userIsAuthenticated, setUserIsAuthenticated] =
+    useState(isAuthenticated);
+
+  useEffect(() => {
+    setUserIsAuthenticated(isAuthenticated);
+    console.log(userIsAuthenticated);
+  }, [token]);
 
   useEffect(() => {
     const handleResize = () => {

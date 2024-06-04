@@ -12,9 +12,8 @@ const Posts = ({ author }: Props) => {
   const [posts, setPosts] = useState<Post[]>();
 
   useEffect(() => {
-    console.log("Author: ", author);
     getPosts();
-  }, []);
+  }, [author]);
 
   function getPosts() {
     axios

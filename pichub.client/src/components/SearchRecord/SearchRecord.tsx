@@ -9,7 +9,7 @@ const SearchRecord = () => {
         <div className="col-2 d-flex align-items-center">
           <ProfileImage
             widthHeight={40}
-            imageUrl="../../../public/images/profiles/square.png"
+            imageUrl="../../../public/images/profiles/default-profile.jpg"
           />
         </div>
         <div className="col-8 text-light px-0">

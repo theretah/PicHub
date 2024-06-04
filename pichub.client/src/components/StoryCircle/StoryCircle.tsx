@@ -9,17 +9,13 @@ const StoryCircle = () => {
       style={{ width: widthAndHeight + 10 }}
     >
       <div className="text-bg-dark">
-        <ProfileImage
-          imageUrl="../../../public/images/profiles/v.jpg"
-          widthHeight={widthAndHeight}
-        />
-        {/* <img
-          src=""
+        <img
+          src="../../../public/images/profiles/default-profile.jpg"
           alt=""
           height={widthAndHeight}
           width={widthAndHeight}
           className="rounded-circle border border-2 mx-auto"
-        /> */}
+        />
         <div className="card-body p-0">
           <p className="card-text" style={{ fontSize: ".85rem" }}>
             username...

@@ -16,11 +16,10 @@ interface CreatePostProps {
   ImageFile: File;
 }
 const CreatePost = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [currentUser, setCurrentUser] = useState<User>();
   const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
   const [selectedPictureSrc, setSelectedPictureSrc] = useState<
     string | ArrayBuffer | null
@@ -29,9 +28,6 @@ const CreatePost = () => {
   const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
 
   useEffect(() => {
-    console.log(register("ImageFile"));
-    getCurrentUser();
-
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 900);
     };
@@ -62,11 +58,6 @@ const CreatePost = () => {
     }
   }
 
-  function getCurrentUser() {
-    axios.get(`/api/account/getloggedinuser`).then((res) => {
-      setCurrentUser(res.data);
-    });
-  }
   const addPost = useMutation({
     mutationFn: async (post: CreatePostProps) => {
       const formData = new FormData();
@@ -113,7 +104,7 @@ const CreatePost = () => {
               />
               &nbsp;
               <span className="fw-bold align-self-center text-light">
-                {currentUser?.userName}
+                {user?.userName}
               </span>
             </div>
           )}
@@ -189,7 +180,7 @@ const CreatePost = () => {
                   />
                   &nbsp;
                   <span className="fw-bold align-self-center">
-                    {currentUser?.userName}
+                    {user?.userName}
                   </span>
                 </div>
               )}

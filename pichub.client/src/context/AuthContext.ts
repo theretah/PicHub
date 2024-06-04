@@ -5,6 +5,8 @@ export interface User {
   userName: string;
   password: string;
   fullName: string;
+  bio: string;
+  gender: string;
 }
 export interface RegisterData {
   email: string;

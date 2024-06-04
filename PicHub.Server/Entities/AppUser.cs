@@ -11,6 +11,8 @@ namespace PicHub.Server.Entities
         public string FullName { get; set; }
         public byte[] ProfileImageUrl { get; set; }
         public DateTime RegistrationDate { get; set; }
+        public int Gender { get; set; }
+        public string Bio { get; set; }
 
         public IEnumerable<Post> CreatedPosts { get; set; }
     }

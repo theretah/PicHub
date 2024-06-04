@@ -9,7 +9,7 @@ const HomeSuggestDetails = ({ user }: Props) => {
     <div className="row my-3">
       <div className="col-2">
         <ProfileImage
-          imageUrl="../../../public/images/profiles/square.png"
+          imageUrl="../../../public/images/profiles/default-profile.jpg"
           widthHeight={45}
         />
       </div>

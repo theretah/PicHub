@@ -52,16 +52,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
     }
   }
 
-  // function getUser() {
-  //   axios.get(`/api/account/getloggedinuser`).then((res) => {
-  //     setUser(res.data);
-  //     console.log(`${user} from leftsideBar`);
-  //   });
-  // }
-
   useEffect(() => {
-    // getUser();
-
     const handleResize = () => {
       setShowFullButton(
         window.innerWidth >= xl &&
@@ -306,7 +297,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             activePage={currentPage}
             buttonText="Profile"
             showFullButton={showFullButton && currentPage != "Messages"}
-            to={user ? `/page` : "/login"}
+            to={user ? `/page/${user.id}` : "/login"}
           >
             {currentPage === "Profile" ? (
               <svg
