@@ -16,9 +16,9 @@ import {
 } from "mdb-react-ui-kit";
 import { Link, useParams } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../context/AuthContext";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
+import { User } from "../../store";
 interface Props {
   authorId: string;
   postId: number;
@@ -83,7 +83,11 @@ const PostDetails = ({ authorId, postId }: Props) => {
           <div className="d-flex">
             <Link to={`/page/${authorId}`}>
               <ProfileImage
-                imageUrl={"../../../public/images/profiles/default-profile.jpg"}
+                imageUrl={
+                  author?.profileImageUrl
+                    ? `data:image/png;base64,${author.profileImageUrl}`
+                    : "../../../public/images/profiles/default-profile.jpg"
+                }
                 widthHeight={isSmallScreen ? 25 : 40}
               />
             </Link>

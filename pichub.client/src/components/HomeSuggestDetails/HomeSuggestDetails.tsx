@@ -1,6 +1,7 @@
 import React from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../context/AuthContext";
+import { User } from "../../store";
+
 interface Props {
   user: User;
 }
@@ -9,7 +10,11 @@ const HomeSuggestDetails = ({ user }: Props) => {
     <div className="row my-3">
       <div className="col-2">
         <ProfileImage
-          imageUrl="../../../public/images/profiles/default-profile.jpg"
+          imageUrl={
+            user.profileImageUrl
+              ? `data:image/png;base64,${user.profileImageUrl}`
+              : "../../../public/images/profiles/default-profile.jpg"
+          }
           widthHeight={45}
         />
       </div>

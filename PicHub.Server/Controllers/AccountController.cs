@@ -1,6 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
 
@@ -10,46 +16,86 @@ namespace PicHub.Server.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly SignInManager<AppUser> signInManager;
+        private readonly IConfiguration configuration;
         private readonly UserManager<AppUser> userManager;
         private readonly IUserStore<AppUser> userStore;
 
-        public AccountController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IUserStore<AppUser> userStore)
+        public AccountController(IConfiguration configuration, UserManager<AppUser> userManager, IUserStore<AppUser> userStore)
         {
             this.userStore = userStore;
-            this.signInManager = signInManager;
+            this.configuration = configuration;
             this.userManager = userManager;
         }
 
-        [HttpPost]
-        [Route("login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var result = await signInManager.PasswordSignInAsync(model.UserName, model.Password, isPersistent: false, lockoutOnFailure: false);
+            var existedUser = await userManager.FindByNameAsync(model.UserName);
+            if (existedUser != null)
+            {
+                return BadRequest("User with this username already exists.");
+            }
 
+            var user = CreateUser();
+            user.FullName = model.FullName;
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.EmailConfirmed = true;
+            user.RegistrationDate = DateTime.Now;
+
+            var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                return Ok(new { success = true });
+                var token = GenerateJwtToken(model.UserName);
+                return Ok(new { token });
             }
             else
             {
-                return BadRequest("Login failed");
+                return BadRequest(result.Errors);
             }
         }
 
-        [HttpPost]
-        [Route("logout")]
-        public async Task<IActionResult> Logout()
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (signInManager.IsSignedIn(User))
+            var user = await userManager.FindByNameAsync(model.UserName);
+            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
             {
-                await signInManager.SignOutAsync();
-                return Ok(new { success = true });
+                var token = GenerateJwtToken(model.UserName);
+                return Ok(new { token });
             }
-            else
+
+            return BadRequest("Login failed. Invalid username or password.");
+        }
+        private string GenerateJwtToken(string userName)
+        {
+            var user = userManager.FindByNameAsync(userName).Result;
+            var secret = configuration["JwtConfig:ValidSecret"];
+            var issuer = configuration["JwtConfig:ValidIssuer"];
+            var audience = configuration["JwtConfig:ValidAudience"];
+            if (secret is null || issuer is null || audience is null)
             {
-                return BadRequest("Logout failed");
+                throw new ApplicationException("Jwt config is not set.");
             }
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, userName),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name, userName)
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(1),
+                signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         [HttpGet]
@@ -61,31 +107,6 @@ namespace PicHub.Server.Controllers
         public async Task<int> GetUsersCountAsync()
         {
             return await userManager.Users.CountAsync();
-        }
-        [HttpPost]
-        [Route("register")]
-        public async Task<IActionResult> Register(RegisterViewModel registerForm)
-        {
-            var user = CreateUser();
-
-            user.FullName = registerForm.FullName;
-            user.UserName = registerForm.UserName;
-            user.Email = registerForm.Email;
-            // user.PhoneNumber = registerForm.Phone;
-            user.EmailConfirmed = true;
-            // user.PhoneNumberConfirmed = true;
-            user.RegistrationDate = DateTime.Now;
-
-            var result = await userManager.CreateAsync(user, registerForm.Password);
-            if (result.Succeeded)
-            {
-                await signInManager.SignInAsync(user, isPersistent: false);
-                return Ok(new { success = true });
-            }
-            else
-            {
-                return BadRequest(result.Errors);
-            }
         }
 
         [HttpGet]
@@ -109,11 +130,42 @@ namespace PicHub.Server.Controllers
             return await userManager.FindByNameAsync(userName);
         }
 
-        [HttpGet]
-        [Route("getloggedinuser")]
-        public async Task<AppUser> GetLoggedInUser()
+        [HttpGet("getloggedinuser")]
+        public async Task<IActionResult> GetLoggedInUser()
         {
-            return await userManager.GetUserAsync(User);
+            var userId = HttpContext.Items["UserId"]?.ToString();
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userProfile = new
+            {
+                user.Id,
+                user.UserName,
+                user.Email,
+                user.FullName,
+                user.Bio,
+                user.Gender,
+                user.ProfileImageUrl
+            };
+
+            return Ok(userProfile);
+        }
+
+        [HttpGet]
+        [Route("getloggedinuserjson")]
+        public async Task<IActionResult> GetLoggedInUserJson()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var loggedInUser = await userManager.FindByIdAsync(userId);
+            return new JsonResult(loggedInUser);
         }
 
         [HttpGet]
@@ -145,8 +197,8 @@ namespace PicHub.Server.Controllers
             }
             catch
             {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(IdentityUser)}'. " +
-                    $"Ensure that '{nameof(IdentityUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
+                throw new InvalidOperationException($"Can't create an instance of '{nameof(AppUser)}'. " +
+                    $"Ensure that '{nameof(AppUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
                     $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
             }
         }

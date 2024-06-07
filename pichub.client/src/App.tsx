@@ -1,10 +1,7 @@
-import { useRoutes } from "react-router-dom";
-import Routes from "./Routes";
-import { AuthProvider } from "./context/AuthProvider";
+import AppRoutes from "./Routes";
 
 function App() {
-  const router = useRoutes(Routes);
-  return <AuthProvider>{router}</AuthProvider>;
+  return <AppRoutes />;
 }
 
 export default App;

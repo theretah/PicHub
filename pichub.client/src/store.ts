@@ -1,52 +1,90 @@
 import { create } from "zustand";
-import { LoginData, User } from "./context/AuthContext";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+
+export interface User {
+  id: string;
+  userName: string;
+  fullName: string;
+  bio: string;
+  gender: string;
+  profileImageUrl: string;
+}
+
+export interface LoginData {
+  userName: string;
+  password: string;
+}
 
 interface AuthStore {
   isAuthenticated: boolean;
   user: User | null;
-  token: string | null;
+  fetchUser: () => Promise<void>;
   login: (loginData: LoginData) => Promise<void>;
   logout: () => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
   isAuthenticated: !!localStorage.getItem("token"),
-  token: localStorage.getItem("user"),
   user: JSON.parse(localStorage.getItem("user") || "null"),
+
+  fetchUser: async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      set({ isAuthenticated: false, user: null });
+      return;
+    }
+
+    await axios
+      .get(`/api/account/getloggedinuser`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        if (res.data) {
+          set({ user: res.data, isAuthenticated: true });
+          localStorage.setItem("user", JSON.stringify(res.data));
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          set({ isAuthenticated: false, user: null });
+        }
+      })
+      .catch((error) => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        set({ isAuthenticated: false, user: null });
+        console.log(error);
+      });
+  },
 
   login: async (loginData: LoginData) => {
     try {
       await axios
         .post(`/api/account/login`, loginData)
         .then((loginResponse) => {
-          const newToken = loginResponse.data.token;
-          localStorage.setItem("token", newToken);
+          const token = loginResponse.data.token;
+          localStorage.setItem("token", token);
 
           axios
-            .get(`/api/account/getbyusername?userName=${loginData.userName}`)
+            .get("/api/account/getloggedinuser", {
+              headers: { Authorization: `Bearer ${token}` },
+            })
             .then((userResponse) => {
-              localStorage.setItem("user", JSON.stringify(userResponse.data));
-              console.log(userResponse.data);
-              set({
-                isAuthenticated: true,
-                token: newToken,
-                user: userResponse.data,
-              });
+              set({ isAuthenticated: true, user: userResponse.data });
+            })
+            .catch((error) => {
+              console.log(error);
             });
         });
     } catch (error) {
+      set({ isAuthenticated: false, user: null });
       console.log(error);
     }
   },
 
   logout: async () => {
-    axios.post(`/api/account/logout`);
-
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    set({ isAuthenticated: false, user: null, token: null });
+    set({ isAuthenticated: false, user: null });
   },
 }));
 

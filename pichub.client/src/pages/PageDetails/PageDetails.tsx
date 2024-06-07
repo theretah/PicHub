@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import Layout from "../../components/Layout/Layout";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import {
   MDBModal,
   MDBModalDialog,
@@ -13,9 +13,7 @@ import Reels from "./Reels";
 import Tagged from "./Tagged";
 import Saved from "./Saved";
 import axios from "axios";
-import { User } from "../../context/AuthContext";
-import { useAuth } from "../../context/useAuth";
-import useAuthStore from "../../store";
+import useAuthStore, { User } from "../../store";
 
 const EditProfileButton = () => {
   return (
@@ -33,6 +31,7 @@ interface FollowButtonProps {
   follow: () => void;
   unFollow: () => void;
 }
+
 const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
   return isFollowing ? (
     <button className="btn btn-secondary me-1 py-1" onClick={unFollow}>
@@ -61,7 +60,7 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
 const PageDetails = () => {
   const { id } = useParams();
   const [pageUser, setPageUser] = useState<User>();
-  const { user } = useAuthStore();
+  const { user, isAuthenticated, fetchUser } = useAuthStore();
 
   const [userIsOwner, setUserIsOwner] = useState(pageUser?.id == user?.id);
 
@@ -91,15 +90,28 @@ const PageDetails = () => {
   }, [windowWidth]);
 
   useEffect(() => {
+    console.log(isAuthenticated);
+    console.log(user);
+    if (!isAuthenticated) fetchUser();
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     getPageUser();
-  }, [userIsOwner, id]);
+  }, [id]);
 
   const getPageUser = async () => {
-    await axios.get(`/api/account/getbyid?id=${id}`).then((res) => {
-      setPageUser(res.data);
-      setUserIsOwner(res.data.id == user?.id);
-    });
+    await axios
+      .get(`/api/account/getbyid?id=${id}`)
+      .then((res) => {
+        setPageUser(res.data);
+        setUserIsOwner(res.data.id == user?.id);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   };
+
+  if (!isAuthenticated) return <Navigate to={"/login"} />;
 
   return (
     <>
@@ -160,7 +172,9 @@ const PageDetails = () => {
                     >
                       <ProfileImage
                         imageUrl={
-                          "../../../public/images/profiles/default-profile.jpg"
+                          pageUser?.profileImageUrl
+                            ? `data:image/png;base64,${pageUser.profileImageUrl}`
+                            : "../../../public/images/profiles/default-profile.jpg"
                         }
                         widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
                       />

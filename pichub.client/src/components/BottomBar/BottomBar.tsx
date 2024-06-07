@@ -1,4 +1,4 @@
-import { useState } from "react";
+import useAuthStore from "../../store";
 import BottomBarButton from "./BottomBarButton";
 
 interface Props {
@@ -6,6 +6,7 @@ interface Props {
 }
 
 const BottomBar = ({ currentPage }: Props) => {
+  const { user } = useAuthStore();
   return (
     <div
       className="container-fluid position-fixed bottom-0 bg-dark z-2 border-top border-gray"
@@ -150,7 +151,7 @@ const BottomBar = ({ currentPage }: Props) => {
             <BottomBarButton
               activePage={currentPage}
               buttonText="Profile"
-              to="/page"
+              to={user ? `/page/${user.id}` : "/login"}
             >
               {currentPage === "Profile" ? (
                 <svg

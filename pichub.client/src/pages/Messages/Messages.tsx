@@ -3,12 +3,11 @@ import Layout from "../../components/Layout/Layout";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import MessageRecord from "../../components/MessageRecord/MessageRecord";
 import DirectChat from "../../components/DirectChat/DirectChat";
-import { useAuth } from "../../context/useAuth";
 import useAuthStore from "../../store";
 
 const Messages = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, token } = useAuthStore();
+  const { isAuthenticated, user, fetchUser } = useAuthStore();
   const md = 768;
   const xl = 1200;
   const [activeMessage, setActiveMessage] = useState(false);
@@ -34,6 +33,10 @@ const Messages = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [windowWidth]);
+
+  useEffect(() => {
+    if (!isAuthenticated) fetchUser(localStorage.getItem("token") || "null");
+  }, [isAuthenticated]);
 
   if (!isAuthenticated) {
     return <Navigate to={"/login"} />;

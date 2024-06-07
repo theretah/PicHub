@@ -1,12 +1,12 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
-import { useAuth } from "../../context/useAuth";
 import { Navigate, useNavigate } from "react-router-dom";
 import "./Settings.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
-import useAuthStore from "../../store";
+import useAuthStore, { User } from "../../store";
+import { isatty } from "tty";
 
 interface EditProfileProps {
   FullName: string;
@@ -17,7 +17,8 @@ interface EditProfileProps {
 }
 
 const Settings = () => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, fetchUser } = useAuthStore();
+
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
@@ -53,17 +54,18 @@ const Settings = () => {
 
   const editProfile = useMutation({
     mutationFn: async (model: EditProfileProps) => {
-      console.log(model);
-
       const formData = new FormData();
+      formData.append(
+        "ProfileImageFile",
+        model.ProfileImageFile ? model.ProfileImageFile : ""
+      );
       formData.append("FullName", model.FullName);
       formData.append("UserName", model.UserName);
-      formData.append("Bio", model.Bio);
-      formData.append("ProfileImageFile", model.ProfileImageFile);
+      formData.append("Bio", model.Bio ? model.Bio : "");
       formData.append("Gender", model.Gender);
 
       axios
-        .put(`/api/user/update`, model)
+        .put(`/api/user/update`, formData)
         .then((res) => {
           navigate("/");
         })
@@ -74,8 +76,8 @@ const Settings = () => {
   });
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    fetchUser(localStorage.getItem("token") || "null");
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -110,6 +112,29 @@ const Settings = () => {
             <div className="col bg-gray rounded p-2">
               <img
                 src={selectedPictureSrc?.toString()}
+                className="mx-auto object-fit-cover rounded-circle"
+                alt="..."
+                style={{ width: 75, height: 75 }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary ms-2 py-1"
+                onClick={handleSelectFileButton}
+              >
+                Change photo
+              </button>
+              <input
+                id="file-input"
+                type="file"
+                hidden
+                accept="image/*"
+                onInput={handleFileInput}
+              />
+            </div>
+          ) : user?.profileImageUrl ? (
+            <div className="col bg-gray rounded p-2">
+              <img
+                src={`data:image/png;base64,${user.profileImageUrl}`}
                 className="mx-auto object-fit-cover rounded-circle"
                 alt="..."
                 style={{ width: 75, height: 75 }}

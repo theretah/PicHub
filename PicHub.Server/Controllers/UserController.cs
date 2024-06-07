@@ -25,14 +25,21 @@ namespace PicHub.Server.Controllers
         public async Task<IActionResult> Update(EditProfileViewModel model)
         {
             var user = await userManager.GetUserAsync(User);
-            user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile);
+            if (model.ProfileImageFile != null)
+            { user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile); }
             user.FullName = model.FullName;
             user.UserName = model.UserName;
             user.Gender = model.Gender;
+            user.Bio = model.Bio;
             try
             {
-                await userManager.UpdateAsync(user);
-                return Ok();
+                var result = await userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                { return Ok(); }
+                else
+                {
+                    return BadRequest(result.Errors);
+                }
             }
             catch (Exception)
             {

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
-import { User } from "../../context/AuthContext";
+
 import axios from "axios";
+import { User } from "../../store";
 
 const HomeSideBar = () => {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>();
   useEffect(() => {
     axios.get(`/api/account/getall`).then((res) => setSuggestedUsers(res.data));
   }, []);
-  let i = 0;
+
   return (
     <ul className="p-0" style={{ width: 280 }}>
       <div className="row">

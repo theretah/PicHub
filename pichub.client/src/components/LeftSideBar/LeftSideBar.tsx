@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import SearchButton from "../LeftSideBarButtons/SearchButton";
 import LeftSideBarButton from "./LeftSideBarButton";
-import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store";
 
@@ -12,7 +11,7 @@ interface Props {
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const xl = 1200;
-  const { logout, user } = useAuthStore();
+  const { logout, user, isAuthenticated, fetchUser } = useAuthStore();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef(searchOpen);
@@ -25,6 +24,10 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       !settingsOpen &&
       currentPage != "Messages"
   );
+
+  useEffect(() => {
+    if (!isAuthenticated) fetchUser(localStorage.getItem("token") || "null");
+  }, [isAuthenticated]);
 
   function logoutUser() {
     logout();

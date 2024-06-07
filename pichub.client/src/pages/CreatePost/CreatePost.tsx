@@ -7,8 +7,6 @@ import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
-import { User } from "../../context/AuthContext";
-import { useAuth } from "../../context/useAuth";
 import useAuthStore from "../../store";
 
 interface CreatePostProps {
@@ -17,7 +15,7 @@ interface CreatePostProps {
   ImageFile: File;
 }
 const CreatePost = () => {
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, fetchUser } = useAuthStore();
   const navigate = useNavigate();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -27,6 +25,10 @@ const CreatePost = () => {
   >();
 
   const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
+
+  useEffect(() => {
+    if (!isAuthenticated) fetchUser(localStorage.getItem("token") || "null");
+  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {

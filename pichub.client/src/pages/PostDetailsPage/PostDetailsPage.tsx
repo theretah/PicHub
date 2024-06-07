@@ -16,14 +16,15 @@ import "./PostDetailsPage.css";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import { useAuth } from "../../context/useAuth";
-import useAuthStore from "../../store";
+import useAuthStore, { User } from "../../store";
 
 const PostDetailsPage = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, fetchUser, user } = useAuthStore();
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const [pageUser, setPageUser] = useState<User>();
+
   const [post, setPost] = useState<Post>();
   const [modal, setModal] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -32,7 +33,14 @@ const PostDetailsPage = () => {
   const [likes, setLikes] = useState(538);
 
   useEffect(() => {
+    fetchUser();
+  }, [user]);
+
+  useEffect(() => {
+    console.log(localStorage.getItem("user")?.split(","));
     getPost();
+    getUser();
+
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 992);
     };
@@ -44,7 +52,8 @@ const PostDetailsPage = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [post?.authorId]);
+
   function handleLikeButton() {
     if (isLiked) {
       setLikes(likes - 1);
@@ -53,12 +62,20 @@ const PostDetailsPage = () => {
     }
     setIsLiked(!isLiked);
   }
+
   const toggleOpen = () => {
     setModal(!modal);
   };
+
   const getPost = () => {
     axios.get(`/api/post/get?id=${id}`).then((res) => {
       setPost(res.data);
+    });
+  };
+
+  const getUser = () => {
+    axios.get(`/api/account/getbyid?id=${post?.authorId}`).then((res) => {
+      setPageUser(res.data);
     });
   };
 
@@ -95,13 +112,13 @@ const PostDetailsPage = () => {
                 <div className="card-body bg-dark text-light border-0">
                   <div className="d-flex justify-content-start p-2">
                     <ProfileImage
-                      imageUrl={
-                        "../../../public/images/profiles/default-profile.jpg"
-                      }
+                      imageUrl={`data:image/png;base64,${pageUser?.profileImageUrl}`}
                       widthHeight={35}
                     />
                     &nbsp;
-                    <span className="fw-bold align-self-center">username</span>
+                    <span className="fw-bold align-self-center">
+                      {pageUser?.userName}
+                    </span>
                     &nbsp; &nbsp;
                     <button className="p-0 btn text-light text-gray text-decoration-none align-self-center">
                       Following
@@ -171,22 +188,6 @@ const PostDetailsPage = () => {
                   </div>
                   <hr className="my-0 mx-0" />
                   <div className="overflow-y-auto p-2" style={{ height: 275 }}>
-                    {/* <div className="mt-2">
-                      <img
-                        src={"../../../public/images/profiles/square.png"}
-                        alt=""
-                        height={40} 
-                        width={40}
-                        className="rounded-circle object-fit-contain"
-                      />
-                      &nbsp;
-                      <span className="fw-bold align-self-center">
-                        username
-                      </span>
-                      &nbsp; &nbsp;
-                      <span className="text-gray">3h</span>
-                    </div>
-                    <br /> */}
                     <p>{post?.caption}</p>
                   </div>
                   <hr className="my-0" />
