@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CMSReactDotNet.Server.Data.IRepositories;
@@ -46,7 +47,13 @@ namespace PicHub.Server.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreatePost(CreatePostViewModel model)
         {
-            var user = await userManager.GetUserAsync(User);
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userName == null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await userManager.FindByNameAsync(userName);
             try
             {
                 unit.Posts.Add(new Post
@@ -64,6 +71,18 @@ namespace PicHub.Server.Controllers
             {
                 return BadRequest("Failed to add the post.");
             }
+        }
+
+        [HttpPost("save")]
+        public async Task<IActionResult> Save(int postId)
+        {
+            return BadRequest();
+        }
+
+        [HttpPost("like")]
+        public async Task<IActionResult> Like(int postId)
+        {
+            return BadRequest();
         }
     }
 }

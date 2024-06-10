@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuthStore, { LoginData } from "../../store";
+import useAuthStore, { LoginData } from "../../auth/store";
 
 interface RegisterData {
   email: string;

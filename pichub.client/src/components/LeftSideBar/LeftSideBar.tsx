@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import SearchButton from "../LeftSideBarButtons/SearchButton";
 import LeftSideBarButton from "./LeftSideBarButton";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../store";
+import useAuthStore from "../../auth/store";
 
 interface Props {
   currentPage: string;
@@ -10,8 +10,11 @@ interface Props {
 }
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
+  const { logout, user, fetchUser, isAuthenticated } = useAuthStore();
+  useEffect(() => {
+    fetchUser();
+  }, [isAuthenticated]);
   const xl = 1200;
-  const { logout, user, isAuthenticated, fetchUser } = useAuthStore();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const searchRef = useRef(searchOpen);
@@ -24,10 +27,6 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       !settingsOpen &&
       currentPage != "Messages"
   );
-
-  useEffect(() => {
-    if (!isAuthenticated) fetchUser(localStorage.getItem("token") || "null");
-  }, [isAuthenticated]);
 
   function logoutUser() {
     logout();
@@ -297,7 +296,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             activePage={currentPage}
             buttonText="Profile"
             showFullButton={showFullButton && currentPage != "Messages"}
-            to={user ? `/page/${user.id}` : "/login"}
+            to={user ? `/page/${user.userName}` : "/login"}
           >
             {currentPage === "Profile" ? (
               <svg

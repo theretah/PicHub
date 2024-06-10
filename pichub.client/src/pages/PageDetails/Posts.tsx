@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import { User } from "../../store";
+import { User } from "../../auth/store";
 
 interface Props {
   author: User;

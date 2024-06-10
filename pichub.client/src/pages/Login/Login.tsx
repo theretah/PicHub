@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { register } from "module";
-import useAuthStore, { LoginData } from "../../store";
+import useAuthStore, { LoginData } from "../../auth/store";
 
 const Login = () => {
   const { handleSubmit, register } = useForm<LoginData>();

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 
 import axios from "axios";
-import { User } from "../../store";
+import { User } from "../../auth/store";
 
 const HomeSideBar = () => {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>();

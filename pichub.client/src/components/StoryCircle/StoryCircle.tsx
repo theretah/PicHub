@@ -10,7 +10,7 @@ const StoryCircle = () => {
     >
       <div className="text-bg-dark">
         <img
-          src="../../../public/images/profiles/default-profile.jpg"
+          src="../../../images/profiles/default-profile.jpg"
           alt=""
           height={widthAndHeight}
           width={widthAndHeight}

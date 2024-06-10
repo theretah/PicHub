@@ -15,5 +15,7 @@ namespace PicHub.Server.Entities
         public string Bio { get; set; }
 
         public IEnumerable<Post> CreatedPosts { get; set; }
+        public IEnumerable<Save> SavedPosts { get; set; }
+        public IEnumerable<Like> LikedPosts { get; set; }
     }
 }

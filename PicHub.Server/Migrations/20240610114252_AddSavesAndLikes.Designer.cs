@@ -11,9 +11,9 @@ using PicHub.Server.Data;
 
 namespace PicHub.Server.Migrations
 {
-    [DbContext(typeof(PichubContext))]
-    [Migration("20240530103938_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(PicHubContext))]
+    [Migration("20240610114252_AddSavesAndLikes")]
+    partial class AddSavesAndLikes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -179,12 +179,10 @@ namespace PicHub.Server.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -221,12 +219,10 @@ namespace PicHub.Server.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -234,6 +230,21 @@ namespace PicHub.Server.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
@@ -268,13 +279,35 @@ namespace PicHub.Server.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
+                {
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("PostId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Saves");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("ProfileImageUrl")
                         .IsRequired()
@@ -337,6 +370,25 @@ namespace PicHub.Server.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.Post", "Post")
+                        .WithMany("UsersLiked")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "User")
+                        .WithMany("LikedPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
                 {
                     b.HasOne("PicHub.Server.Entities.AppUser", "Author")
@@ -348,9 +400,39 @@ namespace PicHub.Server.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.Post", "Post")
+                        .WithMany("UsersSaved")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "User")
+                        .WithMany("SavedPosts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
+                {
+                    b.Navigation("UsersLiked");
+
+                    b.Navigation("UsersSaved");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
                 {
                     b.Navigation("CreatedPosts");
+
+                    b.Navigation("LikedPosts");
+
+                    b.Navigation("SavedPosts");
                 });
 #pragma warning restore 612, 618
         }

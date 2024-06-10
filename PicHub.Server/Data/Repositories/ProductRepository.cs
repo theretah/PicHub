@@ -6,9 +6,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
 {
     public class PostRepository : Repository<Post>, IPostRepository
     {
-        private readonly PichubContext context;
+        private readonly PicHubContext context;
 
-        public PostRepository(PichubContext context) : base(context)
+        public PostRepository(PicHubContext context) : base(context)
         {
             this.context = context;
         }

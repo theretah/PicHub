@@ -13,14 +13,13 @@ import ShareButton from "../../components/PostControlButtons/ShareButton";
 import SaveButton from "../../components/PostControlButtons/SaveButton";
 import Layout from "../../components/Layout/Layout";
 import "./PostDetailsPage.css";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import useAuthStore, { User } from "../../store";
+import useAuthStore, { User } from "../../auth/store";
 
 const PostDetailsPage = () => {
-  const { isAuthenticated, fetchUser, user } = useAuthStore();
-  const navigate = useNavigate();
+  const { isAuthenticated } = useAuthStore();
 
   const { id } = useParams();
   const [pageUser, setPageUser] = useState<User>();
@@ -31,10 +30,6 @@ const PostDetailsPage = () => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likes, setLikes] = useState(538);
-
-  useEffect(() => {
-    fetchUser();
-  }, [user]);
 
   useEffect(() => {
     console.log(localStorage.getItem("user")?.split(","));
@@ -219,7 +214,7 @@ const PostDetailsPage = () => {
                     <div className="d-flex">
                       <ProfileImage
                         imageUrl={
-                          "../../../public/images/profiles/default-profile.jpg"
+                          "../../../images/profiles/default-profile.jpg"
                         }
                         widthHeight={35}
                       />

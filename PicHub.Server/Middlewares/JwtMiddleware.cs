@@ -38,7 +38,7 @@ namespace PicHub.Server.Middlewares
                 var audience = configuration["JwtConfig:ValidAudience"];
 
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(configuration["JwtConfig:ValidSecret"]);
+                var key = Encoding.ASCII.GetBytes(configuration["JwtConfig:Secret"]);
                 var validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

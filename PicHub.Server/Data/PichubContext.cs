@@ -9,7 +9,7 @@ using PicHub.Server.Entities;
 
 namespace PicHub.Server.Data
 {
-    public class PichubContext(DbContextOptions<PichubContext> options) : IdentityDbContext(options)
+    public class PicHubContext(DbContextOptions<PicHubContext> options) : IdentityDbContext(options)
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -19,5 +19,7 @@ namespace PicHub.Server.Data
         }
         public DbSet<AppUser> AppUsers { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<Save> Saves { get; set; }
+        public DbSet<Like> Likes { get; set; }
     }
 }

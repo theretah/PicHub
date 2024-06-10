@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pichub.Server.Utilities;
@@ -21,10 +23,17 @@ namespace PicHub.Server.Controllers
             this.userManager = userManager;
         }
 
+        [Authorize]
         [HttpPut("update")]
         public async Task<IActionResult> Update(EditProfileViewModel model)
         {
-            var user = await userManager.GetUserAsync(User);
+            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userName == null)
+            {
+                return Unauthorized();
+            }
+
+            var user = await userManager.FindByNameAsync(userName);
             if (model.ProfileImageFile != null)
             { user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile); }
             user.FullName = model.FullName;

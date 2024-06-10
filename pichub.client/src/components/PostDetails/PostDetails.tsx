@@ -18,7 +18,7 @@ import { Link, useParams } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import { User } from "../../store";
+import { User } from "../../auth/store";
 interface Props {
   authorId: string;
   postId: number;
@@ -86,7 +86,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
                 imageUrl={
                   author?.profileImageUrl
                     ? `data:image/png;base64,${author.profileImageUrl}`
-                    : "../../../public/images/profiles/default-profile.jpg"
+                    : "../../../images/profiles/default-profile.jpg"
                 }
                 widthHeight={isSmallScreen ? 25 : 40}
               />

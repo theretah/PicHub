@@ -1,6 +1,6 @@
 import React from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../store";
+import { User } from "../../auth/store";
 
 interface Props {
   user: User;
@@ -13,7 +13,7 @@ const HomeSuggestDetails = ({ user }: Props) => {
           imageUrl={
             user.profileImageUrl
               ? `data:image/png;base64,${user.profileImageUrl}`
-              : "../../../public/images/profiles/default-profile.jpg"
+              : "../../../images/profiles/default-profile.jpg"
           }
           widthHeight={45}
         />

@@ -13,7 +13,7 @@ import Reels from "./Reels";
 import Tagged from "./Tagged";
 import Saved from "./Saved";
 import axios from "axios";
-import useAuthStore, { User } from "../../store";
+import useAuthStore, { User } from "../../auth/store";
 
 const EditProfileButton = () => {
   return (
@@ -90,18 +90,12 @@ const PageDetails = () => {
   }, [windowWidth]);
 
   useEffect(() => {
-    console.log(isAuthenticated);
-    console.log(user);
-    if (!isAuthenticated) fetchUser();
-  }, [isAuthenticated]);
-
-  useEffect(() => {
     getPageUser();
   }, [id]);
 
   const getPageUser = async () => {
     await axios
-      .get(`/api/account/getbyid?id=${id}`)
+      .get(`/api/account/getbyusername?userName=${id}`)
       .then((res) => {
         setPageUser(res.data);
         setUserIsOwner(res.data.id == user?.id);
@@ -174,7 +168,7 @@ const PageDetails = () => {
                         imageUrl={
                           pageUser?.profileImageUrl
                             ? `data:image/png;base64,${pageUser.profileImageUrl}`
-                            : "../../../public/images/profiles/default-profile.jpg"
+                            : "../../../images/profiles/default-profile.jpg"
                         }
                         widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
                       />

@@ -1,4 +1,4 @@
-import useAuthStore from "../../store";
+import useAuthStore from "../../auth/store";
 import BottomBarButton from "./BottomBarButton";
 
 interface Props {
@@ -151,7 +151,7 @@ const BottomBar = ({ currentPage }: Props) => {
             <BottomBarButton
               activePage={currentPage}
               buttonText="Profile"
-              to={user ? `/page/${user.id}` : "/login"}
+              to={user ? `/page/${user.userName}` : "/login"}
             >
               {currentPage === "Profile" ? (
                 <svg

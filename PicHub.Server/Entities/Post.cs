@@ -15,5 +15,8 @@ namespace PicHub.Server.Entities
 
         public AppUser Author { get; set; }
         public string AuthorId { get; set; }
+
+        public IEnumerable<Save> UsersSaved { get; set; }
+        public IEnumerable<Like> UsersLiked { get; set; }
     }
 }

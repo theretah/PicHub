@@ -13,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -21,12 +22,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 string connectionString = builder.Configuration.GetConnectionString("SqlServerConnection");
-builder.Services.AddDbContext<PichubContext>(options =>
+builder.Services.AddDbContext<PicHubContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentityCore<AppUser>(options =>
 { options.SignIn.RequireConfirmedAccount = false; })
-.AddEntityFrameworkStores<PichubContext>()
+.AddEntityFrameworkStores<PicHubContext>()
 .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
@@ -35,7 +36,7 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
-    var secret = builder.Configuration["JwtConfig:ValidSecret"];
+    var secret = builder.Configuration["JwtConfig:Secret"];
     var issuer = builder.Configuration["JwtConfig:ValidIssuer"];
     var audience = builder.Configuration["JwtConfig:ValidAudience"];
     if (secret is null || issuer is null || audience is null)
@@ -74,7 +75,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseMiddleware<JwtMiddleware>();
+// app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
 
@@ -7,7 +7,7 @@ import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
-import useAuthStore from "../../store";
+import useAuthStore from "../../auth/store";
 
 interface CreatePostProps {
   Caption: string;
@@ -16,6 +16,10 @@ interface CreatePostProps {
 }
 const CreatePost = () => {
   const { isAuthenticated, user, fetchUser } = useAuthStore();
+  useEffect(() => {
+    fetchUser();
+  }, [isAuthenticated]);
+
   const navigate = useNavigate();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -25,10 +29,6 @@ const CreatePost = () => {
   >();
 
   const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
-
-  useEffect(() => {
-    if (!isAuthenticated) fetchUser(localStorage.getItem("token") || "null");
-  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -69,7 +69,9 @@ const CreatePost = () => {
       formData.append("TurnOffComments", post.TurnOffComments);
 
       axios
-        .post(`/api/post/create`, formData)
+        .post(`/api/post/create`, formData, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => {
           if (res.status == 200) navigate("/");
         })
@@ -190,7 +192,7 @@ const CreatePost = () => {
               <div className="overflow-y-auto mt-2" style={{ height: 265 }}>
                 <textarea
                   id="caption"
-                  {...register("Caption")}
+                  {...register("Caption", { required: false })}
                   className="form-control h-100 border-0 text-light bg-gray"
                   placeholder="Write a caption..."
                 ></textarea>

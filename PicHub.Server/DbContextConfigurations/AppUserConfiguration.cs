@@ -13,9 +13,9 @@ namespace PicHub.Server.DbContextConfigurations
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {
             builder.HasMany(u => u.CreatedPosts)
-            .WithOne(p => p.Author)
-            .HasForeignKey(p => p.AuthorId)
-            .IsRequired();
+                .WithOne(p => p.Author)
+                .HasForeignKey(p => p.AuthorId)
+                .IsRequired();
         }
     }
 }

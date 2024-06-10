@@ -5,7 +5,7 @@ import "./Settings.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
-import useAuthStore, { User } from "../../store";
+import useAuthStore, { User } from "../../auth/store";
 import { isatty } from "tty";
 
 interface EditProfileProps {
@@ -61,12 +61,16 @@ const Settings = () => {
       );
       formData.append("FullName", model.FullName);
       formData.append("UserName", model.UserName);
-      formData.append("Bio", model.Bio ? model.Bio : "");
+      formData.append("Bio", model.Bio);
       formData.append("Gender", model.Gender);
 
       axios
-        .put(`/api/user/update`, formData)
-        .then((res) => {
+        .put(`/api/user/update`, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+        .then(() => {
           navigate("/");
         })
         .catch((error) => {
@@ -74,10 +78,6 @@ const Settings = () => {
         });
     },
   });
-
-  useEffect(() => {
-    fetchUser(localStorage.getItem("token") || "null");
-  }, [isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {
