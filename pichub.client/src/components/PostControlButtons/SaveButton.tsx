@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PostControlButtonProps from "./PostControlButtonProps";
-
-const SaveButton = ({ size }: PostControlButtonProps) => {
-  const [isSaved, setIsSaved] = useState(false);
+interface Props {
+  size: number;
+  isSaved: boolean;
+  handleSaveButton: () => void;
+}
+const SaveButton = ({ size, handleSaveButton, isSaved }: Props) => {
   return (
-    <a className={`btn p-0 text-light`} onClick={() => setIsSaved(!isSaved)}>
+    <a className={`btn p-0 text-light`} onClick={handleSaveButton}>
       {isSaved ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"

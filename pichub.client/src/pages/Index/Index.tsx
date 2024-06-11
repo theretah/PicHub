@@ -89,7 +89,7 @@ const Index = () => {
               isSmallScreen ? "mx-auto" : ""
             }`}
           >
-            <HomeStoriesBar />
+            {/* <HomeStoriesBar /> */}
             <HomePostsColumn />
           </div>
           {!isLargeScreen && (

@@ -1,4 +1,4 @@
-import { User } from "../context/AuthContext";
+import { User } from "../auth/store";
 
 export interface Post {
   id: number;

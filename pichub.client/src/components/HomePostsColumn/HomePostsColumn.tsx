@@ -17,7 +17,7 @@ const HomePostsColumn = () => {
   }, []);
 
   return (
-    <div className="row mx-auto" style={{ maxWidth: 475 }}>
+    <div className="row mx-auto mt-3" style={{ maxWidth: 475 }}>
       {allPosts.map((post) => (
         <div className="p-0 mb-4">
           <PostDetails

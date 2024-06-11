@@ -47,20 +47,19 @@ namespace PicHub.Server.Controllers
         [HttpPost("create")]
         public async Task<IActionResult> CreatePost(CreatePostViewModel model)
         {
-            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userName == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
             {
                 return Unauthorized();
             }
 
-            var user = await userManager.FindByNameAsync(userName);
             try
             {
                 unit.Posts.Add(new Post
                 {
                     Caption = model.Caption,
                     CommentsAllowed = !model.TurnOffComments,
-                    AuthorId = user.Id,
+                    AuthorId = userId,
                     CreateDate = DateTime.Now,
                     PhotoContent = FileUtilities.FileToByteArray(model.ImageFile),
                 });
@@ -76,13 +75,82 @@ namespace PicHub.Server.Controllers
         [HttpPost("save")]
         public async Task<IActionResult> Save(int postId)
         {
-            return BadRequest();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                var save = unit.Saves.Find(s => s.UserId == userId && s.PostId == postId).FirstOrDefault();
+                if (save != null)
+                {
+                    unit.Saves.Remove(save);
+                }
+                else
+                {
+                    unit.Saves.Add(new Save()
+                    {
+                        PostId = postId,
+                        UserId = userId
+                    });
+                }
+                unit.Complete();
+                return Ok();
+            }
+
+            return BadRequest("Could not save this post.");
+        }
+
+        [HttpGet("issaved")]
+        public async Task<IActionResult> IsSaved(int postId)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isSaved = unit.Saves.Find(l => l.PostId == postId && l.UserId == userId).Any();
+                return Ok(isSaved);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Could not get data.");
+            }
+        }
+
+        [HttpGet("isliked")]
+        public async Task<IActionResult> IsLiked(int postId)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isLiked = unit.Likes.Find(l => l.PostId == postId && l.UserId == userId).Any();
+                return Ok(isLiked);
+            }
+            catch (Exception)
+            {
+                throw new Exception("Could not get data.");
+            }
         }
 
         [HttpPost("like")]
         public async Task<IActionResult> Like(int postId)
         {
-            return BadRequest();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                var existingLike = unit.Likes.Find(l => l.UserId == userId && l.PostId == postId).FirstOrDefault();
+                if (existingLike != null)
+                {
+                    unit.Likes.Remove(existingLike);
+                }
+                else
+                {
+                    unit.Likes.Add(new Like
+                    {
+                        UserId = userId,
+                        PostId = postId,
+                    });
+                }
+                unit.Complete();
+                return Ok();
+            }
+            return BadRequest("Could not like this post.");
         }
     }
 }

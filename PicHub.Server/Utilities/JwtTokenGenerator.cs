@@ -25,10 +25,10 @@ namespace PicHub.Server.Utilities
             }
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, userName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                // new Claim(JwtRegisteredClaimNames.Sub, userName),
+                // new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                // new Claim(ClaimTypes.Name, userName),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Name, userName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

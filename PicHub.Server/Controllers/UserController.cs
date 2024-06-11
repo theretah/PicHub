@@ -27,13 +27,13 @@ namespace PicHub.Server.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> Update(EditProfileViewModel model)
         {
-            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userName == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
             {
                 return Unauthorized();
             }
 
-            var user = await userManager.FindByNameAsync(userName);
+            var user = await userManager.FindByIdAsync(userId);
             if (model.ProfileImageFile != null)
             { user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile); }
             user.FullName = model.FullName;

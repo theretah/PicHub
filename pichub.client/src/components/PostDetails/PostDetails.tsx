@@ -1,36 +1,35 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ShareButton from "../PostControlButtons/ShareButton";
 import ChatButton from "../PostControlButtons/ChatButton";
 import LikeButton from "../PostControlButtons/LikeButton";
-import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 import SaveButton from "../PostControlButtons/SaveButton";
 import {
-  MDBBtn,
   MDBModal,
   MDBModalDialog,
   MDBModalContent,
-  MDBModalHeader,
-  MDBModalTitle,
   MDBModalBody,
-  MDBModalFooter,
 } from "mdb-react-ui-kit";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import { User } from "../../auth/store";
+import useAuthStore, { User } from "../../auth/store";
+
 interface Props {
   authorId: string;
   postId: number;
 }
+
 const PostDetails = ({ authorId, postId }: Props) => {
+  const { user } = useAuthStore();
   const [post, setPost] = useState<Post>();
   const [author, setAuthor] = useState<User>();
 
   const [modal, setModal] = useState(false);
 
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likes, setLikes] = useState(536);
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
 
@@ -47,33 +46,68 @@ const PostDetails = ({ authorId, postId }: Props) => {
   };
 
   useEffect(() => {
-    getPostAuthor();
     getPost();
-
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 768);
-    };
-
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+    getPostAuthor();
+    getIsLiked();
+    getIsSaved();
+  }, [postId]);
 
   const toggleOpen = () => {
     setModal(!modal);
   };
 
+  function getIsLiked() {
+    axios
+      .get(`/api/post/isliked?postId=${postId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setIsLiked(res.data);
+        console.log(res.data);
+      });
+  }
+
+  function getIsSaved() {
+    axios
+      .get(`/api/post/issaved?postId=${postId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setIsSaved(res.data);
+      });
+  }
+
   function handleLikeButton() {
+    axios
+      .post(
+        `/api/post/like?postId=${postId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then(() => {
+        setIsLiked(!isLiked);
+      });
     if (isLiked) {
       setLikes(likes - 1);
     } else {
       setLikes(likes + 1);
     }
-    setIsLiked(!isLiked);
+  }
+
+  function handleSaveButton() {
+    axios
+      .post(
+        `/api/post/save?postId=${postId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then(() => {
+        setIsSaved(!isSaved);
+      });
   }
 
   return (
@@ -81,28 +115,40 @@ const PostDetails = ({ authorId, postId }: Props) => {
       <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
-            <Link to={`/page/${authorId}`}>
+            <Link to={`/page/${author?.userName}`}>
               <ProfileImage
                 imageUrl={
                   author?.profileImageUrl
                     ? `data:image/png;base64,${author.profileImageUrl}`
                     : "../../../images/profiles/default-profile.jpg"
                 }
-                widthHeight={isSmallScreen ? 25 : 40}
+                widthHeight={40}
               />
             </Link>
 
             <div className="card-body p-0 align-self-center">
               <Link
                 className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
-                to={`/page/${authorId}`}
+                to={`/page/${author?.userName}`}
               >
                 {author?.userName}
               </Link>
-              &nbsp; &nbsp;
-              <button className="p-0 btn text-decoration-none align-self-center">
-                <span className="text-gray">Following</span>
-              </button>
+              {author?.id != user?.id &&
+                (isFollowing ? (
+                  <>
+                    &nbsp; &nbsp;
+                    <button className="p-0 btn text-decoration-none align-self-center">
+                      <span className="text-gray">Following</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    &nbsp; &nbsp;
+                    <button className="p-0 btn text-primary fw-bold align-self-center">
+                      Follow
+                    </button>
+                  </>
+                ))}
             </div>
             <button className="btn text-light d-flex" onClick={toggleOpen}>
               <svg
@@ -181,7 +227,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
               <LikeButton
                 size={22}
                 isLiked={isLiked}
-                handleLikeBtn={handleLikeButton}
+                handleLikeButton={handleLikeButton}
               />
             </div>
             <div className="me-2">
@@ -192,7 +238,11 @@ const PostDetails = ({ authorId, postId }: Props) => {
             </div>
           </div>
           <div className="col d-flex justify-content-end">
-            <SaveButton size={22} />
+            <SaveButton
+              size={22}
+              handleSaveButton={handleSaveButton}
+              isSaved={isSaved}
+            />
           </div>
         </div>
 

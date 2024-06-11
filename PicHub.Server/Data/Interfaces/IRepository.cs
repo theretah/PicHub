@@ -4,8 +4,8 @@ namespace CMSReactDotNet.Server.Data.IRepositories
 {
     public interface IRepository<T> where T : class
     {
-        T Get(int id);
         bool Exists(int id);
+        T Get(int id);
         IEnumerable<T> GetAll();
         IEnumerable<T> Find(Expression<Func<T, bool>> predicate);
 

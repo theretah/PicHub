@@ -11,7 +11,7 @@ const HomeStoriesBar = () => {
       <div className="row">
         <ul
           id="storiesBar"
-          className="pt-2 pb-1 overflow-x-scroll mx-auto px-0"
+          className="pt-2 overflow-x-scroll mx-auto px-0"
           style={{
             whiteSpace: "nowrap",
             msOverflowStyle: "none",

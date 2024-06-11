@@ -32,13 +32,13 @@ namespace PicHub.Server.Controllers
         [HttpGet("getloggedinuser")]
         public async Task<IActionResult> GetLoggedInUser()
         {
-            var userName = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userName == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
             {
                 return Unauthorized("User is not authenticated. From GetLoggedInUser().");
             }
 
-            var user = await userManager.FindByNameAsync(userName);
+            var user = await userManager.FindByIdAsync(userId);
             if (user == null)
             {
                 return NotFound();

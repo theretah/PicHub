@@ -29,13 +29,17 @@ const PostDetailsPage = () => {
   const [commentText, setCommentText] = useState("");
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const [likes, setLikes] = useState(538);
 
   useEffect(() => {
-    console.log(localStorage.getItem("user")?.split(","));
     getPost();
     getUser();
+    getIsLiked();
+    getIsSaved();
+  }, [post?.id]);
 
+  useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 992);
     };
@@ -47,15 +51,60 @@ const PostDetailsPage = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [post?.authorId]);
+  }, []);
+
+  function getIsLiked() {
+    axios
+      .get(`/api/post/isliked?postId=${post?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setIsLiked(res.data);
+        console.log(res.data);
+      });
+  }
+
+  function getIsSaved() {
+    axios
+      .get(`/api/post/issaved?postId=${post?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setIsSaved(res.data);
+      });
+  }
 
   function handleLikeButton() {
+    axios
+      .post(
+        `/api/post/like?postId=${post?.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then(() => {
+        setIsLiked(!isLiked);
+      });
     if (isLiked) {
       setLikes(likes - 1);
     } else {
       setLikes(likes + 1);
     }
-    setIsLiked(!isLiked);
+  }
+
+  function handleSaveButton() {
+    axios
+      .post(
+        `/api/post/save?postId=${post?.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then((res) => {
+        setIsSaved(!isSaved);
+      });
   }
 
   const toggleOpen = () => {
@@ -193,7 +242,7 @@ const PostDetailsPage = () => {
                           <LikeButton
                             size={22}
                             isLiked={isLiked}
-                            handleLikeBtn={handleLikeButton}
+                            handleLikeButton={handleLikeButton}
                           />
                         </div>
                         <div className="me-2">
@@ -204,7 +253,11 @@ const PostDetailsPage = () => {
                         </div>
                       </div>
                       <div className="col d-flex justify-content-end">
-                        <SaveButton size={22} />
+                        <SaveButton
+                          size={22}
+                          handleSaveButton={handleSaveButton}
+                          isSaved={isSaved}
+                        />
                       </div>
                     </div>
                     <button className="btn fw-bold p-0 mb-0 mt-3 text-light">

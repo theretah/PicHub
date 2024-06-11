@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-
 interface Props {
   size: number;
   isLiked: boolean;
-  handleLikeBtn: () => void;
+  handleLikeButton: () => void;
 }
-const LikeButton = ({ isLiked, handleLikeBtn, size }: Props) => {
+
+const LikeButton = ({ isLiked, handleLikeButton, size }: Props) => {
   return (
-    <a onClick={handleLikeBtn} className={`btn text-light p-0`}>
+    <a onClick={handleLikeButton} className={`btn text-light p-0`}>
       {isLiked ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"

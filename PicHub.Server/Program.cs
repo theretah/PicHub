@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
@@ -7,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.Data;
 using PicHub.Server.Entities;
-using PicHub.Server.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -26,7 +27,10 @@ builder.Services.AddDbContext<PicHubContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddIdentityCore<AppUser>(options =>
-{ options.SignIn.RequireConfirmedAccount = false; })
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
+})
 .AddEntityFrameworkStores<PicHubContext>()
 .AddDefaultTokenProviders();
 
@@ -74,8 +78,6 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
-// app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
