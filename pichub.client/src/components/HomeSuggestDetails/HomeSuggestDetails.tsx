@@ -13,7 +13,7 @@ const HomeSuggestDetails = ({ user }: Props) => {
           imageUrl={
             user.profileImageUrl
               ? `data:image/png;base64,${user.profileImageUrl}`
-              : "../../../images/profiles/default-profile.jpg"
+              : "/images/profiles/default-profile.jpg"
           }
           widthHeight={45}
         />

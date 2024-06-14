@@ -1,31 +1,32 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { Navigate, useNavigate } from "react-router-dom";
 import "./Settings.css";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
-import useAuthStore, { User } from "../../auth/store";
-import { isatty } from "tty";
+import useAuthStore from "../../auth/store";
 
 interface EditProfileProps {
   FullName: string;
   UserName: string;
   Bio: string;
-  ProfileImageFile: File;
+  ProfileImageFile: File | string | null;
   Gender: string;
 }
 
 const Settings = () => {
-  const { isAuthenticated, user, fetchUser } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
 
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
   const [selectedPictureSrc, setSelectedPictureSrc] = useState<
     string | ArrayBuffer | null
   >();
+  const [currentPictureSrc, setCurrentPictureSrc] = useState<string | null>(
+    user?.profileImageUrl || null
+  );
 
   const { register, handleSubmit, setValue } = useForm<EditProfileProps>();
 
@@ -33,11 +34,17 @@ const Settings = () => {
     document.getElementById("file-input")?.click();
   };
 
+  const handleDeleteFileButton = () => {
+    setSelectedPictureSrc(null);
+    setCurrentPictureSrc("");
+
+    setValue("ProfileImageFile", "");
+  };
+
   function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files ? event.target.files[0] : null;
-    setSelectedPicture(file);
+    setValue("ProfileImageFile", file);
     if (file) {
-      setValue("ProfileImageFile", file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setSelectedPictureSrc(reader.result);
@@ -55,6 +62,7 @@ const Settings = () => {
   const editProfile = useMutation({
     mutationFn: async (model: EditProfileProps) => {
       const formData = new FormData();
+
       formData.append(
         "ProfileImageFile",
         model.ProfileImageFile ? model.ProfileImageFile : ""
@@ -63,7 +71,6 @@ const Settings = () => {
       formData.append("UserName", model.UserName);
       formData.append("Bio", model.Bio);
       formData.append("Gender", model.Gender);
-
       axios
         .put(`/api/user/update`, formData, {
           headers: {
@@ -71,6 +78,7 @@ const Settings = () => {
           },
         })
         .then(() => {
+          console.log(model);
           navigate("/");
         })
         .catch((error) => {
@@ -105,10 +113,10 @@ const Settings = () => {
 
         <div className="mb-3 mt-3">
           <label htmlFor="fullNameInput" className="form-label h6">
-            Profile picture
+            Profile photo
           </label>
 
-          {selectedPicture ? (
+          {selectedPictureSrc ? (
             <div className="col bg-gray rounded p-2">
               <img
                 src={selectedPictureSrc?.toString()}
@@ -123,6 +131,13 @@ const Settings = () => {
               >
                 Change photo
               </button>
+              <button
+                type="button"
+                className="btn text-danger fw-bold ms-2 py-1"
+                onClick={handleDeleteFileButton}
+              >
+                Delete photo
+              </button>
               <input
                 id="file-input"
                 type="file"
@@ -131,10 +146,10 @@ const Settings = () => {
                 onInput={handleFileInput}
               />
             </div>
-          ) : user?.profileImageUrl ? (
+          ) : currentPictureSrc ? (
             <div className="col bg-gray rounded p-2">
               <img
-                src={`data:image/png;base64,${user.profileImageUrl}`}
+                src={`data:image/png;base64,${currentPictureSrc}`}
                 className="mx-auto object-fit-cover rounded-circle"
                 alt="..."
                 style={{ width: 75, height: 75 }}
@@ -145,6 +160,13 @@ const Settings = () => {
                 onClick={handleSelectFileButton}
               >
                 Change photo
+              </button>
+              <button
+                type="button"
+                className="btn text-danger fw-bold ms-2 py-1"
+                onClick={handleDeleteFileButton}
+              >
+                Delete photo
               </button>
               <input
                 id="file-input"
@@ -157,7 +179,7 @@ const Settings = () => {
           ) : (
             <div className="col bg-gray rounded p-2">
               <img
-                src="\images\profiles\default-profile.jpg"
+                src="/images/profiles/default-profile.jpg"
                 className="mx-auto object-fit-cover rounded-circle"
                 alt="..."
                 style={{ width: 75, height: 75 }}
@@ -231,9 +253,7 @@ const Settings = () => {
             {...register("Gender")}
             defaultValue={user?.gender}
           >
-            <option selected value={0}>
-              Prefer not to say
-            </option>
+            <option value={0}>Prefer not to say</option>
             <option value={1}>Male</option>
             <option value={2}>Female</option>
           </select>

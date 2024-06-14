@@ -27,13 +27,13 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getall")]
-        public async Task<IEnumerable<Post>> GetAllPosts()
+        public async Task<IEnumerable<Post>> GetAll()
         {
             return unit.Posts.GetAll().OrderByDescending(p => p.CreateDate);
         }
 
         [HttpGet("getallbyauthor")]
-        public async Task<IEnumerable<Post>> GetAllPostsByAuthor(string authorId)
+        public async Task<IEnumerable<Post>> GetAllByAuthor(string authorId)
         {
             return unit.Posts.Find(p => p.AuthorId == authorId);
         }
@@ -45,10 +45,10 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> CreatePost(CreatePostViewModel model)
+        public async Task<IActionResult> Create(CreatePostViewModel model)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
             {
                 return Unauthorized();
             }
@@ -59,7 +59,7 @@ namespace PicHub.Server.Controllers
                 {
                     Caption = model.Caption,
                     CommentsAllowed = !model.TurnOffComments,
-                    AuthorId = userId,
+                    AuthorId = loggedInUserId,
                     CreateDate = DateTime.Now,
                     PhotoContent = FileUtilities.FileToByteArray(model.ImageFile),
                 });
@@ -75,10 +75,10 @@ namespace PicHub.Server.Controllers
         [HttpPost("save")]
         public async Task<IActionResult> Save(int postId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId != null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId != null)
             {
-                var save = unit.Saves.Find(s => s.UserId == userId && s.PostId == postId).FirstOrDefault();
+                var save = unit.Saves.Find(s => s.UserId == loggedInUserId && s.PostId == postId).FirstOrDefault();
                 if (save != null)
                 {
                     unit.Saves.Remove(save);
@@ -88,7 +88,7 @@ namespace PicHub.Server.Controllers
                     unit.Saves.Add(new Save()
                     {
                         PostId = postId,
-                        UserId = userId
+                        UserId = loggedInUserId
                     });
                 }
                 unit.Complete();
@@ -103,8 +103,8 @@ namespace PicHub.Server.Controllers
         {
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isSaved = unit.Saves.Find(l => l.PostId == postId && l.UserId == userId).Any();
+                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isSaved = unit.Saves.Find(l => l.PostId == postId && l.UserId == loggedInUserId).Any();
                 return Ok(isSaved);
             }
             catch (Exception)
@@ -118,8 +118,8 @@ namespace PicHub.Server.Controllers
         {
             try
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isLiked = unit.Likes.Find(l => l.PostId == postId && l.UserId == userId).Any();
+                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var isLiked = unit.Likes.Find(l => l.PostId == postId && l.UserId == loggedInUserId).Any();
                 return Ok(isLiked);
             }
             catch (Exception)
@@ -131,10 +131,10 @@ namespace PicHub.Server.Controllers
         [HttpPost("like")]
         public async Task<IActionResult> Like(int postId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId != null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId != null)
             {
-                var existingLike = unit.Likes.Find(l => l.UserId == userId && l.PostId == postId).FirstOrDefault();
+                var existingLike = unit.Likes.Find(l => l.UserId == loggedInUserId && l.PostId == postId).FirstOrDefault();
                 if (existingLike != null)
                 {
                     unit.Likes.Remove(existingLike);
@@ -143,14 +143,32 @@ namespace PicHub.Server.Controllers
                 {
                     unit.Likes.Add(new Like
                     {
-                        UserId = userId,
+                        UserId = loggedInUserId,
                         PostId = postId,
                     });
                 }
                 unit.Complete();
-                return Ok();
+                return Created();
             }
             return BadRequest("Could not like this post.");
+        }
+
+        [HttpGet("getsavedposts")]
+        public async IAsyncEnumerable<Post> GetSaveds(string userId)
+        {
+            foreach (var save in await unit.Saves.GetSavesByUserId(userId))
+            {
+                yield return unit.Posts.Find(p => p.Id == save.PostId).Single();
+            }
+        }
+
+        [HttpGet("getlikedposts")]
+        public async IAsyncEnumerable<Post> GetLikeds(string userId)
+        {
+            foreach (var like in await unit.Likes.GetLikesByUserId(userId))
+            {
+                yield return unit.Posts.Find(p => p.Id == like.PostId).Single();
+            }
         }
     }
 }

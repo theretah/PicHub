@@ -63,7 +63,6 @@ const PostDetails = ({ authorId, postId }: Props) => {
       })
       .then((res) => {
         setIsLiked(res.data);
-        console.log(res.data);
       });
   }
 

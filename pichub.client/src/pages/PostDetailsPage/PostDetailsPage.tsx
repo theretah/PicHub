@@ -35,8 +35,10 @@ const PostDetailsPage = () => {
   useEffect(() => {
     getPost();
     getUser();
-    getIsLiked();
-    getIsSaved();
+    if (post) {
+      getIsLiked();
+      getIsSaved();
+    }
   }, [post?.id]);
 
   useEffect(() => {
@@ -60,7 +62,6 @@ const PostDetailsPage = () => {
       })
       .then((res) => {
         setIsLiked(res.data);
-        console.log(res.data);
       });
   }
 
@@ -111,14 +112,14 @@ const PostDetailsPage = () => {
     setModal(!modal);
   };
 
-  const getPost = () => {
-    axios.get(`/api/post/get?id=${id}`).then((res) => {
+  const getPost = async () => {
+    await axios.get(`/api/post/get?id=${id}`).then((res) => {
       setPost(res.data);
     });
   };
 
-  const getUser = () => {
-    axios.get(`/api/account/getbyid?id=${post?.authorId}`).then((res) => {
+  const getUser = async () => {
+    await axios.get(`/api/account/getbyid?id=${post?.authorId}`).then((res) => {
       setPageUser(res.data);
     });
   };
@@ -156,7 +157,11 @@ const PostDetailsPage = () => {
                 <div className="card-body bg-dark text-light border-0">
                   <div className="d-flex justify-content-start p-2">
                     <ProfileImage
-                      imageUrl={`data:image/png;base64,${pageUser?.profileImageUrl}`}
+                      imageUrl={
+                        pageUser?.profileImageUrl
+                          ? `data:image/png;base64,${pageUser?.profileImageUrl}`
+                          : "/images/profiles/default-profile.jpg"
+                      }
                       widthHeight={35}
                     />
                     &nbsp;

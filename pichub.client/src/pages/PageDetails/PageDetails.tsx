@@ -424,7 +424,7 @@ const PageDetails = () => {
                 ) : activeTab == "tagged" ? (
                   <Tagged />
                 ) : (
-                  <Saved />
+                  pageUser && <Saved user={pageUser} />
                 )}
               </div>
             </div>

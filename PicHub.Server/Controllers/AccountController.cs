@@ -32,13 +32,13 @@ namespace PicHub.Server.Controllers
         [HttpGet("getloggedinuser")]
         public async Task<IActionResult> GetLoggedInUser()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
             {
                 return Unauthorized("User is not authenticated. From GetLoggedInUser().");
             }
 
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
             {
                 return NotFound();
@@ -75,8 +75,14 @@ namespace PicHub.Server.Controllers
             var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
-                return Ok(new { token });
+                var createdUser = await userManager.FindByNameAsync(model.UserName);
+                if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
+                {
+                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
+                    var response = new { UserName = createdUser.UserName, Password = model.Password };
+                    return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
+                }
+                return BadRequest("Unable to login as registered user.");
             }
             else
             {
@@ -124,15 +130,6 @@ namespace PicHub.Server.Controllers
         public async Task<AppUser> GetUserByUsername(string userName)
         {
             return await userManager.FindByNameAsync(userName);
-        }
-
-        [Authorize]
-        [HttpGet("getloggedinuserjson")]
-        public async Task<IActionResult> GetLoggedInUserJson()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var loggedInUser = await userManager.FindByIdAsync(userId);
-            return new JsonResult(loggedInUser);
         }
 
         [HttpGet("lastregistered")]
