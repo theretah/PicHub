@@ -34,7 +34,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
 
   const getPostAuthor = () => {
-    axios.get(`/api/account/getbyid?id=${authorId}`).then((res) => {
+    axios.get(`/api/account/getById?id=${authorId}`).then((res) => {
       setAuthor(res.data);
     });
   };
@@ -58,7 +58,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
 
   function getIsLiked() {
     axios
-      .get(`/api/post/isliked?postId=${postId}`, {
+      .get(`/api/post/isLiked?postId=${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -68,7 +68,7 @@ const PostDetails = ({ authorId, postId }: Props) => {
 
   function getIsSaved() {
     axios
-      .get(`/api/post/issaved?postId=${postId}`, {
+      .get(`/api/post/isSaved?postId=${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {

@@ -14,8 +14,12 @@ namespace PicHub.Server.Entities
         public int Gender { get; set; }
         public string Bio { get; set; }
 
+        public int FollowersCount { get; set; }
+        public int FollowingsCount { get; set; }
+
         public IEnumerable<Post> CreatedPosts { get; set; }
         public IEnumerable<Save> SavedPosts { get; set; }
         public IEnumerable<Like> LikedPosts { get; set; }
+        public IEnumerable<Follow> Follows { get; set; }
     }
 }

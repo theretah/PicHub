@@ -42,7 +42,7 @@ const Explore = () => {
   };
 
   const getAllPosts = () => {
-    axios.get(`/api/post/getall`).then((res) => {
+    axios.get(`/api/post/getAll`).then((res) => {
       setPosts(res.data);
     });
   };

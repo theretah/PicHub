@@ -57,7 +57,7 @@ const PostDetailsPage = () => {
 
   function getIsLiked() {
     axios
-      .get(`/api/post/isliked?postId=${post?.id}`, {
+      .get(`/api/post/isLiked?postId=${post?.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -67,7 +67,7 @@ const PostDetailsPage = () => {
 
   function getIsSaved() {
     axios
-      .get(`/api/post/issaved?postId=${post?.id}`, {
+      .get(`/api/post/isSaved?postId=${post?.id}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => {
@@ -119,7 +119,7 @@ const PostDetailsPage = () => {
   };
 
   const getUser = async () => {
-    await axios.get(`/api/account/getbyid?id=${post?.authorId}`).then((res) => {
+    await axios.get(`/api/account/getById?id=${post?.authorId}`).then((res) => {
       setPageUser(res.data);
     });
   };

@@ -7,7 +7,7 @@ const HomePostsColumn = () => {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
 
   const getAllPosts = () => {
-    axios.get(`/api/post/getall`).then((res) => {
+    axios.get(`/api/post/getAll`).then((res) => {
       setAllPosts(res.data);
     });
   };

@@ -3,12 +3,11 @@ import SearchRecord from "../SearchRecord/SearchRecord";
 
 interface Props {
   isOpen: boolean;
-  activePage: string;
 }
 
-const SearchPanel = ({ isOpen, activePage }: Props) => {
+const SearchPanel = ({ isOpen }: Props) => {
   const xl = 1200;
-  const translate = "translate(53px, -140px)";
+  const translate = "translate(53px, -184px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   let i = 0;
 

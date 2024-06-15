@@ -5,6 +5,7 @@
         IPostRepository Posts { get; }
         ISaveRepository Saves { get; }
         ILikeRepository Likes { get; }
+        IFollowRepository Follows { get; }
         int Complete();
     }
 }

@@ -1,4 +1,5 @@
 import useAuthStore from "../../auth/store";
+import ProfileImage from "../ProfileImage/ProfileImage";
 import BottomBarButton from "./BottomBarButton";
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
 }
 
 const BottomBar = ({ currentPage }: Props) => {
-  const { user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   return (
     <div
       className="container-fluid position-fixed bottom-0 bg-dark z-2 border-top border-gray"
@@ -153,32 +154,16 @@ const BottomBar = ({ currentPage }: Props) => {
               buttonText="Profile"
               to={user ? `/page/${user.userName}` : "/login"}
             >
-              {currentPage === "Profile" ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="26"
-                  height="26"
-                  fill="currentColor"
-                  className="bi bi-person-circle"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                  <path
-                    fill-rule="evenodd"
-                    d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                  />
-                </svg>
+              {isAuthenticated && user?.profileImageUrl ? (
+                <ProfileImage
+                  imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
+                  widthHeight={26}
+                />
               ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="26"
-                  height="26"
-                  fill="currentColor"
-                  className="bi bi-person-fill"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-                </svg>
+                <ProfileImage
+                  imageUrl={`/images/profiles/default-profile.jpg`}
+                  widthHeight={26}
+                />
               )}
             </BottomBarButton>
           </ul>

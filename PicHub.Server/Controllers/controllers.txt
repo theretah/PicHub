@@ -3,13 +3,14 @@ Account
     Login
     Logout
     Remove Account
-    Change Username
 
 User
+    Edit Profile
+    Follow
+    Unfollow
     GetFollowers
-    GetFollowing
+    GetFollowings
     
-
 Post
     Like
     Unlike

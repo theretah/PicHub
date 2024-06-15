@@ -3,6 +3,7 @@ import SearchButton from "../LeftSideBarButtons/SearchButton";
 import LeftSideBarButton from "./LeftSideBarButton";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 interface Props {
   currentPage: string;
@@ -71,7 +72,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
 
   return (
     <div
-      className="position-fixed border-gray border-end pt-3 bg-dark px-auto vh-100 m-0 z-3"
+      className="position-fixed border-gray border-end pt-5 bg-dark px-auto vh-100 m-0 z-3"
       style={
         showFullButton
           ? { width: leftBarWidth }
@@ -80,15 +81,14 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             }
       }
     >
-      <ul className="list-group" style={{ height: 700 }}>
-        <div className="list-group-item bg-dark border-0">
+      <ul className="list-group" style={{ height: 675 }}>
+        <div className="list-group-item bg-dark border-0 mb-4">
           <span
-            className={`text-light px-0 d-flex ${
+            className={`text-light px-0 d-flex h2 ${
               showFullButton && currentPage != "Messages"
                 ? "justify-content-start"
                 : "justify-content-center"
             }`}
-            style={{ fontSize: 36 }}
           >
             {showFullButton && currentPage != "Messages" ? "PicHub" : "P"}
           </span>
@@ -298,36 +298,16 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             showFullButton={showFullButton && currentPage != "Messages"}
             to={user ? `/page/${user.userName}` : "/login"}
           >
-            {currentPage === "Profile" ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                fill="currentColor"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <path
-                  fill-rule="evenodd"
-                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                />
-              </svg>
+            {isAuthenticated && user?.profileImageUrl ? (
+              <ProfileImage
+                imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
+                widthHeight={26}
+              />
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
-                fill="currentColor"
-                className="bi bi-person-circle"
-                viewBox="0 0 16 16"
-              >
-                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                <path
-                  fill-rule="evenodd"
-                  d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
-                />
-              </svg>
+              <ProfileImage
+                imageUrl={`/images/profiles/default-profile.jpg`}
+                widthHeight={26}
+              />
             )}
           </LeftSideBarButton>
         </div>

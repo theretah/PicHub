@@ -14,10 +14,44 @@ import Tagged from "./Tagged";
 import Saved from "./Saved";
 import axios from "axios";
 import useAuthStore, { User } from "../../auth/store";
-
+const MoreButton = () => {
+  return (
+    <button className="btn text-light py-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        fill="currentColor"
+        className="bi bi-three-dots p-0"
+        viewBox="0 0 16 16"
+      >
+        <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
+      </svg>
+    </button>
+  );
+};
+const SettingsButton = () => {
+  return (
+    <button className="btn text-light py-1">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        fill="currentColor"
+        className="bi bi-gear-wide"
+        viewBox="0 0 16 16"
+      >
+        <path d="M8.932.727c-.243-.97-1.62-.97-1.864 0l-.071.286a.96.96 0 0 1-1.622.434l-.205-.211c-.695-.719-1.888-.03-1.613.931l.08.284a.96.96 0 0 1-1.186 1.187l-.284-.081c-.96-.275-1.65.918-.931 1.613l.211.205a.96.96 0 0 1-.434 1.622l-.286.071c-.97.243-.97 1.62 0 1.864l.286.071a.96.96 0 0 1 .434 1.622l-.211.205c-.719.695-.03 1.888.931 1.613l.284-.08a.96.96 0 0 1 1.187 1.187l-.081.283c-.275.96.918 1.65 1.613.931l.205-.211a.96.96 0 0 1 1.622.434l.071.286c.243.97 1.62.97 1.864 0l.071-.286a.96.96 0 0 1 1.622-.434l.205.211c.695.719 1.888.03 1.613-.931l-.08-.284a.96.96 0 0 1 1.187-1.187l.283.081c.96.275 1.65-.918.931-1.613l-.211-.205a.96.96 0 0 1 .434-1.622l.286-.071c.97-.243.97-1.62 0-1.864l-.286-.071a.96.96 0 0 1-.434-1.622l.211-.205c.719-.695.03-1.888-.931-1.613l-.284.08a.96.96 0 0 1-1.187-1.186l.081-.284c.275-.96-.918-1.65-1.613-.931l-.205.211a.96.96 0 0 1-1.622-.434zM8 12.997a4.998 4.998 0 1 1 0-9.995 4.998 4.998 0 0 1 0 9.996z" />
+      </svg>
+    </button>
+  );
+};
 const EditProfileButton = () => {
   return (
-    <Link className="btn btn-secondary me-1 py-1 ms-auto" to={"/settings"}>
+    <Link
+      className="btn btn-secondary me-1 py-1 ms-auto"
+      to={"/settings/editprofile"}
+    >
       Edit Profile
     </Link>
   );
@@ -58,16 +92,19 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
 };
 
 const PageDetails = () => {
-  const { id } = useParams();
+  const { userName } = useParams();
   const [pageUser, setPageUser] = useState<User>();
-  const { user, isAuthenticated, fetchUser } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   const [userIsOwner, setUserIsOwner] = useState(pageUser?.id == user?.id);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [postsCount, setPostsCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingsCount, setFollowingsCount] = useState(0);
 
   const md = 768;
   const sm = 576;
   const fontSize = 12;
-  const [isFollowing, setIsFollowing] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isMedium, setIsMedium] = useState(window.innerWidth < md);
   const [isExtraSmall, setIsExtraSmall] = useState(window.innerWidth < sm);
@@ -91,11 +128,17 @@ const PageDetails = () => {
 
   useEffect(() => {
     getPageUser();
-  }, [id]);
+    getPostsCount();
+    getFollowersCount();
+    getFollowingsCount();
+    if (pageUser?.id && !userIsOwner) {
+      getIsFollowing();
+    }
+  }, [userName, pageUser?.id]);
 
   const getPageUser = async () => {
     await axios
-      .get(`/api/account/getbyusername?userName=${id}`)
+      .get(`/api/account/getByUserName?userName=${userName}`)
       .then((res) => {
         setPageUser(res.data);
         setUserIsOwner(res.data.id == user?.id);
@@ -104,6 +147,58 @@ const PageDetails = () => {
         console.log(e);
       });
   };
+
+  async function getPostsCount() {
+    await axios
+      .get(`/api/user/getPostsCount?userId=${pageUser?.id}`)
+      .then((res) => {
+        setPostsCount(res.data);
+      });
+  }
+
+  async function followUser() {
+    await axios.post(
+      `/api/user/follow?followingId=${pageUser?.id}`,
+      {},
+      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+    );
+  }
+
+  async function unFollowUser() {
+    await axios.delete(`/api/user/unFollow?followingId=${pageUser?.id}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+  }
+
+  async function getIsFollowing() {
+    await axios
+      .get(`/api/user/getIsFollowing?followingId=${pageUser?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setIsFollowing(res.data);
+      });
+  }
+
+  async function getFollowersCount() {
+    await axios
+      .get(`/api/user/getFollowersCount?userId=${pageUser?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setFollowersCount(res.data);
+      });
+  }
+
+  async function getFollowingsCount() {
+    await axios
+      .get(`/api/user/getFollowingsCount?userId=${pageUser?.id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => {
+        setFollowingsCount(res.data);
+      });
+  }
 
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
@@ -183,7 +278,7 @@ const PageDetails = () => {
                         <div className="row">
                           <div className="row mt-2">
                             <div className="col d-flex align-items-center">
-                              <span className="h5 m-0 me-4">
+                              <span className="h5 m-0 me-4 ">
                                 {pageUser?.userName}
                               </span>
                               {userIsOwner ? (
@@ -235,30 +330,27 @@ const PageDetails = () => {
                         {windowWidth >= md && (
                           <div className="col-sm-8 col-md-8">
                             {userIsOwner ? (
-                              <EditProfileButton />
+                              <>
+                                <EditProfileButton />
+                                <SettingsButton />
+                              </>
                             ) : (
                               <>
                                 <FollowButton
-                                  follow={() => setIsFollowing(true)}
-                                  unFollow={() => setIsFollowing(false)}
+                                  follow={() => {
+                                    setIsFollowing(true);
+                                    followUser();
+                                  }}
+                                  unFollow={() => {
+                                    setIsFollowing(false);
+                                    unFollowUser();
+                                  }}
                                   isFollowing={isFollowing}
                                 />
                                 <MessageButton />
+                                <MoreButton />
                               </>
                             )}
-
-                            <button className="btn text-light py-1">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="22"
-                                height="22"
-                                fill="currentColor"
-                                className="bi bi-three-dots p-0"
-                                viewBox="0 0 16 16"
-                              >
-                                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                              </svg>
-                            </button>
                           </div>
                         )}
                       </div>
@@ -268,28 +360,33 @@ const PageDetails = () => {
                         }`}
                       >
                         <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">1,655</span> Posts
+                          <span className="fw-bold">{postsCount} </span> Posts
                         </p>
                         <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">32.6M</span> Followers
+                          <span className="fw-bold">{followersCount} </span>
+                          Followers
                         </p>
                         <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">8</span> Following
+                          <span className="fw-bold">{followingsCount} </span>
+                          Following
                         </p>
                       </div>
 
-                      <p className="fw-bold mb-0 mt-3">{pageUser?.fullName}</p>
+                      <p className="fw-bold mb-0 mt-3" style={{ fontSize: 15 }}>
+                        {pageUser?.fullName}
+                      </p>
 
-                      <p className="my-0 text-light text-gray">
+                      <p
+                        className="my-0 text-light text-gray"
+                        style={{ fontSize: 14 }}
+                      >
                         Personal account
                       </p>
-                      <p className="card-text my-0">
-                        This is a wider card with supporting text below as a
-                        natural lead-in to additional content. This content is a
-                        little bit longer.
+                      <p className="card-text mt-1" style={{ fontSize: 15 }}>
+                        {pageUser?.bio}
                       </p>
-                      <p className="card-text">
-                        <small className="text-gray">Followed by</small>
+                      <p className="card-text mt-3" style={{ fontSize: 13 }}>
+                        <span className="text-gray">Followed by</span>
                         <a
                           href="#"
                           className="text-decoration-none text-light fw-bold"
@@ -302,7 +399,10 @@ const PageDetails = () => {
                 </div>
               </div>
 
-              <ul className="nav nav-underline justify-content-center">
+              <ul
+                className="nav nav-underline d-flex justify-content-evenly mx-auto"
+                style={{ maxWidth: 600 }}
+              >
                 <li className="nav-item">
                   <button
                     className={`nav-link ${
@@ -313,7 +413,7 @@ const PageDetails = () => {
                     onClick={() => setActiveTab("posts")}
                     style={{ fontSize: fontSize }}
                   >
-                    <span>
+                    <span style={{ fontSize: 15 }}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="22"
@@ -341,7 +441,7 @@ const PageDetails = () => {
                     onClick={() => setActiveTab("reels")}
                     style={{ fontSize: fontSize }}
                   >
-                    <span>
+                    <span style={{ fontSize: 15 }}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="22"
@@ -366,7 +466,7 @@ const PageDetails = () => {
                     onClick={() => setActiveTab("tagged")}
                     style={{ fontSize: fontSize }}
                   >
-                    <span>
+                    <span style={{ fontSize: 15 }}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="22"
@@ -392,7 +492,7 @@ const PageDetails = () => {
                     onClick={() => setActiveTab("saved")}
                     style={{ fontSize: fontSize }}
                   >
-                    <span>
+                    <span style={{ fontSize: 15 }}>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="22"

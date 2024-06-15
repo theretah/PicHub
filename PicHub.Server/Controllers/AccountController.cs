@@ -29,7 +29,7 @@ namespace PicHub.Server.Controllers
         }
 
         [Authorize]
-        [HttpGet("getloggedinuser")]
+        [HttpGet("getLoggedInUser")]
         public async Task<IActionResult> GetLoggedInUser()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -103,36 +103,36 @@ namespace PicHub.Server.Controllers
             return BadRequest("Login failed. Invalid username or password.");
         }
 
-        [HttpGet("getall")]
+        [HttpGet("getAll")]
         public async Task<IEnumerable<AppUser>> GetAllUsers()
         {
             return await userManager.Users.ToListAsync();
         }
-        [HttpGet("getuserscount")]
+        [HttpGet("getUsersCount")]
         public async Task<int> GetUsersCountAsync()
         {
             return await userManager.Users.CountAsync();
         }
 
-        [HttpGet("getbyemail")]
+        [HttpGet("getByEmail")]
         public async Task<AppUser> GetUserByEmail(string email)
         {
             return await userManager.FindByEmailAsync(email);
         }
 
-        [HttpGet("getbyid")]
+        [HttpGet("getById")]
         public async Task<AppUser> GetUserById(string id)
         {
             return await userManager.FindByIdAsync(id);
         }
 
-        [HttpGet("getbyusername")]
+        [HttpGet("getByUserName")]
         public async Task<AppUser> GetUserByUsername(string userName)
         {
             return await userManager.FindByNameAsync(userName);
         }
 
-        [HttpGet("lastregistered")]
+        [HttpGet("lastRegistered")]
         public async Task<IEnumerable<AppUser>> GetLastRegisteredUsers()
         {
             return await userManager.Users.OrderByDescending(u => u.RegistrationDate).ToListAsync();

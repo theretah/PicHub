@@ -7,7 +7,7 @@ import { User } from "../../auth/store";
 const HomeSideBar = () => {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>();
   useEffect(() => {
-    axios.get(`/api/account/getall`).then((res) => setSuggestedUsers(res.data));
+    axios.get(`/api/account/getAll`).then((res) => setSuggestedUsers(res.data));
   }, []);
 
   return (

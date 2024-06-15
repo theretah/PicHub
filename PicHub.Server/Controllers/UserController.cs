@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using CMSReactDotNet.Server.Data.IRepositories;
+using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pichub.Server.Utilities;
@@ -17,10 +20,12 @@ namespace PicHub.Server.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
+        private readonly IUnitOfWork unit;
 
-        public UserController(UserManager<AppUser> userManager)
+        public UserController(UserManager<AppUser> userManager, IUnitOfWork unit)
         {
             this.userManager = userManager;
+            this.unit = unit;
         }
 
         [Authorize]
@@ -59,6 +64,76 @@ namespace PicHub.Server.Controllers
             catch (Exception)
             {
                 return BadRequest("Profile could not be updated.");
+            }
+        }
+
+        [HttpGet("getPostsCount")]
+        public async Task<IActionResult> GetPostsCount(string userId)
+        {
+            var posts = unit.Posts.Find(p => p.AuthorId == userId);
+            return Ok(posts.Count());
+        }
+
+        [HttpGet("getFollowersCount")]
+        public async Task<IActionResult> GetFollowersCount(string userId)
+        {
+            var followers = unit.Follows.Find(f => f.FollowingId == userId);
+            return Ok(followers.Count());
+        }
+
+        [HttpGet("getFollowingsCount")]
+        public async Task<IActionResult> GetFollowingsCount(string userId)
+        {
+            var followings = unit.Follows.Find(f => f.FollowerId == userId);
+            return Ok(followings.Count());
+        }
+        [HttpGet("getIsFollowing")]
+        public async Task<IActionResult> GetIsFollowing(string followingId)
+        {
+            var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Ok(unit.Follows.Find(f => f.FollowerId == followerId && f.FollowingId == followingId).Any());
+        }
+
+        [HttpPost("follow")]
+        public async Task<IActionResult> Follow(string followingId)
+        {
+            try
+            {
+                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                unit.Follows.Add(new Follow
+                {
+                    FollowerId = loggedInUserId,
+                    FollowingId = followingId
+                });
+                unit.Complete();
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                var followingUser = await userManager.FindByIdAsync(followingId);
+                return BadRequest($"Could not follow {followingUser.UserName}.");
+            }
+        }
+
+        [HttpDelete("unFollow")]
+        public async Task<IActionResult> UnFollow(string followingId)
+        {
+            try
+            {
+                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var follow = unit.Follows.Find(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId).Single();
+
+                unit.Follows.Remove(follow);
+                unit.Complete();
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                var followingUser = await userManager.FindByIdAsync(followingId);
+                return BadRequest($"Could not unfollow {followingUser.UserName}.");
             }
         }
     }

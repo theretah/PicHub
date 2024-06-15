@@ -17,7 +17,7 @@ const Saved = ({ user }: Props) => {
 
   function getSavedPosts() {
     axios
-      .get(`/api/post/getsavedposts?userId=${user?.id}`)
+      .get(`/api/post/getSavedPosts?userId=${user?.id}`)
       .then((res) => setSavedPosts(res.data));
   }
 

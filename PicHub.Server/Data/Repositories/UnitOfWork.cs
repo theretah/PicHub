@@ -15,6 +15,7 @@ namespace CMSReactDotNet.Server.Data.Repositories
             Posts = new PostRepository(context);
             Saves = new SaveRepository(context);
             Likes = new LikeRepository(context);
+            Follows = new FollowRepository(context);
         }
 
         public IPostRepository Posts { get; private set; }
@@ -22,6 +23,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public ISaveRepository Saves { get; private set; }
 
         public ILikeRepository Likes { get; private set; }
+
+        public IFollowRepository Follows { get; private set; }
 
         public int Complete()
         {

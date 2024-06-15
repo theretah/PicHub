@@ -26,13 +26,13 @@ namespace PicHub.Server.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet("getall")]
+        [HttpGet("getAll")]
         public async Task<IEnumerable<Post>> GetAll()
         {
             return unit.Posts.GetAll().OrderByDescending(p => p.CreateDate);
         }
 
-        [HttpGet("getallbyauthor")]
+        [HttpGet("getAllByAuthor")]
         public async Task<IEnumerable<Post>> GetAllByAuthor(string authorId)
         {
             return unit.Posts.Find(p => p.AuthorId == authorId);
@@ -98,7 +98,7 @@ namespace PicHub.Server.Controllers
             return BadRequest("Could not save this post.");
         }
 
-        [HttpGet("issaved")]
+        [HttpGet("isSaved")]
         public async Task<IActionResult> IsSaved(int postId)
         {
             try
@@ -113,7 +113,7 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpGet("isliked")]
+        [HttpGet("isLiked")]
         public async Task<IActionResult> IsLiked(int postId)
         {
             try
@@ -153,7 +153,7 @@ namespace PicHub.Server.Controllers
             return BadRequest("Could not like this post.");
         }
 
-        [HttpGet("getsavedposts")]
+        [HttpGet("getSavedPosts")]
         public async IAsyncEnumerable<Post> GetSaveds(string userId)
         {
             foreach (var save in await unit.Saves.GetSavesByUserId(userId))
@@ -162,7 +162,7 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpGet("getlikedposts")]
+        [HttpGet("getLikedPosts")]
         public async IAsyncEnumerable<Post> GetLikeds(string userId)
         {
             foreach (var like in await unit.Likes.GetLikesByUserId(userId))

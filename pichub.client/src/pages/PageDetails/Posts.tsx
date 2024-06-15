@@ -17,7 +17,7 @@ const Posts = ({ author }: Props) => {
 
   function getPosts() {
     axios
-      .get(`/api/post/getallbyauthor?authorId=${author?.id}`)
+      .get(`/api/post/getAllByAuthor?authorId=${author?.id}`)
       .then((res) => setPosts(res.data));
   }
 

@@ -12,6 +12,7 @@ const ProfileImage = ({ widthHeight, imageUrl }: Props) => {
       height={widthHeight}
       width={widthHeight}
       className="rounded-circle object-fit-contain"
+      style={{ aspectRatio: 1 }}
     />
   );
 };
