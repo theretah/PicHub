@@ -87,6 +87,7 @@ namespace PicHub.Server.Controllers
             var followings = unit.Follows.Find(f => f.FollowerId == userId);
             return Ok(followings.Count());
         }
+
         [HttpGet("getIsFollowing")]
         public async Task<IActionResult> GetIsFollowing(string followingId)
         {
