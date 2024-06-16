@@ -12,6 +12,7 @@ namespace PicHub.Server.Entities
         public string? Caption { get; set; }
         public bool CommentsAllowed { get; set; }
         public DateTime CreateDate { get; set; }
+        public int LikesCount { get; set; }
 
         public AppUser Author { get; set; }
         public string AuthorId { get; set; }

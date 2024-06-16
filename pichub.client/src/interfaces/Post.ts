@@ -8,4 +8,5 @@ export interface Post {
   authorId: string;
   author: User;
   photoContent: string;
+  likesCount: number;
 }

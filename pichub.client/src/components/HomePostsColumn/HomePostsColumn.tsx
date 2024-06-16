@@ -20,11 +20,7 @@ const HomePostsColumn = () => {
     <div className="row mx-auto mt-3" style={{ maxWidth: 475 }}>
       {allPosts.map((post) => (
         <div className="p-0 mb-4">
-          <PostDetails
-            key={post.id}
-            authorId={post.authorId}
-            postId={post.id}
-          />
+          <PostDetails key={post.id} postId={post.id} onlyVertical={true} />
         </div>
       ))}
     </div>

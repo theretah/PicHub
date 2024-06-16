@@ -10,6 +10,7 @@ import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage";
 import Reels from "./pages/Reels/Reels";
 import Register from "./pages/Register/Register";
 import Settings from "./components/Settings/SettingsLayout";
+import ExploreReel from "./pages/ExploreReel/ExploreReel";
 
 const AppRoutes = () => {
   const Routes = [
@@ -19,6 +20,7 @@ const AppRoutes = () => {
     { path: "/page/:userName", element: <PageDetails /> },
     { path: "/post/:id", element: <PostDetailsPage /> },
     { path: "/explore", element: <Explore /> },
+    { path: "/explore/reels", element: <ExploreReel /> },
     { path: "/messages", element: <Messages /> },
     { path: "/createPost", element: <CreatePost /> },
     { path: "/reels", element: <Reels /> },

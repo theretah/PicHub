@@ -70,7 +70,7 @@ const Explore = () => {
           <div className={`row p-1`}>
             {posts?.map((post) => (
               <div className="col-4 p-1">
-                <Link to={`/post/${post.id}`}>
+                <Link to={`/explore/reels`}>
                   <img
                     className="object-fit-cover w-100"
                     src={`data:image/png;base64,${post?.photoContent}`}

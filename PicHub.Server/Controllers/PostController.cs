@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CMSReactDotNet.Server.Data.IRepositories;
+using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Pichub.Server.Utilities;
@@ -134,10 +135,13 @@ namespace PicHub.Server.Controllers
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId != null)
             {
+                var post = unit.Posts.Get(postId);
                 var existingLike = unit.Likes.Find(l => l.UserId == loggedInUserId && l.PostId == postId).FirstOrDefault();
                 if (existingLike != null)
                 {
                     unit.Likes.Remove(existingLike);
+                    post.LikesCount--;
+                    unit.Posts.Update(post);
                 }
                 else
                 {
@@ -146,6 +150,8 @@ namespace PicHub.Server.Controllers
                         UserId = loggedInUserId,
                         PostId = postId,
                     });
+                    post.LikesCount++;
+                    unit.Posts.Update(post);
                 }
                 unit.Complete();
                 return Created();
@@ -169,6 +175,13 @@ namespace PicHub.Server.Controllers
             {
                 yield return unit.Posts.Find(p => p.Id == like.PostId).Single();
             }
+        }
+
+        [HttpGet("getLikesCount")]
+        public async Task<IActionResult> GetLikesCount(int postId)
+        {
+            var post = unit.Posts.Get(postId);
+            return Ok(post.LikesCount);
         }
     }
 }
