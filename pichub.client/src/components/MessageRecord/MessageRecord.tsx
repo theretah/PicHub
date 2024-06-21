@@ -1,6 +1,3 @@
-import React from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
-
 interface Props {
   isMedium: boolean;
   isSelected: boolean;

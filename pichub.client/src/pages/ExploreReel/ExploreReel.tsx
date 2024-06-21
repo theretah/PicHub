@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../../components/Layout/Layout";
-import {
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalBody,
-} from "mdb-react-ui-kit";
-import ChatButton from "../../components/PostControlButtons/ChatButton";
-import LikeButton from "../../components/PostControlButtons/LikeButton";
-import SaveButton from "../../components/PostControlButtons/SaveButton";
-import ShareButton from "../../components/PostControlButtons/ShareButton";
-import PostDetails from "../../components/PostDetails/PostDetails";
-import ProfileImage from "../../components/ProfileImage/ProfileImage";
-import { Post } from "../../interfaces/Post";
 import axios from "axios";
-import PostDetailsHorizontal from "../../components/PostDetails/PostDetailsHorizontal";
+import { useEffect, useState } from "react";
+import Layout from "../../components/Layout/Layout";
+import PostDetails from "../../components/PostDetails/PostDetails";
+import { Post } from "../../interfaces/Post";
 
 const ExploreReel = () => {
   const [posts, setPosts] = useState<Post[]>();
-  const [isSmallScreen, setIsSmallScreen] = useState<Boolean>();
+  const [isSmallScreen, setIsSmallScreen] = useState<boolean>();
 
   useEffect(() => {
     getPosts();
@@ -45,25 +33,17 @@ const ExploreReel = () => {
 
   return (
     <Layout currentPage="Explore">
-      {posts?.map((post) => (
-        <div className="mt-2">
-          {isSmallScreen ? (
-            <div className="row mx-auto">
-              <PostDetails authorId={post.authorId} postId={post.id} />
-            </div>
-          ) : (
-            <div
-              className="mx-auto mt-3 shadow-lg border border-secondary"
-              style={{ width: 802, height: 502 }}
-            >
-              <PostDetailsHorizontal
-                authorId={post.authorId}
-                postId={post.id}
-              />
-            </div>
-          )}
-        </div>
-      ))}
+      <div className="mt-4">
+        {posts?.map((post) => (
+          <div key={post.id} className="p-0 mb-4">
+            <PostDetails
+              key={post.id}
+              post={post}
+              onlyVertical={isSmallScreen || false}
+            />
+          </div>
+        ))}
+      </div>
     </Layout>
   );
 };

@@ -152,7 +152,7 @@ const BottomBar = ({ currentPage }: Props) => {
             <BottomBarButton
               activePage={currentPage}
               buttonText="Profile"
-              to={user ? `/page/${user.userName}` : "/login"}
+              to={user ? `/profile/${user.userName}` : "/login"}
             >
               {isAuthenticated && user?.profileImageUrl ? (
                 <ProfileImage

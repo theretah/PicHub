@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Props {
   imageUrl: string;
   widthHeight: number;

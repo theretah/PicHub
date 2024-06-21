@@ -1,4 +1,3 @@
-import React from "react";
 import StoryCircle from "../StoryCircle/StoryCircle";
 const HomeStoriesBar = () => {
   let i = 0;

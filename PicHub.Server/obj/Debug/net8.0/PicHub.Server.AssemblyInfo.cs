@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8659b3c5e92bebae2cd301f2f2fde8b8808c7125")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52436ee6a14b418d93d7d8c3e8ef657d2797b852")]
 [assembly: System.Reflection.AssemblyProductAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PicHub.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

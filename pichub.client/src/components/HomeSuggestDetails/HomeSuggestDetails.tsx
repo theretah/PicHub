@@ -1,6 +1,6 @@
-import React from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
+import { Link } from "react-router-dom";
 import { User } from "../../auth/store";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 interface Props {
   user: User;
@@ -20,7 +20,12 @@ const HomeSuggestDetails = ({ user }: Props) => {
       </div>
       <div className="col-7">
         <div className="row">
-          <p className="m-0 fw-bold text-light">{user.userName}</p>
+          <Link
+            to={`/profile/${user.userName}`}
+            className="m-0 fw-bold text-light text-decoration-none"
+          >
+            {user.userName}
+          </Link>
         </div>
         <div className="row">
           <small className="text-gray">Suggested for you</small>

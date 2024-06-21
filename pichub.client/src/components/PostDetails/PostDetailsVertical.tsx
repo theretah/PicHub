@@ -1,24 +1,22 @@
 import {
   MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
   MDBModalBody,
+  MDBModalContent,
+  MDBModalDialog,
 } from "mdb-react-ui-kit";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import useAuthStore from "../../auth/store";
 import ChatButton from "../PostControlButtons/ChatButton";
 import LikeButton from "../PostControlButtons/LikeButton";
 import SaveButton from "../PostControlButtons/SaveButton";
 import ShareButton from "../PostControlButtons/ShareButton";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../auth/store";
-import { Post } from "../../interfaces/Post";
 import { PostDetailsProps } from "./PostDetailsProps";
 
 const PostDetailsVertical = ({
   author,
   post,
-  loggedInUser,
   isFollowing,
   isLiked,
   isSaved,
@@ -26,6 +24,7 @@ const PostDetailsVertical = ({
   handleSaveButton,
   likesCount,
 }: PostDetailsProps) => {
+  const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
 
@@ -38,7 +37,7 @@ const PostDetailsVertical = ({
       <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
-            <Link to={`/page/${author?.userName}`}>
+            <Link to={`/profile/${author?.userName}`}>
               <ProfileImage
                 imageUrl={
                   author?.profileImageUrl
@@ -52,11 +51,11 @@ const PostDetailsVertical = ({
             <div className="card-body p-0 align-self-center">
               <Link
                 className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
-                to={`/page/${author?.userName}`}
+                to={`/profile/${author?.userName}`}
               >
                 {author?.userName}
               </Link>
-              {author?.id != loggedInUser.id &&
+              {author?.id != user?.id &&
                 (isFollowing ? (
                   <>
                     &nbsp; &nbsp;
@@ -171,7 +170,7 @@ const PostDetailsVertical = ({
 
         <p className="card-title fw-bold mt-2">{likesCount} likes</p>
         <Link
-          to={`/page/${author.id}`}
+          to={`/profile/${author.userName}`}
           className="card-title fw-bold d-inline text-decoration-none"
         >
           {author.userName}{" "}

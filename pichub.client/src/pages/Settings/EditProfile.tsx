@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { register } from "module";
-import React, { ChangeEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";

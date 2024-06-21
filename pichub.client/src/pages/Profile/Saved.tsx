@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Post } from "../../interfaces/Post";
 import axios from "axios";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { User } from "../../auth/store";
+import { Post } from "../../interfaces/Post";
 
 interface Props {
   user: User;

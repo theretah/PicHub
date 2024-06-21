@@ -123,7 +123,8 @@ namespace PicHub.Server.Controllers
         [HttpGet("getById")]
         public async Task<AppUser> GetUserById(string id)
         {
-            return await userManager.FindByIdAsync(id);
+            var user = await userManager.FindByIdAsync(id);
+            return user;
         }
 
         [HttpGet("getByUserName")]

@@ -296,7 +296,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             activePage={currentPage}
             buttonText="Profile"
             showFullButton={showFullButton && currentPage != "Messages"}
-            to={user ? `/page/${user.userName}` : "/login"}
+            to={user ? `/profile/${user.userName}` : "/login"}
           >
             {isAuthenticated && user?.profileImageUrl ? (
               <ProfileImage

@@ -2,23 +2,36 @@ import { ChangeEvent, useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
 
-import ProfileImage from "../../components/ProfileImage/ProfileImage";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
 import { Navigate, useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";
+import ProfileImage from "../../components/ProfileImage/ProfileImage";
+import { base64ToBlob } from "../../utils/Base64ToBlob";
+import SelectPostPictureModal from "./SelectPostPictureModal";
 
 interface CreatePostProps {
   Caption: string;
   TurnOffComments: string;
   ImageFile: File;
 }
+
 const CreatePost = () => {
   const { isAuthenticated, user, fetchUser } = useAuthStore();
   useEffect(() => {
     fetchUser();
   }, [isAuthenticated]);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string>("");
+  const updateAvatar = (imgSrc: string) => {
+    setAvatar(imgSrc);
+  };
+
+  const toggleOpen = () => {
+    setModalOpen(!modalOpen);
+  };
 
   const navigate = useNavigate();
 
@@ -45,7 +58,8 @@ const CreatePost = () => {
   }, []);
 
   const handleSelectFileButton = () => {
-    document.getElementById("file-input")?.click();
+    //document.getElementById("file-input")?.click();
+    setModalOpen(true);
   };
 
   function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
@@ -82,6 +96,12 @@ const CreatePost = () => {
   });
 
   const onSubmit: SubmitHandler<CreatePostProps> = async (data) => {
+    if (avatar) {
+      const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
+      const blob = base64ToBlob(avatar, mimeType);
+      const file = new File([blob], "avatar.png", { type: mimeType });
+      data.ImageFile = file;
+    }
     await addPost.mutate(data);
   };
 
@@ -104,7 +124,7 @@ const CreatePost = () => {
           {isSmallScreen && (
             <div className="mb-2">
               <ProfileImage
-                imageUrl={"../../../public/images/profiles/square.png"}
+                imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
                 widthHeight={30}
               />
               &nbsp;
@@ -118,35 +138,22 @@ const CreatePost = () => {
               isSmallScreen ? "row" : "col-8 border-end border-secondary h-100"
             } d-flex justify-content-center`}
           >
-            {selectedPicture ? (
-              <>
-                <button
-                  type="button"
-                  className="btn"
-                  onClick={handleSelectFileButton}
-                >
-                  <img
-                    src={selectedPictureSrc?.toString()}
-                    className="mx-auto object-fit-contain"
-                    alt="..."
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </button>
-                <input
-                  id="file-input"
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onInput={handleFileInput}
+            {avatar ? (
+              <button type="button" className="btn" onClick={toggleOpen}>
+                <img
+                  src={avatar}
+                  className="mx-auto object-fit-contain"
+                  alt="..."
+                  style={{ width: "100%", height: "100%" }}
                 />
-              </>
+              </button>
             ) : (
               <div className="d-flex justify-content-center align-items-center">
                 <div className="w-100 text-center">
                   <button
                     type="button"
                     className="btn mt-1 py-1"
-                    onClick={handleSelectFileButton}
+                    onClick={toggleOpen}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -164,15 +171,16 @@ const CreatePost = () => {
                       Select from computer
                     </span>
                   </button>
-                  <input
-                    id="file-input"
-                    type="file"
-                    hidden
-                    accept="image/*"
-                    onInput={handleFileInput}
-                  />
                 </div>
               </div>
+            )}
+            {modalOpen && (
+              <SelectPostPictureModal
+                modalOpen={modalOpen}
+                setModalOpen={() => setModalOpen(!modalOpen)}
+                updateAvatar={updateAvatar}
+                closeModal={() => setModalOpen(false)}
+              />
             )}
           </div>
           <div className={`${isSmallScreen ? "row" : "col"} p-2`}>
@@ -180,7 +188,7 @@ const CreatePost = () => {
               {!isSmallScreen && (
                 <div>
                   <ProfileImage
-                    imageUrl={"../../../public/images/profiles/square.png"}
+                    imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
                     widthHeight={30}
                   />
                   &nbsp;

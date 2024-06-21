@@ -1,26 +1,19 @@
-import { useEffect, useState } from "react";
 import PostDetails from "../PostDetails/PostDetails";
-import axios from "axios";
-import { Post } from "../../interfaces/Post";
+import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import usePosts from "../../hooks/postHooks/usePosts";
 
 const HomePostsColumn = () => {
-  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const { data, error, isLoading } = usePosts();
 
-  const getAllPosts = () => {
-    axios.get(`/api/post/getAll`).then((res) => {
-      setAllPosts(res.data);
-    });
-  };
+  if (isLoading) return <LoadingIndicator />;
 
-  useEffect(() => {
-    getAllPosts();
-  }, []);
+  if (error) return <p className="text-light">{error.message}</p>;
 
   return (
     <div className="row mx-auto mt-3" style={{ maxWidth: 475 }}>
-      {allPosts.map((post) => (
-        <div className="p-0 mb-4">
-          <PostDetails key={post.id} postId={post.id} onlyVertical={true} />
+      {data?.map((post) => (
+        <div key={post.id} className="p-0 mb-4">
+          <PostDetails key={post.id} post={post} onlyVertical={true} />
         </div>
       ))}
     </div>

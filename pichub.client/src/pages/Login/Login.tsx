@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useForm } from "react-hook-form";
-import { register } from "module";
 import useAuthStore, { LoginData } from "../../auth/store";
 
 const Login = () => {

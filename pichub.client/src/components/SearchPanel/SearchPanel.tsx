@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
 
 interface Props {
@@ -6,12 +6,9 @@ interface Props {
 }
 
 const SearchPanel = ({ isOpen }: Props) => {
-  const xl = 1200;
   const translate = "translate(53px, -184px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   let i = 0;
-
-  const [transform, setTransform] = useState(translate);
 
   useEffect(() => {
     const handleResize = () => {
@@ -32,7 +29,7 @@ const SearchPanel = ({ isOpen }: Props) => {
       className={`border-end border-gray rounded-end bg-dark m-0 vh-100 position-fixed z-3 ${
         isOpen ? "visible d-block" : "invisible"
       }`}
-      style={{ transform: transform, width: 412 }}
+      style={{ transform: translate, width: 412 }}
     >
       <div className="px-3 py-1 mt-4">
         <h3 className="text-light">Search</h3>

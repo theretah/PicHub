@@ -18,7 +18,7 @@ const Register = () => {
 
   const registerUser = useMutation({
     mutationFn: async (registerData: RegisterData) => {
-      axios.post("/api/account/register", registerData).then((res) => {
+      axios.post("/api/account/register", registerData).then(() => {
         const loginData: LoginData = {
           userName: registerData.userName,
           password: registerData.password,

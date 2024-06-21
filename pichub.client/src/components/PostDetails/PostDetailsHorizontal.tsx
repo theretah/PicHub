@@ -1,22 +1,23 @@
 import {
   MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
   MDBModalBody,
+  MDBModalContent,
+  MDBModalDialog,
 } from "mdb-react-ui-kit";
 
+import { useState } from "react";
+import useAuthStore from "../../auth/store";
 import ChatButton from "../PostControlButtons/ChatButton";
 import LikeButton from "../PostControlButtons/LikeButton";
 import SaveButton from "../PostControlButtons/SaveButton";
 import ShareButton from "../PostControlButtons/ShareButton";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { PostDetailsProps } from "./PostDetailsProps";
-import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const PostDetailsHorizontal = ({
   author,
   post,
-  loggedInUser,
   isFollowing,
   isLiked,
   isSaved,
@@ -24,6 +25,7 @@ const PostDetailsHorizontal = ({
   handleSaveButton,
   likesCount,
 }: PostDetailsProps) => {
+  const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
   const [commentText, setCommentText] = useState("");
 
@@ -60,13 +62,28 @@ const PostDetailsHorizontal = ({
                   widthHeight={35}
                 />
                 &nbsp;
-                <span className="fw-bold align-self-center">
+                <Link
+                  to={`/profile/${author?.userName}`}
+                  className="fw-bold align-self-center text-decoration-none text-light"
+                >
                   {author?.userName}
-                </span>
-                &nbsp; &nbsp;
-                <button className="p-0 btn text-light text-gray text-decoration-none align-self-center">
-                  Following
-                </button>
+                </Link>
+                {author?.id != user?.id &&
+                  (isFollowing ? (
+                    <>
+                      &nbsp; &nbsp;
+                      <button className="p-0 btn text-decoration-none align-self-center">
+                        <span className="text-gray">Following</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      &nbsp; &nbsp;
+                      <button className="p-0 btn text-primary fw-bold align-self-center">
+                        Follow
+                      </button>
+                    </>
+                  ))}
                 <button
                   className="btn text-light p-0 ms-auto"
                   onClick={toggleOpen}

@@ -1,32 +1,29 @@
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Post } from "../../interfaces/Post";
-import axios from "axios";
 import { User } from "../../auth/store";
+import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import usePostsByAuthor from "../../hooks/postHooks/usePostsByAuthor";
 
 interface Props {
   author: User;
 }
 
 const Posts = ({ author }: Props) => {
-  const [posts, setPosts] = useState<Post[]>();
+  const {
+    data: posts,
+    error,
+    isLoading,
+  } = usePostsByAuthor({ authorId: author.id });
 
-  useEffect(() => {
-    getPosts();
-  }, [author]);
+  if (isLoading) return <LoadingIndicator />;
 
-  function getPosts() {
-    axios
-      .get(`/api/post/getAllByAuthor?authorId=${author?.id}`)
-      .then((res) => setPosts(res.data));
-  }
+  if (error) return <p className="text-light">{error.message}</p>;
 
   return posts?.map((post) => (
     <div className="col-4 p-1">
       <Link to={`/post/${post.id}`}>
         <img
           src={`data:image/png;base64,${post.photoContent}`}
-          className="img-fluid mx-auto object-fit-cover"
+          className="img-fluid mx-auto w-100 h-100 object-fit-cover"
           alt="..."
           style={{ aspectRatio: 1 }}
         />

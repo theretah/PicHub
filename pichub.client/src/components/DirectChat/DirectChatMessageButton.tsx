@@ -1,4 +1,3 @@
-import { rejects } from "assert";
 import React, { useEffect, useRef, useState } from "react";
 
 interface BtnProps {

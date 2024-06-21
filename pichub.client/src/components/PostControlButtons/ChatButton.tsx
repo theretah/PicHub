@@ -1,4 +1,3 @@
-import React from "react";
 import PostControlButtonProps from "./PostControlButtonProps";
 
 const ChatButton = ({ size }: PostControlButtonProps) => {

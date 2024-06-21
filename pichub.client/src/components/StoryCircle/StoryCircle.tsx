@@ -1,6 +1,3 @@
-import React, { useState } from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
-
 const StoryCircle = () => {
   const widthAndHeight = 65;
   return (

@@ -1,58 +1,38 @@
 import { useEffect, useState } from "react";
-import ShareButton from "../PostControlButtons/ShareButton";
-import ChatButton from "../PostControlButtons/ChatButton";
-import LikeButton from "../PostControlButtons/LikeButton";
-import SaveButton from "../PostControlButtons/SaveButton";
-import {
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalBody,
-} from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
-import ProfileImage from "../ProfileImage/ProfileImage";
-import { Post } from "../../interfaces/Post";
-import axios from "axios";
-import useAuthStore, { User } from "../../auth/store";
+import useUserById from "../../hooks/accountHooks/useUserById";
+import useIsLiked from "../../hooks/postHooks/useIsLiked";
+import useIsSaved from "../../hooks/postHooks/useIsSaved";
+import useLikesCount from "../../hooks/postHooks/useLikesCount";
+import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
+import { Post } from "../../interfaces/Post";
 
 interface Props {
-  postId: number;
+  post: Post;
   onlyVertical: boolean;
 }
-const PostDetails = ({ postId, onlyVertical }: Props) => {
+interface Like {
+  postId: number;
+  userId: string;
+}
+const PostDetails = ({ post, onlyVertical }: Props) => {
+  const { data: author } = useUserById({
+    userId: post.authorId,
+  });
+  const { data: isFollowing } = useIsFollowing({
+    followingId: post.authorId,
+  });
+
+  const { data: likesCount } = useLikesCount({ postId: post.id });
+  const { data: isLiked } = useIsLiked({ postId: post.id });
+  const { data: isSaved } = useIsSaved({ postId: post.id });
+
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const { user } = useAuthStore();
-  const [post, setPost] = useState<Post>();
-  const [author, setAuthor] = useState<User>();
-
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
-  const [likesCount, setLikesCount] = useState(0);
-
-  const getPost = async () => {
-    await axios.get(`/api/post/get?id=${postId}`).then((res) => {
-      setPost(res.data);
-
-      axios
-        .get(`/api/account/getById?id=${res.data.authorId}`)
-        .then((authorRes) => {
-          setAuthor(authorRes.data);
-        });
-    });
-  };
-
-  const getLikesCount = async () => {
-    await axios.get(`/api/post/getLikesCount?postId=${postId}`).then((res) => {
-      setLikesCount(res.data);
-    });
-  };
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 992);
+      setIsSmallScreen(window.innerWidth <= 920);
     };
 
     handleResize();
@@ -64,75 +44,21 @@ const PostDetails = ({ postId, onlyVertical }: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    getPost();
-    getIsLiked();
-    getIsSaved();
-    getLikesCount();
-  }, [postId]);
+  async function handleLikeButton() {}
 
-  async function getIsLiked() {
-    await axios
-      .get(`/api/post/isLiked?postId=${postId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        setIsLiked(res.data);
-      });
-  }
-
-  async function getIsSaved() {
-    await axios
-      .get(`/api/post/isSaved?postId=${postId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        setIsSaved(res.data);
-      });
-  }
-
-  async function handleLikeButton() {
-    await axios
-      .post(
-        `/api/post/like?postId=${postId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then(() => {
-        setIsLiked(!isLiked);
-        if (isLiked) {
-          setLikesCount(likesCount - 1);
-        } else {
-          setLikesCount(likesCount + 1);
-        }
-      });
-  }
-
-  async function handleSaveButton() {
-    await axios
-      .post(
-        `/api/post/save?postId=${postId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then(() => {
-        setIsSaved(!isSaved);
-      });
-  }
+  async function handleSaveButton() {}
   return (
     <div className="row mx-auto">
       {author &&
         post &&
-        user &&
+        likesCount != undefined &&
+        isLiked != undefined &&
+        isSaved != undefined &&
+        isFollowing != undefined &&
         (isSmallScreen || onlyVertical ? (
           <PostDetailsVertical
             author={author}
             post={post}
-            loggedInUser={user}
             isFollowing={isFollowing}
             isSaved={isSaved}
             handleSaveButton={handleSaveButton}
@@ -144,7 +70,6 @@ const PostDetails = ({ postId, onlyVertical }: Props) => {
           <PostDetailsHorizontal
             author={author}
             post={post}
-            loggedInUser={user}
             isFollowing={isFollowing}
             isSaved={isSaved}
             handleSaveButton={handleSaveButton}

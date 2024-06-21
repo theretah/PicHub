@@ -1,20 +1,51 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
-import SearchPanel from "../../components/SearchPanel/SearchPanel";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
+import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import usePosts from "../../hooks/postHooks/usePosts";
 import { Post } from "../../interfaces/Post";
-import axios from "axios";
+interface PostItemProps {
+  post: Post;
+}
+function ExplorePostItem({ post }: PostItemProps) {
+  return (
+    <div className="col-4 p-1">
+      <Link to={`/explore/reels`}>
+        <img
+          className="object-fit-cover w-100"
+          src={`data:image/png;base64,${post?.photoContent}`}
+          alt=""
+          style={{
+            aspectRatio: 1,
+          }}
+        />
+      </Link>
+    </div>
+  );
+}
+function ExplorePostsPanel() {
+  const { data, error, isLoading } = usePosts();
 
-const Explore = () => {
-  const [posts, setPosts] = useState<Post[]>();
+  if (isLoading) return <LoadingIndicator />;
+
+  if (error) return <p className="text-light">{error.message}</p>;
+
+  return (
+    <div className="row p-1">
+      {data?.map((post) => (
+        <ExplorePostItem post={post} />
+      ))}
+    </div>
+  );
+}
+
+export default function Explore() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    getAllPosts();
-
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -41,11 +72,6 @@ const Explore = () => {
     setIsOpen(!isOpen);
   };
 
-  const getAllPosts = () => {
-    axios.get(`/api/post/getAll`).then((res) => {
-      setPosts(res.data);
-    });
-  };
   return (
     <Layout currentPage={"Explore"}>
       <div className="row">
@@ -67,27 +93,10 @@ const Explore = () => {
               </div>
             </div>
           )}
-          <div className={`row p-1`}>
-            {posts?.map((post) => (
-              <div className="col-4 p-1">
-                <Link to={`/explore/reels`}>
-                  <img
-                    className="object-fit-cover w-100"
-                    src={`data:image/png;base64,${post?.photoContent}`}
-                    alt=""
-                    style={{
-                      aspectRatio: 1,
-                    }}
-                  />
-                </Link>
-              </div>
-            ))}
-          </div>
+          <ExplorePostsPanel />
         </div>
         <div className="col"></div>
       </div>
     </Layout>
   );
-};
-
-export default Explore;
+}

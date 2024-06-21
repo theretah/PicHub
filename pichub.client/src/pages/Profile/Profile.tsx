@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import Layout from "../../components/Layout/Layout";
 import { Link, Navigate, useParams } from "react-router-dom";
-import {
-  MDBModal,
-  MDBModalDialog,
-  MDBModalContent,
-  MDBModalBody,
-} from "mdb-react-ui-kit";
+
 import Posts from "./Posts";
 import Reels from "./Reels";
 import Tagged from "./Tagged";
@@ -91,7 +86,7 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
   );
 };
 
-const PageDetails = () => {
+const Profile = () => {
   const { userName } = useParams();
   const [pageUser, setPageUser] = useState<User>();
   const { user, isAuthenticated } = useAuthStore();
@@ -282,30 +277,27 @@ const PageDetails = () => {
                                 {pageUser?.userName}
                               </span>
                               {userIsOwner ? (
-                                <EditProfileButton />
+                                <>
+                                  <EditProfileButton />
+                                  <SettingsButton />
+                                </>
                               ) : (
                                 <>
                                   <FollowButton
-                                    follow={() => setIsFollowing(true)}
-                                    unFollow={() => setIsFollowing(false)}
+                                    follow={() => {
+                                      setIsFollowing(true);
+                                      followUser();
+                                    }}
+                                    unFollow={() => {
+                                      setIsFollowing(false);
+                                      unFollowUser();
+                                    }}
                                     isFollowing={isFollowing}
                                   />
                                   <MessageButton />
+                                  <MoreButton />
                                 </>
                               )}
-
-                              <button className="btn text-light py-1 px-0">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  width="22"
-                                  height="22"
-                                  fill="currentColor"
-                                  className="bi bi-three-dots p-0"
-                                  viewBox="0 0 16 16"
-                                >
-                                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
-                                </svg>
-                              </button>
                             </div>
                           </div>
                         </div>
@@ -536,4 +528,4 @@ const PageDetails = () => {
   );
 };
 
-export default PageDetails;
+export default Profile;

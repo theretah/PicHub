@@ -1,5 +1,3 @@
-import React from "react";
-import BottomBar from "../../components/BottomBar/BottomBar";
 import Layout from "../../components/Layout/Layout";
 
 const Reels = () => {
