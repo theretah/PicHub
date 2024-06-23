@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useUserById from "../../hooks/accountHooks/useUserById";
 import useIsLiked from "../../hooks/postHooks/useIsLiked";
 import useIsSaved from "../../hooks/postHooks/useIsSaved";
-import useLikesCount from "../../hooks/postHooks/useLikesCount";
 import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
@@ -24,7 +23,6 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     followingId: post.authorId,
   });
 
-  const { data: likesCount } = useLikesCount({ postId: post.id });
   const { data: isLiked } = useIsLiked({ postId: post.id });
   const { data: isSaved } = useIsSaved({ postId: post.id });
 
@@ -51,12 +49,12 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     <div className="row mx-auto">
       {author &&
         post &&
-        likesCount != undefined &&
         isLiked != undefined &&
         isSaved != undefined &&
         isFollowing != undefined &&
         (isSmallScreen || onlyVertical ? (
           <PostDetailsVertical
+            key={post.id}
             author={author}
             post={post}
             isFollowing={isFollowing}
@@ -64,10 +62,10 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={handleSaveButton}
             isLiked={isLiked}
             handleLikeButton={handleLikeButton}
-            likesCount={likesCount}
           />
         ) : (
           <PostDetailsHorizontal
+            key={post.id}
             author={author}
             post={post}
             isFollowing={isFollowing}
@@ -75,7 +73,6 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={handleSaveButton}
             isLiked={isLiked}
             handleLikeButton={handleLikeButton}
-            likesCount={likesCount}
           />
         ))}
     </div>

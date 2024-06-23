@@ -9,7 +9,9 @@ const useIsLiked = ({ postId }: Props) => {
     queryKey: ["isLiked"],
     queryFn: () =>
       axios
-        .get<boolean>(`/api/post/isLiked?postId=${postId}`)
+        .get<boolean>(`/api/post/isLiked?postId=${postId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => res.data),
   });
 };

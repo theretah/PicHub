@@ -23,7 +23,6 @@ const PostDetailsHorizontal = ({
   isSaved,
   handleLikeButton,
   handleSaveButton,
-  likesCount,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
@@ -178,7 +177,7 @@ const PostDetailsHorizontal = ({
                   </div>
                 </div>
                 <button className="btn fw-bold p-0 mb-0 mt-3 text-light">
-                  {likesCount} likes
+                  {post.likesCount} likes
                 </button>
                 <p className="text-gray p-0">3 hours ago</p>
                 <div className="d-flex">

@@ -22,7 +22,6 @@ const PostDetailsVertical = ({
   isSaved,
   handleLikeButton,
   handleSaveButton,
-  likesCount,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
@@ -168,7 +167,7 @@ const PostDetailsVertical = ({
           </div>
         </div>
 
-        <p className="card-title fw-bold mt-2">{likesCount} likes</p>
+        <p className="card-title fw-bold mt-2">{post.likesCount} likes</p>
         <Link
           to={`/profile/${author.userName}`}
           className="card-title fw-bold d-inline text-decoration-none"

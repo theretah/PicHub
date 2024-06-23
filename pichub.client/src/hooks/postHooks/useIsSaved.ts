@@ -9,7 +9,9 @@ const useIsSaved = ({ postId }: Props) => {
     queryKey: ["isSaved"],
     queryFn: () =>
       axios
-        .get<boolean>(`/api/post/isSaved?postId=${postId}`)
+        .get<boolean>(`/api/post/isSaved?postId=${postId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => res.data),
   });
 };

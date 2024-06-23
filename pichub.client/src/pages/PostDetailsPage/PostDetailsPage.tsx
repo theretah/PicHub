@@ -24,7 +24,7 @@ const PostDetailsPage = () => {
   return (
     <Layout currentPage="">
       <div className="mt-2">
-        {id && data && <PostDetails post={data} onlyVertical={false} />}
+        {data && <PostDetails key={data.id} post={data} onlyVertical={false} />}
       </div>
     </Layout>
   );

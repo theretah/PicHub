@@ -1,17 +1,24 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import useAuthStore, { LoginData } from "../../auth/store";
+import { useState } from "react";
 
 const Login = () => {
   const { handleSubmit, register } = useForm<LoginData>();
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
+  const [error, setError] = useState<string>();
+
   const loginUser = useMutation({
     mutationFn: async (loginData: LoginData) => {
-      login(loginData);
-      navigate("/");
+      const response = await login(loginData);
+      if (response == "Login successful.") {
+        navigate("/");
+      } else {
+        setError(response);
+      }
     },
   });
 
@@ -26,6 +33,11 @@ const Login = () => {
             })}
           >
             <h1 className="text-center my-5">PicHub</h1>
+            {error && (
+              <div className="mb-3 bg-danger-subtle rounded p-3">
+                <span className="text-danger">{error}</span>
+              </div>
+            )}
             <div className="mb-2">
               <input
                 id="userName"
@@ -48,6 +60,7 @@ const Login = () => {
                 placeholder="Password"
               />
             </div>
+
             <div className="mb-3">
               <button className="btn btn-primary w-100" type="submit">
                 Log in
@@ -58,6 +71,7 @@ const Login = () => {
               <h5>Reza@16562181</h5>
             </div>
           </form>
+
           <div className="border py-3 px-5 text-bg-white">
             <p className="text-center m-0">
               <span>Don't have an account? </span>

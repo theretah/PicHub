@@ -1,14 +1,15 @@
-import { useEffect, useState } from "react";
-import ProfileImage from "../../components/ProfileImage/ProfileImage";
-import Layout from "../../components/Layout/Layout";
+import { ReactNode, useEffect, useState } from "react";
+import ProfileImage from "../ProfileImage/ProfileImage";
+import Layout from "../Layout/Layout";
 import { Link, Navigate, useParams } from "react-router-dom";
 
-import Posts from "./Posts";
-import Reels from "./Reels";
-import Tagged from "./Tagged";
-import Saved from "./Saved";
+import Posts from "../../pages/Profile/Posts";
+import Reels from "../../pages/Profile/Reels";
+import Tagged from "../../pages/Profile/Tagged";
+import Saved from "../../pages/Profile/Saved";
 import axios from "axios";
 import useAuthStore, { User } from "../../auth/store";
+
 const MoreButton = () => {
   return (
     <button className="btn text-light py-1">
@@ -86,7 +87,10 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
   );
 };
 
-const Profile = () => {
+interface Props {
+  children: ReactNode;
+}
+const Profile = ({ children }: Props) => {
   const { userName } = useParams();
   const [pageUser, setPageUser] = useState<User>();
   const { user, isAuthenticated } = useAuthStore();
@@ -396,7 +400,8 @@ const Profile = () => {
                 style={{ maxWidth: 600 }}
               >
                 <li className="nav-item">
-                  <button
+                  <Link
+                    to={`/profile/${pageUser?.userName}/posts`}
                     className={`nav-link ${
                       activeTab === "posts"
                         ? "border-bottom text-light"
@@ -421,10 +426,11 @@ const Profile = () => {
                       </svg>
                       &nbsp; POSTS
                     </span>
-                  </button>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <button
+                  <Link
+                    to={`/profile/${pageUser?.userName}/reels`}
                     className={`nav-link ${
                       activeTab === "reels"
                         ? "border-bottom text-light"
@@ -446,10 +452,11 @@ const Profile = () => {
                       </svg>
                       &nbsp; REELS
                     </span>
-                  </button>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <button
+                  <Link
+                    to={`/profile/${pageUser?.userName}/tagged`}
                     className={`nav-link ${
                       activeTab === "tagged"
                         ? "border-bottom text-light"
@@ -472,10 +479,11 @@ const Profile = () => {
                       </svg>
                       &nbsp; TAGGED
                     </span>
-                  </button>
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <button
+                  <Link
+                    to={`/profile/saved`}
                     className={`nav-link ${
                       activeTab === "saved"
                         ? "border-bottom text-light"
@@ -497,7 +505,7 @@ const Profile = () => {
                       </svg>
                       &nbsp; SAVED
                     </span>
-                  </button>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -506,21 +514,9 @@ const Profile = () => {
         </div>
         <div className="container-fluid mt-3">
           <div className="row">
-            <div className="col"></div>
-            <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12">
-              <div className="row">
-                {activeTab == "posts" && pageUser ? (
-                  <Posts author={pageUser} />
-                ) : activeTab == "reels" ? (
-                  <Reels />
-                ) : activeTab == "tagged" ? (
-                  <Tagged />
-                ) : (
-                  pageUser && <Saved user={pageUser} />
-                )}
-              </div>
+            <div className="col-xl-10 col-lg-12 col-md-12 col-sm-12 mx-auto">
+              <div className="row">{children}</div>
             </div>
-            <div className="col"></div>
           </div>
         </div>
       </Layout>

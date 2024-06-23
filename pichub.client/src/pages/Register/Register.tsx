@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthStore, { LoginData } from "../../auth/store";
+import { useState } from "react";
 
 interface RegisterData {
   email: string;
@@ -15,17 +16,25 @@ const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
   const { register, handleSubmit } = useForm<RegisterData>();
+  const [error, setError] = useState<string>();
+  const emailExists = "User with this email address already exists.";
+  const userNameExists = "User with this username already exists.";
 
   const registerUser = useMutation({
     mutationFn: async (registerData: RegisterData) => {
-      axios.post("/api/account/register", registerData).then(() => {
-        const loginData: LoginData = {
-          userName: registerData.userName,
-          password: registerData.password,
-        };
-        login(loginData);
-        navigate("/");
-      });
+      axios
+        .post("/api/account/register", registerData)
+        .then(() => {
+          const loginData: LoginData = {
+            userName: registerData.userName,
+            password: registerData.password,
+          };
+          login(loginData);
+          navigate("/");
+        })
+        .catch((e) => {
+          setError(e.response.data);
+        });
     },
   });
 
@@ -45,6 +54,11 @@ const Register = () => {
             <p className="text-center text-secondary">
               Sign up to see photos and videos from your friends.
             </p>
+            {error && (
+              <div className="mb-3 bg-danger-subtle rounded p-3">
+                <span className="text-danger">{error}</span>
+              </div>
+            )}
             <div className="mb-2">
               <input
                 id="email"
@@ -53,7 +67,7 @@ const Register = () => {
                 })}
                 type="email"
                 className="form-control"
-                placeholder="Phone Number or Email"
+                placeholder="Email Address"
               />
             </div>
             <div className="mb-2">
@@ -67,6 +81,7 @@ const Register = () => {
                 placeholder="Full Name"
               />
             </div>
+
             <div className="mb-2">
               <input
                 id="userName"

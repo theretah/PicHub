@@ -33,10 +33,17 @@ namespace PicHub.Server.Controllers
             return unit.Posts.GetAll().OrderByDescending(p => p.CreateDate);
         }
 
-        [HttpGet("getAllByAuthor")]
-        public async Task<IEnumerable<Post>> GetAllByAuthor(string authorId)
+        [HttpGet("getAllByAuthorId")]
+        public async Task<IEnumerable<Post>> GetAllByAuthorId(string authorId)
         {
             return unit.Posts.Find(p => p.AuthorId == authorId);
+        }
+
+        [HttpGet("getAllByAuthorUserName")]
+        public async Task<IEnumerable<Post>> GetAllByAuthorUserName(string userName)
+        {
+            var user = await userManager.FindByNameAsync(userName);
+            return unit.Posts.Find(p => p.AuthorId == user.Id);
         }
 
         [HttpGet("get")]

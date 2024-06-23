@@ -59,18 +59,25 @@ namespace PicHub.Server.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            var existedByEmail = await userManager.FindByEmailAsync(model.Email);
+            if (existedByEmail != null)
+            {
+                return BadRequest("User with this email address already exists.");
+            }
+
             var existedUser = await userManager.FindByNameAsync(model.UserName);
             if (existedUser != null)
             {
                 return BadRequest("User with this username already exists.");
             }
 
-            var user = CreateUser();
+            var user = Activator.CreateInstance<AppUser>();
             user.FullName = model.FullName;
             user.UserName = model.UserName;
             user.Email = model.Email;
             user.EmailConfirmed = true;
             user.RegistrationDate = DateTime.Now;
+
 
             var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
@@ -94,13 +101,16 @@ namespace PicHub.Server.Controllers
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
-            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
+            if (user != null)
             {
-                var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
-                return Ok(new { token });
+                if (await userManager.CheckPasswordAsync(user, model.Password))
+                {
+                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
+                    return Ok(new { token });
+                }
+                return BadRequest("Failed to login with this password.");
             }
-
-            return BadRequest("Login failed. Invalid username or password.");
+            return BadRequest("User with this username does not exist.");
         }
 
         [HttpGet("getAll")]
@@ -150,20 +160,6 @@ namespace PicHub.Server.Controllers
             }
 
             return BadRequest("A problem occured while removing the user.");
-        }
-
-        private AppUser CreateUser()
-        {
-            try
-            {
-                return Activator.CreateInstance<AppUser>();
-            }
-            catch
-            {
-                throw new InvalidOperationException($"Can't create an instance of '{nameof(AppUser)}'. " +
-                    $"Ensure that '{nameof(AppUser)}' is not an abstract class and has a parameterless constructor, or alternatively " +
-                    $"override the register page in /Areas/Identity/Pages/Account/Register.cshtml");
-            }
         }
     }
 }

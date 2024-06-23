@@ -1,17 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import React from "react";
 import { Post } from "../../interfaces/Post";
-interface Props {
-  authorId: string;
-}
-const usePostsByAuthor = ({ authorId }: Props) => {
+
+const useSavedPosts = () => {
   return useQuery<Post[], Error>({
     queryKey: ["postsByAuthor"],
     queryFn: () =>
       axios
-        .get<Post[]>(`/api/post/getAllByAuthor?authorId=${authorId}`)
+        .get(`/api/post/getSavedPosts`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
         .then((res) => res.data),
   });
 };
 
-export default usePostsByAuthor;
+export default useSavedPosts;

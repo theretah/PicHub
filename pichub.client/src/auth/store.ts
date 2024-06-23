@@ -19,7 +19,7 @@ interface AuthStore {
   isAuthenticated: boolean;
   user: User | null;
   fetchUser: () => Promise<void>;
-  login: (loginData: LoginData) => Promise<void>;
+  login: (loginData: LoginData) => Promise<string>;
   logout: () => void;
 }
 
@@ -52,32 +52,25 @@ const useAuthStore = create<AuthStore>((set) => ({
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         set({ isAuthenticated: false, user: null });
-        console.log(error);
+        throw new Error(error);
       });
   },
 
   login: async (loginData: LoginData) => {
     try {
-      await axios
-        .post(`/api/account/login`, loginData)
-        .then((loginResponse) => {
-          const token = loginResponse.data.token;
-          localStorage.setItem("token", token);
+      const loginResponse = await axios.post(`/api/account/login`, loginData);
+      const token = loginResponse.data.token;
+      localStorage.setItem("token", token);
 
-          axios
-            .get("/api/account/getLoggedInUser", {
-              headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((userResponse) => {
-              set({ isAuthenticated: true, user: userResponse.data });
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        });
-    } catch (error) {
+      const userResponse = await axios.get("/api/account/getLoggedInUser", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      set({ isAuthenticated: true, user: userResponse.data });
+      return "Login successful.";
+    } catch (e: any) {
       set({ isAuthenticated: false, user: null });
-      console.log(error);
+      return e.response.data;
     }
   },
 

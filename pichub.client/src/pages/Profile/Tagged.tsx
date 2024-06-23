@@ -1,5 +1,11 @@
+import Profile from "../../components/Profile/Profile";
+
 const Tagged = () => {
-  return <div>Tagged</div>;
+  return (
+    <Profile>
+      <div>Tagged</div>
+    </Profile>
+  );
 };
 
 export default Tagged;

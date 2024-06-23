@@ -1,38 +1,30 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { User } from "../../auth/store";
-import { Post } from "../../interfaces/Post";
+import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import useSavedPosts from "../../hooks/postHooks/useSavedPosts";
+import Profile from "../../components/Profile/Profile";
 
-interface Props {
-  user: User;
-}
+const Saved = () => {
+  const { data, error, isLoading } = useSavedPosts();
 
-const Saved = ({ user }: Props) => {
-  const [savedPosts, setSavedPosts] = useState<Post[]>();
+  if (error) return <p className="text-light">{error.message}</p>;
+  if (isLoading) return <LoadingIndicator />;
 
-  useEffect(() => {
-    getSavedPosts();
-  }, [user]);
-
-  function getSavedPosts() {
-    axios
-      .get(`/api/post/getSavedPosts?userId=${user?.id}`)
-      .then((res) => setSavedPosts(res.data));
-  }
-
-  return savedPosts?.map((post) => (
-    <div className="col-4 p-1">
-      <Link to={`/post/${post.id}`}>
-        <img
-          src={`data:image/png;base64,${post.photoContent}`}
-          className="img-fluid mx-auto object-fit-cover"
-          alt="..."
-          style={{ aspectRatio: 1 }}
-        />
-      </Link>
-    </div>
-  ));
+  return (
+    <Profile>
+      {data?.map((post) => (
+        <div className="col-4 p-1" key={post.id}>
+          <Link to={`/post/${post.id}`}>
+            <img
+              src={`data:image/png;base64,${post.photoContent}`}
+              className="img-fluid mx-auto object-fit-cover"
+              alt="..."
+              style={{ aspectRatio: 1 }}
+            />
+          </Link>
+        </div>
+      ))}
+    </Profile>
+  );
 };
 
 export default Saved;
