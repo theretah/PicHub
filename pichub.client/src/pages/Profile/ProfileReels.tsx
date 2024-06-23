@@ -1,13 +1,13 @@
 import { useParams } from "react-router-dom";
 import Profile from "../../components/Profile/Profile";
 
-const Tagged = () => {
+const ProfileReels = () => {
   const { userName } = useParams();
   return (
-    <Profile userName={userName || ""} activeTab="tagged">
-      <div>Tagged</div>
+    <Profile userName={userName || ""} activeTab="reels">
+      <div>Reels</div>
     </Profile>
   );
 };
 
-export default Tagged;
+export default ProfileReels;

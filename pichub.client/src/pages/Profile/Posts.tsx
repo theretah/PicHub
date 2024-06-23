@@ -1,8 +1,8 @@
 import { Link, useParams } from "react-router-dom";
 import { User } from "../../auth/store";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import usePostsByAuthor from "../../hooks/postHooks/usePostsByAuthorId";
 import Profile from "../../components/Profile/Profile";
+import usePostsByAuthorUserName from "../../hooks/postHooks/usePostsByAuthorUserName";
 
 const Posts = () => {
   const { userName } = useParams();
@@ -10,14 +10,14 @@ const Posts = () => {
     data: posts,
     error,
     isLoading,
-  } = usePostsByAuthor({ authorId: userName ? userName : "" });
+  } = usePostsByAuthorUserName({ userName: userName || "" });
 
   if (isLoading) return <LoadingIndicator />;
 
   if (error) return <p className="text-light">{error.message}</p>;
 
   return (
-    <Profile>
+    <Profile userName={userName || ""} activeTab="posts">
       {posts?.map((post) => (
         <div className="col-4 p-1" key={post.id}>
           <Link to={`/post/${post.id}`}>

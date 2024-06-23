@@ -14,6 +14,7 @@ import Profile from "./components/Profile/Profile";
 import Posts from "./pages/Profile/Posts";
 import Saved from "./pages/Profile/Saved";
 import Tagged from "./pages/Profile/Tagged";
+import ProfileReels from "./pages/Profile/ProfileReels";
 
 const AppRoutes = () => {
   const Routes = [
@@ -21,7 +22,7 @@ const AppRoutes = () => {
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/profile/:userName/posts", element: <Posts /> },
-    { path: "/profile/:userName/reels", element: <Reels /> },
+    { path: "/profile/:userName/reels", element: <ProfileReels /> },
     { path: "/profile/:userName/tagged", element: <Tagged /> },
     { path: "/profile/:saved", element: <Saved /> },
     { path: "/post/:id", element: <PostDetailsPage /> },

@@ -4,7 +4,7 @@ import Layout from "../Layout/Layout";
 import { Link, Navigate, useParams } from "react-router-dom";
 
 import Posts from "../../pages/Profile/Posts";
-import Reels from "../../pages/Profile/Reels";
+import ProfileReels from "../../pages/Profile/ProfileReels";
 import Tagged from "../../pages/Profile/Tagged";
 import Saved from "../../pages/Profile/Saved";
 import axios from "axios";
@@ -88,10 +88,11 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
 };
 
 interface Props {
+  userName: string;
   children: ReactNode;
+  activeTab: string;
 }
-const Profile = ({ children }: Props) => {
-  const { userName } = useParams();
+const Profile = ({ userName, children, activeTab }: Props) => {
   const [pageUser, setPageUser] = useState<User>();
   const { user, isAuthenticated } = useAuthStore();
 
@@ -107,7 +108,6 @@ const Profile = ({ children }: Props) => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [isMedium, setIsMedium] = useState(window.innerWidth < md);
   const [isExtraSmall, setIsExtraSmall] = useState(window.innerWidth < sm);
-  const [activeTab, setActiveTab] = useState("posts");
 
   useEffect(() => {
     const handleResize = () => {
@@ -407,7 +407,6 @@ const Profile = ({ children }: Props) => {
                         ? "border-bottom text-light"
                         : "text-gray"
                     }`}
-                    onClick={() => setActiveTab("posts")}
                     style={{ fontSize: fontSize }}
                   >
                     <span style={{ fontSize: 15 }}>
@@ -436,7 +435,6 @@ const Profile = ({ children }: Props) => {
                         ? "border-bottom text-light"
                         : "text-gray"
                     }`}
-                    onClick={() => setActiveTab("reels")}
                     style={{ fontSize: fontSize }}
                   >
                     <span style={{ fontSize: 15 }}>
@@ -462,7 +460,6 @@ const Profile = ({ children }: Props) => {
                         ? "border-bottom text-light"
                         : "text-gray"
                     }`}
-                    onClick={() => setActiveTab("tagged")}
                     style={{ fontSize: fontSize }}
                   >
                     <span style={{ fontSize: 15 }}>
@@ -489,7 +486,6 @@ const Profile = ({ children }: Props) => {
                         ? "border-bottom text-light"
                         : "text-gray"
                     }`}
-                    onClick={() => setActiveTab("saved")}
                     style={{ fontSize: fontSize }}
                   >
                     <span style={{ fontSize: 15 }}>

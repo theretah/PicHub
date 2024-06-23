@@ -6,7 +6,7 @@ interface Props {
 }
 const useIsLiked = ({ postId }: Props) => {
   return useQuery<boolean, Error>({
-    queryKey: ["isLiked"],
+    queryKey: ["isLiked", postId],
     queryFn: () =>
       axios
         .get<boolean>(`/api/post/isLiked?postId=${postId}`, {

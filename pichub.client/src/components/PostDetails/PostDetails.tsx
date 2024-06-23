@@ -6,6 +6,9 @@ import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { Post } from "../../interfaces/Post";
+import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import { User } from "../../auth/store";
+import axios from "axios";
 
 interface Props {
   post: Post;
@@ -16,9 +19,11 @@ interface Like {
   userId: string;
 }
 const PostDetails = ({ post, onlyVertical }: Props) => {
+  console.log("AuthorId from post details: ", post.authorId);
   const { data: author } = useUserById({
     userId: post.authorId,
   });
+  // const [author, setAuthor] = useState<User>();
   const { data: isFollowing } = useIsFollowing({
     followingId: post.authorId,
   });
@@ -27,7 +32,11 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const { data: isSaved } = useIsSaved({ postId: post.id });
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-
+  // useEffect(() => {
+  //   axios.get(`/api/account/getById?id=${post.authorId}`).then((res) => {
+  //     setAuthor(res.data);
+  //   });
+  // }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 920);
@@ -45,36 +54,38 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   async function handleLikeButton() {}
 
   async function handleSaveButton() {}
+
+  if (
+    author == undefined ||
+    isLiked == undefined ||
+    isSaved == undefined ||
+    isFollowing == undefined
+  )
+    return <LoadingIndicator />;
+
   return (
     <div className="row mx-auto">
-      {author &&
-        post &&
-        isLiked != undefined &&
-        isSaved != undefined &&
-        isFollowing != undefined &&
-        (isSmallScreen || onlyVertical ? (
-          <PostDetailsVertical
-            key={post.id}
-            author={author}
-            post={post}
-            isFollowing={isFollowing}
-            isSaved={isSaved}
-            handleSaveButton={handleSaveButton}
-            isLiked={isLiked}
-            handleLikeButton={handleLikeButton}
-          />
-        ) : (
-          <PostDetailsHorizontal
-            key={post.id}
-            author={author}
-            post={post}
-            isFollowing={isFollowing}
-            isSaved={isSaved}
-            handleSaveButton={handleSaveButton}
-            isLiked={isLiked}
-            handleLikeButton={handleLikeButton}
-          />
-        ))}
+      {isSmallScreen || onlyVertical ? (
+        <PostDetailsVertical
+          author={author}
+          post={post}
+          isFollowing={isFollowing}
+          isSaved={isSaved}
+          handleSaveButton={handleSaveButton}
+          isLiked={isLiked}
+          handleLikeButton={handleLikeButton}
+        />
+      ) : (
+        <PostDetailsHorizontal
+          author={author}
+          post={post}
+          isFollowing={isFollowing}
+          isSaved={isSaved}
+          handleSaveButton={handleSaveButton}
+          isLiked={isLiked}
+          handleLikeButton={handleLikeButton}
+        />
+      )}
     </div>
   );
 };

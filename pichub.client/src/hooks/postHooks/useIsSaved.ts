@@ -6,7 +6,7 @@ interface Props {
 }
 const useIsSaved = ({ postId }: Props) => {
   return useQuery<boolean, Error>({
-    queryKey: ["isSaved"],
+    queryKey: ["isSaved", postId],
     queryFn: () =>
       axios
         .get<boolean>(`/api/post/isSaved?postId=${postId}`, {

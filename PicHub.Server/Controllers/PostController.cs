@@ -167,8 +167,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getSavedPosts")]
-        public async IAsyncEnumerable<Post> GetSaveds(string userId)
+        public async IAsyncEnumerable<Post> GetSaveds()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             foreach (var save in await unit.Saves.GetSavesByUserId(userId))
             {
                 yield return unit.Posts.Find(p => p.Id == save.PostId).Single();
