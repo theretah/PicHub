@@ -13,10 +13,10 @@ const Account = ({ width }: Props) => {
   }
   return (
     <>
-      <form className={`mb-3 ${width}`}>
+      <form className={`${width}`}>
         <span className="h4">Account privacy</span>
       </form>
-      <form className={`mb-3`} onSubmit={deleteAccount}>
+      <form className={`${width}`} onSubmit={deleteAccount}>
         <button type="submit" className="btn btn-danger">
           Delete account
         </button>

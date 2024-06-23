@@ -68,9 +68,10 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getPostsCount")]
-        public async Task<IActionResult> GetPostsCount(string userId)
+        public async Task<IActionResult> GetPostsCount(string userName)
         {
-            var posts = unit.Posts.Find(p => p.AuthorId == userId);
+            var user = await userManager.FindByNameAsync(userName);
+            var posts = unit.Posts.Find(p => p.AuthorId == user.Id);
             return Ok(posts.Count());
         }
 

@@ -1,18 +1,19 @@
+import React from "react";
+import { Props } from "./Props";
 import {
   MDBModal,
   MDBModalDialog,
   MDBModalContent,
-  MDBModalBody,
   MDBModalHeader,
+  MDBModalBody,
 } from "mdb-react-ui-kit";
-import ImageCropper from "./ImageCropper";
-import { Props } from "./Props";
+import ImageCropper from "../ImageCropper/ImageCropper";
 
-const SelectPostPictureModal = ({
-  updateAvatar,
+const SelectProfilePictureModal = ({
   closeModal,
   modalOpen,
   setModalOpen,
+  updateAvatar,
 }: Props) => {
   return (
     <MDBModal open={modalOpen} onClose={setModalOpen} tabIndex="-1">
@@ -22,7 +23,7 @@ const SelectPostPictureModal = ({
           style={{ width: 500, height: 600 }}
         >
           <MDBModalHeader className="bg-dark text-light d-flex justify-content-between border-gray py-1">
-            <span className="h5 m-0">Select picture file</span>
+            <span className="h5 m-0">Select profile picture</span>
             <button
               type="button"
               className="btn btn-dark p-0"
@@ -47,7 +48,9 @@ const SelectPostPictureModal = ({
                 <div className="col d-flex justify-content-between">
                   <div className="w-100">
                     <ImageCropper
-                      circularCrop={false}
+                      aspectRatio={1}
+                      minDimension={300}
+                      circularCrop={true}
                       updateAvatar={updateAvatar}
                       closeModal={closeModal}
                     />
@@ -62,4 +65,4 @@ const SelectPostPictureModal = ({
   );
 };
 
-export default SelectPostPictureModal;
+export default SelectProfilePictureModal;

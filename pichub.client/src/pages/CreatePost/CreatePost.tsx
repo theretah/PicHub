@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
 
@@ -9,7 +9,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
-import SelectPostPictureModal from "./SelectPostPictureModal";
+import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";
 
 interface CreatePostProps {
   Caption: string;
@@ -36,12 +36,8 @@ const CreatePost = () => {
   const navigate = useNavigate();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  const [selectedPicture, setSelectedPicture] = useState<File | null>(null);
-  const [selectedPictureSrc, setSelectedPictureSrc] = useState<
-    string | ArrayBuffer | null
-  >();
 
-  const { register, handleSubmit, setValue } = useForm<CreatePostProps>();
+  const { register, handleSubmit } = useForm<CreatePostProps>();
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,24 +52,6 @@ const CreatePost = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const handleSelectFileButton = () => {
-    //document.getElementById("file-input")?.click();
-    setModalOpen(true);
-  };
-
-  function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files ? event.target.files[0] : null;
-    setSelectedPicture(file);
-    if (file) {
-      setValue("ImageFile", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedPictureSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  }
 
   const addPost = useMutation({
     mutationFn: async (post: CreatePostProps) => {
@@ -90,7 +68,7 @@ const CreatePost = () => {
           if (res.status == 200) navigate("/");
         })
         .catch((error) => {
-          console.log(error);
+          throw new Error(error);
         });
     },
   });

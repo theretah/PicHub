@@ -36,7 +36,7 @@ const PostDetailsVertical = ({
       <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
-            <Link to={`/profile/${author?.userName}`}>
+            <Link to={`/profile/${author?.userName}/posts`}>
               <ProfileImage
                 imageUrl={
                   author?.profileImageUrl
@@ -50,7 +50,7 @@ const PostDetailsVertical = ({
             <div className="card-body p-0 align-self-center">
               <Link
                 className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
-                to={`/profile/${author?.userName}`}
+                to={`/profile/${author?.userName}/posts`}
               >
                 {author?.userName}
               </Link>
@@ -169,7 +169,7 @@ const PostDetailsVertical = ({
 
         <p className="card-title fw-bold mt-2">{post.likesCount} likes</p>
         <Link
-          to={`/profile/${author.userName}`}
+          to={`/profile/${author.userName}/posts`}
           className="card-title fw-bold d-inline text-decoration-none"
         >
           {author.userName}{" "}

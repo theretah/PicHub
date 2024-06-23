@@ -19,11 +19,9 @@ interface Like {
   userId: string;
 }
 const PostDetails = ({ post, onlyVertical }: Props) => {
-  console.log("AuthorId from post details: ", post.authorId);
   const { data: author } = useUserById({
     userId: post.authorId,
   });
-  // const [author, setAuthor] = useState<User>();
   const { data: isFollowing } = useIsFollowing({
     followingId: post.authorId,
   });
@@ -32,11 +30,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const { data: isSaved } = useIsSaved({ postId: post.id });
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-  // useEffect(() => {
-  //   axios.get(`/api/account/getById?id=${post.authorId}`).then((res) => {
-  //     setAuthor(res.data);
-  //   });
-  // }, []);
+
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 920);

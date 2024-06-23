@@ -3,12 +3,10 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import Layout from "../Layout/Layout";
 import { Link, Navigate, useParams } from "react-router-dom";
 
-import Posts from "../../pages/Profile/Posts";
-import ProfileReels from "../../pages/Profile/ProfileReels";
-import Tagged from "../../pages/Profile/Tagged";
-import Saved from "../../pages/Profile/Saved";
 import axios from "axios";
 import useAuthStore, { User } from "../../auth/store";
+import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
+import usePostsCount from "../../hooks/userHooks/usePostsCount";
 
 const MoreButton = () => {
   return (
@@ -93,12 +91,13 @@ interface Props {
   activeTab: string;
 }
 const Profile = ({ userName, children, activeTab }: Props) => {
-  const [pageUser, setPageUser] = useState<User>();
   const { user, isAuthenticated } = useAuthStore();
 
-  const [userIsOwner, setUserIsOwner] = useState(pageUser?.id == user?.id);
+  const { data: pageUser } = useUserByUserName({ userName: userName });
+  const userIsPageOwner = userName == user?.userName;
+  const { data: postsCount } = usePostsCount({ userName: userName });
+
   const [isFollowing, setIsFollowing] = useState(false);
-  const [postsCount, setPostsCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
   const [followingsCount, setFollowingsCount] = useState(0);
 
@@ -126,34 +125,12 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   }, [windowWidth]);
 
   useEffect(() => {
-    getPageUser();
-    getPostsCount();
     getFollowersCount();
     getFollowingsCount();
-    if (pageUser?.id && !userIsOwner) {
+    if (!userIsPageOwner) {
       getIsFollowing();
     }
   }, [userName, pageUser?.id]);
-
-  const getPageUser = async () => {
-    await axios
-      .get(`/api/account/getByUserName?userName=${userName}`)
-      .then((res) => {
-        setPageUser(res.data);
-        setUserIsOwner(res.data.id == user?.id);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
-
-  async function getPostsCount() {
-    await axios
-      .get(`/api/user/getPostsCount?userId=${pageUser?.id}`)
-      .then((res) => {
-        setPostsCount(res.data);
-      });
-  }
 
   async function followUser() {
     await axios.post(
@@ -203,7 +180,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
 
   return (
     <>
-      {isMedium && (
+      {isMedium && userIsPageOwner && (
         <div className="container-fluid border-bottom border-gray">
           <div className="d-flex justify-content-between py-1">
             <Link to={"/settings"} className="btn btn-dark text-light px-1">
@@ -219,7 +196,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
               </svg>
             </Link>
             <Link to={"/login"} className="btn btn-dark text-light">
-              {pageUser?.userName} &nbsp;
+              {user?.userName} &nbsp;
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -280,7 +257,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                               <span className="h5 m-0 me-4 ">
                                 {pageUser?.userName}
                               </span>
-                              {userIsOwner ? (
+                              {userIsPageOwner ? (
                                 <>
                                   <EditProfileButton />
                                   <SettingsButton />
@@ -325,7 +302,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
 
                         {windowWidth >= md && (
                           <div className="col-sm-8 col-md-8">
-                            {userIsOwner ? (
+                            {userIsPageOwner ? (
                               <>
                                 <EditProfileButton />
                                 <SettingsButton />

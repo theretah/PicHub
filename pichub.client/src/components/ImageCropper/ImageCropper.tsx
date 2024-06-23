@@ -9,16 +9,17 @@ import ReactCrop, {
 import setCanvasPreview from "../../setCanvasPreview";
 import "react-image-crop/dist/ReactCrop.css";
 
-const ASPECT_RATIO = 1;
-const MIN_DIMENSION = 1200;
-
 interface ImageCropperProps {
   circularCrop: boolean;
   closeModal: () => void;
   updateAvatar: (dataUrl: string) => void;
+  aspectRatio: number;
+  minDimension: number;
 }
 
 const ImageCropper = ({
+  aspectRatio,
+  minDimension,
   circularCrop,
   closeModal,
   updateAvatar,
@@ -55,14 +56,14 @@ const ImageCropper = ({
 
   const onImageLoad = (e: SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+    const cropWidthInPercent = (minDimension / width) * 100;
 
     const crop = makeAspectCrop(
       {
         unit: "%",
         width: cropWidthInPercent,
       },
-      ASPECT_RATIO,
+      aspectRatio,
       width,
       height
     );
@@ -107,7 +108,7 @@ const ImageCropper = ({
               onChange={(c, percentCrop) => setCrop(percentCrop)}
               circularCrop={circularCrop}
               keepSelection
-              aspect={ASPECT_RATIO}
+              aspect={aspectRatio}
               // minWidth={MIN_DIMENSION}
             >
               <img

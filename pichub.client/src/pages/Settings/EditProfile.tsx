@@ -1,10 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { ChangeEvent, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";
 import { Props } from "./Props";
+import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";
+import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
+import { base64ToBlob } from "../../utils/Base64ToBlob";
 
 interface EditProfileFormProps {
   FullName: string;
@@ -19,39 +22,36 @@ const EditProfile = ({ width }: Props) => {
 
   const navigate = useNavigate();
 
-  const [selectedPictureSrc, setSelectedPictureSrc] = useState<
-    string | ArrayBuffer | null
-  >();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [avatar, setAvatar] = useState<string>("");
+  const updateAvatar = (imgSrc: string) => {
+    setAvatar(imgSrc);
+  };
+
+  const toggleOpen = () => {
+    setModalOpen(!modalOpen);
+  };
+
   const [currentPictureSrc, setCurrentPictureSrc] = useState<string | null>(
     user?.profileImageUrl || null
   );
 
   const { register, handleSubmit, setValue } = useForm<EditProfileFormProps>();
 
-  const handleSelectFileButton = () => {
-    document.getElementById("file-input")?.click();
-  };
-
   const handleDeleteFileButton = () => {
-    setSelectedPictureSrc(null);
     setCurrentPictureSrc("");
+    setAvatar("");
 
     setValue("ProfileImageFile", "");
   };
 
-  function handleFileInput(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files ? event.target.files[0] : null;
-    setValue("ProfileImageFile", file);
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setSelectedPictureSrc(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
   const onSubmit: SubmitHandler<EditProfileFormProps> = async (data) => {
+    if (avatar) {
+      const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
+      const blob = base64ToBlob(avatar, mimeType);
+      const file = new File([blob], "avatar.png", { type: mimeType });
+      data.ProfileImageFile = file;
+    }
     await editProfile.mutate(data);
   };
 
@@ -74,11 +74,10 @@ const EditProfile = ({ width }: Props) => {
           },
         })
         .then(() => {
-          console.log(model);
           navigate("/");
         })
         .catch((error) => {
-          console.log(error);
+          throw new Error(error);
         });
     },
   });
@@ -91,10 +90,10 @@ const EditProfile = ({ width }: Props) => {
           Profile photo
         </label>
 
-        {selectedPictureSrc ? (
+        {avatar ? (
           <div className="col bg-gray rounded p-2">
             <img
-              src={selectedPictureSrc?.toString()}
+              src={avatar?.toString()}
               className="mx-auto object-fit-cover rounded-circle"
               alt="..."
               style={{ width: 75, height: 75 }}
@@ -102,7 +101,7 @@ const EditProfile = ({ width }: Props) => {
             <button
               type="button"
               className="btn btn-primary ms-2 py-1"
-              onClick={handleSelectFileButton}
+              onClick={toggleOpen}
             >
               Change photo
             </button>
@@ -113,13 +112,7 @@ const EditProfile = ({ width }: Props) => {
             >
               Delete photo
             </button>
-            <input
-              id="file-input"
-              type="file"
-              hidden
-              accept="image/*"
-              onInput={handleFileInput}
-            />
+            <input id="file-input" type="file" hidden accept="image/*" />
           </div>
         ) : currentPictureSrc ? (
           <div className="col bg-gray rounded p-2">
@@ -132,7 +125,7 @@ const EditProfile = ({ width }: Props) => {
             <button
               type="button"
               className="btn btn-primary ms-2 py-1"
-              onClick={handleSelectFileButton}
+              onClick={toggleOpen}
             >
               Change photo
             </button>
@@ -143,13 +136,7 @@ const EditProfile = ({ width }: Props) => {
             >
               Delete photo
             </button>
-            <input
-              id="file-input"
-              type="file"
-              hidden
-              accept="image/*"
-              onInput={handleFileInput}
-            />
+            <input id="file-input" type="file" hidden accept="image/*" />
           </div>
         ) : (
           <div className="col bg-gray rounded p-2">
@@ -162,21 +149,22 @@ const EditProfile = ({ width }: Props) => {
             <button
               type="button"
               className="btn btn-primary ms-2 py-1"
-              onClick={handleSelectFileButton}
+              onClick={toggleOpen}
             >
               Upload photo
             </button>
-            <input
-              id="file-input"
-              type="file"
-              hidden
-              accept="image/*"
-              onInput={handleFileInput}
-            />
+            <input id="file-input" type="file" hidden accept="image/*" />
           </div>
         )}
       </div>
-
+      {modalOpen && (
+        <SelectProfilePictureModal
+          modalOpen={modalOpen}
+          setModalOpen={() => setModalOpen(!modalOpen)}
+          updateAvatar={updateAvatar}
+          closeModal={() => setModalOpen(false)}
+        />
+      )}
       <div className="mb-3">
         <label htmlFor="fullNameInput" className="form-label h6">
           Full name
