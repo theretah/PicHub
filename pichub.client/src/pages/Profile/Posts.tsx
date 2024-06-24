@@ -1,5 +1,4 @@
 import { Link, useParams } from "react-router-dom";
-import { User } from "../../auth/store";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import Profile from "../../components/Profile/Profile";
 import usePostsByAuthorUserName from "../../hooks/postHooks/usePostsByAuthorUserName";

@@ -52,6 +52,21 @@ namespace PicHub.Server.Controllers
             return unit.Posts.Get(id);
         }
 
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                unit.Posts.Remove(id);
+                unit.Complete();
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("create")]
         public async Task<IActionResult> Create(CreatePostViewModel model)
         {

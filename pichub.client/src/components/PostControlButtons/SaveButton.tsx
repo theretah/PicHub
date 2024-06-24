@@ -1,5 +1,3 @@
-import { useState } from "react";
-import PostControlButtonProps from "./PostControlButtonProps";
 interface Props {
   size: number;
   isSaved: boolean;

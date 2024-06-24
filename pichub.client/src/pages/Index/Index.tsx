@@ -1,11 +1,9 @@
-import HomeStoriesBar from "../../components/HomeStoriesBar/HomeStoriesBar";
 import HomePostsColumn from "../../components/HomePostsColumn/HomePostsColumn";
 import Layout from "../../components/Layout/Layout";
 import { useState, useEffect, useRef } from "react";
 import HomeSideBar from "../../components/HomeSideBar/HomeSideBar";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import { Link } from "react-router-dom";
-import axios from "axios";
 
 const Index = () => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);

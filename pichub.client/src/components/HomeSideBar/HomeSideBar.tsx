@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
 
 import axios from "axios";
-import { User } from "../../auth/store";
+import { User } from "../../entities/User";
 
 const HomeSideBar = () => {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>();

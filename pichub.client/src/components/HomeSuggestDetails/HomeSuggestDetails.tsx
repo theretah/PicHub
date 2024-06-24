@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import { User } from "../../auth/store";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import { User } from "../../entities/User";
 
 interface Props {
   user: User;

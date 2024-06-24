@@ -2,8 +2,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuthStore, { LoginData } from "../../auth/store";
+import useAuthStore from "../../auth/store";
 import { useState } from "react";
+import { LoginData } from "../../entities/LoginData";
 
 interface RegisterData {
   email: string;
@@ -17,8 +18,6 @@ const Register = () => {
   const { login } = useAuthStore();
   const { register, handleSubmit } = useForm<RegisterData>();
   const [error, setError] = useState<string>();
-  const emailExists = "User with this email address already exists.";
-  const userNameExists = "User with this username already exists.";
 
   const registerUser = useMutation({
     mutationFn: async (registerData: RegisterData) => {

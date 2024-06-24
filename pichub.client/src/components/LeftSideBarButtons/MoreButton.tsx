@@ -1,4 +1,3 @@
-import React from "react";
 import { Props } from "./Props";
 
 const MoreButton = ({ activePage, showFullButton, handleButton }: Props) => {

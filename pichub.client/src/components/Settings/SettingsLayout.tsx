@@ -4,8 +4,6 @@ import { Navigate } from "react-router-dom";
 import "./Settings.css";
 
 import useAuthStore from "../../auth/store";
-import EditProfile from "../../pages/Settings/EditProfile";
-import Account from "../../pages/Settings/Account";
 import SettingsNavbar from "./SettingsNavbar";
 import SettingsNavbarButton from "./SettingsNavbarButton";
 interface Props {
@@ -14,7 +12,6 @@ interface Props {
 const SettingsLayout = ({ children }: Props) => {
   const { isAuthenticated } = useAuthStore();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [currentPage, setCurrentPage] = useState("profile");
 
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
@@ -40,7 +37,6 @@ const SettingsLayout = ({ children }: Props) => {
             <SettingsNavbarButton
               to="/settings/editprofile"
               text="Edit profile"
-              handleClick={() => setCurrentPage("profile")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +56,6 @@ const SettingsLayout = ({ children }: Props) => {
             <SettingsNavbarButton
               to="/settings/accountprivacy"
               text="Account privacy"
-              handleClick={() => setCurrentPage("privacy")}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Props } from "./Props";
 import useAuthStore from "../../auth/store";
 import { useNavigate } from "react-router-dom";
 import SettingsLayout from "../../components/Settings/SettingsLayout";

@@ -1,8 +1,9 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import useAuthStore, { LoginData } from "../../auth/store";
 import { useState } from "react";
+import useAuthStore from "../../auth/store";
+import { LoginData } from "../../entities/LoginData";
 
 const Login = () => {
   const { handleSubmit, register } = useForm<LoginData>();

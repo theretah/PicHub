@@ -1,9 +1,3 @@
-import {
-  MDBModal,
-  MDBModalBody,
-  MDBModalContent,
-  MDBModalDialog,
-} from "mdb-react-ui-kit";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuthStore from "../../auth/store";

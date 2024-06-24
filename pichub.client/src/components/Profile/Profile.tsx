@@ -1,10 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import Layout from "../Layout/Layout";
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 import axios from "axios";
-import useAuthStore, { User } from "../../auth/store";
+import useAuthStore from "../../auth/store";
 import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
 import usePostsCount from "../../hooks/userHooks/usePostsCount";
 

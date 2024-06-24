@@ -1,4 +1,4 @@
-import { Link, Navigate, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import useSavedPosts from "../../hooks/postHooks/useSavedPosts";
 import Profile from "../../components/Profile/Profile";

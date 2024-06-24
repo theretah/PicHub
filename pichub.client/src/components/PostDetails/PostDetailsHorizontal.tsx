@@ -1,10 +1,3 @@
-import {
-  MDBModal,
-  MDBModalBody,
-  MDBModalContent,
-  MDBModalDialog,
-} from "mdb-react-ui-kit";
-
 import { useState } from "react";
 import useAuthStore from "../../auth/store";
 import ChatButton from "../PostControlButtons/ChatButton";

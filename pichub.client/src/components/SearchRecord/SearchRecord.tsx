@@ -1,6 +1,5 @@
-import React from "react";
-import ProfileImage from "../ProfileImage/ProfileImage";
 import { Link } from "react-router-dom";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 const SearchRecord = () => {
   return (

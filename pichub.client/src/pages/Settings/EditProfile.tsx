@@ -4,8 +4,6 @@ import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/store";
-import { Props } from "./Props";
-import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";
 import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SettingsLayout from "../../components/Settings/SettingsLayout";

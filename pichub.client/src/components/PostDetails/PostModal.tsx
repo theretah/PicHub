@@ -6,31 +6,60 @@ import {
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { Post } from "../../entities/Post";
+import useAuthStore from "../../auth/store";
+import useDeletePost from "../../hooks/postHooks/useDeletePost";
 interface PostModalProps {
   post: Post;
   modalOpen: boolean;
   toggleOpen: () => void;
 }
 export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
+  const { user } = useAuthStore();
+  const userIsOwner = post.authorId == user?.id;
+
+  const m = useDeletePost({ postId: post.id });
+  function deletePost() {
+    m.mutate();
+  }
+
+  if (m.isSuccess) window.location.reload();
+
   return (
     <MDBModal open={modalOpen} onClose={toggleOpen} tabIndex="-1">
       <MDBModalDialog>
         <MDBModalContent>
           <MDBModalBody className="p-0">
             <ul className="list-group list-group-flush p-0 rounded bg-dark">
-              <li className="list-group-item align-self-center w-100 p-0">
-                <button className="btn text-danger w-100 fw-bold py-3">
-                  Report
-                </button>
-              </li>
-              <li className="list-group-item align-self-center w-100 p-0">
-                <button className="btn text-danger w-100 fw-bold py-3">
-                  Unfollow
-                </button>
-              </li>
-              <li className="list-group-item align-self-center w-100 p-0">
-                <button className="btn w-100 py-3">Add to favorites</button>
-              </li>
+              {!userIsOwner && (
+                <>
+                  <li className="list-group-item align-self-center w-100 p-0">
+                    <button className="btn text-danger w-100 fw-bold py-3">
+                      Report
+                    </button>
+                  </li>
+                  <li className="list-group-item align-self-center w-100 p-0">
+                    <button className="btn text-danger w-100 fw-bold py-3">
+                      Unfollow
+                    </button>
+                  </li>
+                  <li className="list-group-item align-self-center w-100 p-0">
+                    <button className="btn w-100 py-3">Add to favorites</button>
+                  </li>
+                </>
+              )}
+
+              {userIsOwner && (
+                <li className="list-group-item align-self-center w-100 p-0">
+                  {post && (
+                    <button
+                      onClick={deletePost}
+                      className="btn text-danger fw-bold w-100 py-3"
+                    >
+                      Delete post
+                    </button>
+                  )}
+                </li>
+              )}
               <li className="list-group-item align-self-center w-100 p-0">
                 {post && (
                   <Link to={`/post/${post.id}`} className="btn w-100 py-3">

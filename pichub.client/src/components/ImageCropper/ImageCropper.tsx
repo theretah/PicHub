@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
+import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 import ReactCrop, {
   Crop,
   PixelCrop,
@@ -28,7 +28,6 @@ const ImageCropper = ({
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState<Crop>();
-  const [error, setError] = useState("");
 
   const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -99,7 +98,6 @@ const ImageCropper = ({
           id="profilePhoto"
         />
       </div>
-      {error && <p className="text-danger small">{error}</p>}
       {imgSrc && (
         <div className="d-flex flex-column align-items-center">
           <div className="position-relative d-inline-block">

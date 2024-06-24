@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 const postLike = () => {
-  const like = useMutation<number, Error>({
+  return useMutation({
     mutationFn: (postId: number) =>
       axios
         .post(
