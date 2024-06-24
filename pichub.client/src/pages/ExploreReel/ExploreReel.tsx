@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import PostDetails from "../../components/PostDetails/PostDetails";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 import usePosts from "../../hooks/postHooks/usePosts";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 

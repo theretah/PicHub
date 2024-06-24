@@ -1,19 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
-
-export interface User {
-  id: string;
-  userName: string;
-  fullName: string;
-  bio: string;
-  gender: string;
-  profileImageUrl: string;
-}
-
-export interface LoginData {
-  userName: string;
-  password: string;
-}
+import { User } from "../entities/User";
+import { LoginData } from "../entities/LoginData";
 
 interface AuthStore {
   isAuthenticated: boolean;

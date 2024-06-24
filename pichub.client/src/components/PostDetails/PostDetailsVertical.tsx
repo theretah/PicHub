@@ -13,6 +13,7 @@ import SaveButton from "../PostControlButtons/SaveButton";
 import ShareButton from "../PostControlButtons/ShareButton";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { PostDetailsProps } from "./PostDetailsProps";
+import PostModal from "./PostModal";
 
 const PostDetailsVertical = ({
   author,
@@ -24,9 +25,9 @@ const PostDetailsVertical = ({
   handleSaveButton,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
-  const [modalOpen, setModalOpen] = useState(false);
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
 
+  const [modalOpen, setModalOpen] = useState(false);
   const toggleOpen = () => {
     setModalOpen(!modalOpen);
   };
@@ -83,56 +84,11 @@ const PostDetailsVertical = ({
                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
               </svg>
             </button>
-            <MDBModal
-              open={modalOpen}
-              onClose={() => setModalOpen(false)}
-              tabIndex="-1"
-            >
-              <MDBModalDialog>
-                <MDBModalContent>
-                  <MDBModalBody className="p-0">
-                    <ul className="list-group list-group-flush p-0 rounded bg-dark">
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn text-danger w-100 fw-bold py-3">
-                          Report
-                        </button>
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn text-danger w-100 fw-bold py-3">
-                          Unfollow
-                        </button>
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn w-100 py-3">
-                          Add to favorites
-                        </button>
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        {post && (
-                          <Link
-                            to={`/post/${post.id}`}
-                            className="btn w-100 py-3"
-                          >
-                            Go to post
-                          </Link>
-                        )}
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn w-100 py-3">Share to</button>
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button className="btn w-100 py-3">Copy link</button>
-                      </li>
-                      <li className="list-group-item align-self-center w-100 p-0">
-                        <button onClick={toggleOpen} className="btn w-100 py-3">
-                          Cancel
-                        </button>
-                      </li>
-                    </ul>
-                  </MDBModalBody>
-                </MDBModalContent>
-              </MDBModalDialog>
-            </MDBModal>
+            <PostModal
+              modalOpen={modalOpen}
+              toggleOpen={() => setModalOpen(!modalOpen)}
+              post={post}
+            />
           </div>
         </div>
       </div>

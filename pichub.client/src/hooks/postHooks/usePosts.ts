@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 import { useQuery } from "@tanstack/react-query";
 
 const usePosts = () => {

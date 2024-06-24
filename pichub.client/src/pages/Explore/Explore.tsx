@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import usePosts from "../../hooks/postHooks/usePosts";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 interface PostItemProps {
   post: Post;
 }

@@ -5,10 +5,8 @@ import useIsSaved from "../../hooks/postHooks/useIsSaved";
 import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
-import { User } from "../../auth/store";
-import axios from "axios";
 
 interface Props {
   post: Post;
@@ -18,6 +16,7 @@ interface Like {
   postId: number;
   userId: string;
 }
+
 const PostDetails = ({ post, onlyVertical }: Props) => {
   const { data: author } = useUserById({
     userId: post.authorId,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Layout from "../Layout/Layout";
 import { Navigate } from "react-router-dom";
 import "./Settings.css";
@@ -8,8 +8,10 @@ import EditProfile from "../../pages/Settings/EditProfile";
 import Account from "../../pages/Settings/Account";
 import SettingsNavbar from "./SettingsNavbar";
 import SettingsNavbarButton from "./SettingsNavbarButton";
-
-const SettingsLayout = () => {
+interface Props {
+  children: ReactNode;
+}
+const SettingsLayout = ({ children }: Props) => {
   const { isAuthenticated } = useAuthStore();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [currentPage, setCurrentPage] = useState("profile");
@@ -74,19 +76,13 @@ const SettingsLayout = () => {
           </>
         </SettingsNavbar>
         <div className="col" style={{ paddingLeft: 212 }}>
-          {currentPage == "profile" ? (
-            <EditProfile
-              width={`${
-                windowWidth < 900 ? "w-100" : "w-75"
-              } mx-auto mt-5 text-light`}
-            />
-          ) : (
-            <Account
-              width={`${
-                windowWidth < 900 ? "w-100" : "w-75"
-              } mx-auto mt-5 text-light`}
-            />
-          )}
+          <div
+            className={`mx-auto mt-5 text-light ${
+              windowWidth < 900 ? "w-100" : "w-75"
+            }`}
+          >
+            {children}
+          </div>
         </div>
       </div>
     </Layout>

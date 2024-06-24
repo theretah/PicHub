@@ -14,6 +14,7 @@ import ShareButton from "../PostControlButtons/ShareButton";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { PostDetailsProps } from "./PostDetailsProps";
 import { Link } from "react-router-dom";
+import PostModal from "./PostModal";
 
 const PostDetailsHorizontal = ({
   author,
@@ -98,53 +99,11 @@ const PostDetailsHorizontal = ({
                     <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3" />
                   </svg>
                 </button>
-                <MDBModal
-                  open={modalOpen}
-                  onClose={() => setModalOpen(false)}
-                  tabIndex="-1"
-                >
-                  <MDBModalDialog>
-                    <MDBModalContent>
-                      <MDBModalBody className="p-0">
-                        <ul className="list-group list-group-flush p-0 rounded">
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button className="btn text-danger w-100 fw-bold py-3">
-                              Report
-                            </button>
-                          </li>
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button className="btn text-danger w-100 fw-bold py-3">
-                              Unfollow
-                            </button>
-                          </li>
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button className="btn text-light w-100 py-3">
-                              Add to favorites
-                            </button>
-                          </li>
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button className="btn text-light w-100 py-3">
-                              Share to
-                            </button>
-                          </li>
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button className="btn text-light w-100 py-3">
-                              Copy link
-                            </button>
-                          </li>
-                          <li className="list-group-item bg-dark align-self-center w-100 p-0">
-                            <button
-                              onClick={toggleOpen}
-                              className="btn text-light w-100 py-3"
-                            >
-                              Cancel
-                            </button>
-                          </li>
-                        </ul>
-                      </MDBModalBody>
-                    </MDBModalContent>
-                  </MDBModalDialog>
-                </MDBModal>
+                <PostModal
+                  modalOpen={modalOpen}
+                  toggleOpen={toggleOpen}
+                  post={post}
+                />
               </div>
               <hr className="my-0 mx-0" />
               <div className="overflow-y-auto p-2" style={{ height: 275 }}>

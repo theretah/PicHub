@@ -8,6 +8,7 @@ import { Props } from "./Props";
 import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";
 import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
+import SettingsLayout from "../../components/Settings/SettingsLayout";
 
 interface EditProfileFormProps {
   FullName: string;
@@ -17,7 +18,7 @@ interface EditProfileFormProps {
   Gender: string;
 }
 
-const EditProfile = ({ width }: Props) => {
+const EditProfile = () => {
   const { user } = useAuthStore();
 
   const navigate = useNavigate();
@@ -82,151 +83,153 @@ const EditProfile = ({ width }: Props) => {
     },
   });
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={width}>
-      <span className="h4">Edit profile</span>
+    <SettingsLayout>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <span className="h4">Edit profile</span>
 
-      <div className="mb-3 mt-3">
-        <label htmlFor="fullNameInput" className="form-label h6">
-          Profile photo
-        </label>
+        <div className="mb-3 mt-3">
+          <label htmlFor="fullNameInput" className="form-label h6">
+            Profile photo
+          </label>
 
-        {avatar ? (
-          <div className="col bg-gray rounded p-2">
-            <img
-              src={avatar?.toString()}
-              className="mx-auto object-fit-cover rounded-circle"
-              alt="..."
-              style={{ width: 75, height: 75 }}
-            />
-            <button
-              type="button"
-              className="btn btn-primary ms-2 py-1"
-              onClick={toggleOpen}
-            >
-              Change photo
-            </button>
-            <button
-              type="button"
-              className="btn text-danger fw-bold ms-2 py-1"
-              onClick={handleDeleteFileButton}
-            >
-              Delete photo
-            </button>
-            <input id="file-input" type="file" hidden accept="image/*" />
-          </div>
-        ) : currentPictureSrc ? (
-          <div className="col bg-gray rounded p-2">
-            <img
-              src={`data:image/png;base64,${currentPictureSrc}`}
-              className="mx-auto object-fit-cover rounded-circle"
-              alt="..."
-              style={{ width: 75, height: 75 }}
-            />
-            <button
-              type="button"
-              className="btn btn-primary ms-2 py-1"
-              onClick={toggleOpen}
-            >
-              Change photo
-            </button>
-            <button
-              type="button"
-              className="btn text-danger fw-bold ms-2 py-1"
-              onClick={handleDeleteFileButton}
-            >
-              Delete photo
-            </button>
-            <input id="file-input" type="file" hidden accept="image/*" />
-          </div>
-        ) : (
-          <div className="col bg-gray rounded p-2">
-            <img
-              src="/images/profiles/default-profile.jpg"
-              className="mx-auto object-fit-cover rounded-circle"
-              alt="..."
-              style={{ width: 75, height: 75 }}
-            />
-            <button
-              type="button"
-              className="btn btn-primary ms-2 py-1"
-              onClick={toggleOpen}
-            >
-              Upload photo
-            </button>
-            <input id="file-input" type="file" hidden accept="image/*" />
-          </div>
+          {avatar ? (
+            <div className="col bg-gray rounded p-2">
+              <img
+                src={avatar?.toString()}
+                className="mx-auto object-fit-cover rounded-circle"
+                alt="..."
+                style={{ width: 75, height: 75 }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary ms-2 py-1"
+                onClick={toggleOpen}
+              >
+                Change photo
+              </button>
+              <button
+                type="button"
+                className="btn text-danger fw-bold ms-2 py-1"
+                onClick={handleDeleteFileButton}
+              >
+                Delete photo
+              </button>
+              <input id="file-input" type="file" hidden accept="image/*" />
+            </div>
+          ) : currentPictureSrc ? (
+            <div className="col bg-gray rounded p-2">
+              <img
+                src={`data:image/png;base64,${currentPictureSrc}`}
+                className="mx-auto object-fit-cover rounded-circle"
+                alt="..."
+                style={{ width: 75, height: 75 }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary ms-2 py-1"
+                onClick={toggleOpen}
+              >
+                Change photo
+              </button>
+              <button
+                type="button"
+                className="btn text-danger fw-bold ms-2 py-1"
+                onClick={handleDeleteFileButton}
+              >
+                Delete photo
+              </button>
+              <input id="file-input" type="file" hidden accept="image/*" />
+            </div>
+          ) : (
+            <div className="col bg-gray rounded p-2">
+              <img
+                src="/images/profiles/default-profile.jpg"
+                className="mx-auto object-fit-cover rounded-circle"
+                alt="..."
+                style={{ width: 75, height: 75 }}
+              />
+              <button
+                type="button"
+                className="btn btn-primary ms-2 py-1"
+                onClick={toggleOpen}
+              >
+                Upload photo
+              </button>
+              <input id="file-input" type="file" hidden accept="image/*" />
+            </div>
+          )}
+        </div>
+        {modalOpen && (
+          <SelectProfilePictureModal
+            modalOpen={modalOpen}
+            setModalOpen={() => setModalOpen(!modalOpen)}
+            updateAvatar={updateAvatar}
+            closeModal={() => setModalOpen(false)}
+          />
         )}
-      </div>
-      {modalOpen && (
-        <SelectProfilePictureModal
-          modalOpen={modalOpen}
-          setModalOpen={() => setModalOpen(!modalOpen)}
-          updateAvatar={updateAvatar}
-          closeModal={() => setModalOpen(false)}
-        />
-      )}
-      <div className="mb-3">
-        <label htmlFor="fullNameInput" className="form-label h6">
-          Full name
-        </label>
-        <input
-          {...register("FullName")}
-          type="text"
-          className="form-control bg-gray border-0 text-light"
-          id="fullNameInput"
-          placeholder="John Smith"
-          defaultValue={user?.fullName}
-        />
-      </div>
+        <div className="mb-3">
+          <label htmlFor="fullNameInput" className="form-label h6">
+            Full name
+          </label>
+          <input
+            {...register("FullName")}
+            type="text"
+            className="form-control bg-gray border-0 text-light"
+            id="fullNameInput"
+            placeholder="John Smith"
+            defaultValue={user?.fullName}
+          />
+        </div>
 
-      <div className="mb-3">
-        <label htmlFor="userNameInput" className="form-label h6">
-          Username
-        </label>
-        <input
-          {...register("UserName")}
-          type="text"
-          className="form-control bg-gray border-0 text-light"
-          id="userNameInput"
-          placeholder="johnsmith"
-          defaultValue={user?.userName}
-        />
-      </div>
+        <div className="mb-3">
+          <label htmlFor="userNameInput" className="form-label h6">
+            Username
+          </label>
+          <input
+            {...register("UserName")}
+            type="text"
+            className="form-control bg-gray border-0 text-light"
+            id="userNameInput"
+            placeholder="johnsmith"
+            defaultValue={user?.userName}
+          />
+        </div>
 
-      <div className="mb-3">
-        <label htmlFor="bioInput" className="form-label h6">
-          Bio
-        </label>
-        <textarea
-          {...register("Bio")}
-          className="form-control bg-gray border-0 text-light"
-          placeholder="Write something about yourself"
-          rows={4}
-          style={{ resize: "none" }}
-          defaultValue={user?.bio}
-        ></textarea>
-      </div>
+        <div className="mb-3">
+          <label htmlFor="bioInput" className="form-label h6">
+            Bio
+          </label>
+          <textarea
+            {...register("Bio")}
+            className="form-control bg-gray border-0 text-light"
+            placeholder="Write something about yourself"
+            rows={4}
+            style={{ resize: "none" }}
+            defaultValue={user?.bio}
+          ></textarea>
+        </div>
 
-      <div className="mb-3">
-        <label htmlFor="bioInput" className="form-label h6">
-          Gender
-        </label>
-        <select
-          className="form-select bg-gray border-0 text-light"
-          {...register("Gender")}
-          defaultValue={user?.gender}
-        >
-          <option value={0}>Prefer not to say</option>
-          <option value={1}>Male</option>
-          <option value={2}>Female</option>
-        </select>
-      </div>
-      <div className="mb-3 d-flex justify-content-end">
-        <button className="btn btn-primary w-25" type="submit">
-          Submit
-        </button>
-      </div>
-    </form>
+        <div className="mb-3">
+          <label htmlFor="bioInput" className="form-label h6">
+            Gender
+          </label>
+          <select
+            className="form-select bg-gray border-0 text-light"
+            {...register("Gender")}
+            defaultValue={user?.gender}
+          >
+            <option value={0}>Prefer not to say</option>
+            <option value={1}>Male</option>
+            <option value={2}>Female</option>
+          </select>
+        </div>
+        <div className="mb-3 d-flex justify-content-end">
+          <button className="btn btn-primary w-25" type="submit">
+            Submit
+          </button>
+        </div>
+      </form>
+    </SettingsLayout>
   );
 };
 

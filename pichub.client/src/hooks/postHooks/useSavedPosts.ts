@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 
 const useSavedPosts = () => {
   return useQuery<Post[], Error>({

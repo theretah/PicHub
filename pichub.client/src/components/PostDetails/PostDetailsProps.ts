@@ -1,5 +1,5 @@
 import { User } from "../../auth/store";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 
 export interface PostDetailsProps {
   post: Post;

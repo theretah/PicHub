@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Post } from "../../interfaces/Post";
+import { Post } from "../../entities/Post";
 interface Props {
   authorId: string;
 }

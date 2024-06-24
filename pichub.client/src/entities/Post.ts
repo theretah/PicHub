@@ -1,4 +1,4 @@
-import { User } from "../auth/store";
+import { User } from "./User";
 
 export interface Post {
   id: number;

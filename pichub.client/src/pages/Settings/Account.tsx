@@ -2,8 +2,9 @@ import axios from "axios";
 import { Props } from "./Props";
 import useAuthStore from "../../auth/store";
 import { useNavigate } from "react-router-dom";
+import SettingsLayout from "../../components/Settings/SettingsLayout";
 
-const Account = ({ width }: Props) => {
+const Account = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   function deleteAccount() {
@@ -12,16 +13,16 @@ const Account = ({ width }: Props) => {
     navigate("/login");
   }
   return (
-    <>
-      <form className={`${width}`}>
+    <SettingsLayout>
+      <form>
         <span className="h4">Account privacy</span>
       </form>
-      <form className={`${width}`} onSubmit={deleteAccount}>
+      <form onSubmit={deleteAccount}>
         <button type="submit" className="btn btn-danger">
           Delete account
         </button>
       </form>
-    </>
+    </SettingsLayout>
   );
 };
 
