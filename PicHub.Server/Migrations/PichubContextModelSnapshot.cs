@@ -241,7 +241,7 @@ namespace PicHub.Server.Migrations
 
                     b.HasIndex("FollowingId");
 
-                    b.ToTable("Follows");
+                    b.ToTable("Follows", (string)null);
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
@@ -256,7 +256,7 @@ namespace PicHub.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", (string)null);
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
@@ -291,7 +291,7 @@ namespace PicHub.Server.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
@@ -306,7 +306,7 @@ namespace PicHub.Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Saves");
+                    b.ToTable("Saves", (string)null);
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>

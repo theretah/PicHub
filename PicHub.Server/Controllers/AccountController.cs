@@ -125,22 +125,24 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getByEmail")]
-        public async Task<AppUser> GetUserByEmail(string email)
+        public async Task<IActionResult> GetUserByEmail(string email)
         {
-            return await userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(email);
+            return user != null ? Ok(user) : NotFound();
         }
 
         [HttpGet("getById")]
-        public async Task<AppUser> GetUserById(string id)
+        public async Task<IActionResult> GetUserById(string id)
         {
             var user = await userManager.FindByIdAsync(id);
-            return user;
+            return user != null ? Ok(user) : NotFound();
         }
 
         [HttpGet("getByUserName")]
-        public async Task<AppUser> GetUserByUsername(string userName)
+        public async Task<IActionResult> GetUserByUsername(string userName)
         {
-            return await userManager.FindByNameAsync(userName);
+            var user = await userManager.FindByNameAsync(userName);
+            return user != null ? Ok(user) : NotFound();
         }
 
         [HttpGet("lastRegistered")]

@@ -39,6 +39,10 @@ namespace PicHub.Server.Controllers
             }
 
             var user = await userManager.FindByIdAsync(loggedInUserId);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
             if (model.ProfileImageFile != null)
             {
                 user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile);
@@ -71,37 +75,39 @@ namespace PicHub.Server.Controllers
         public async Task<IActionResult> GetPostsCount(string userName)
         {
             var user = await userManager.FindByNameAsync(userName);
+            if (user == null) return NotFound();
             var posts = unit.Posts.Find(p => p.AuthorId == user.Id);
             return Ok(posts.Count());
         }
 
         [HttpGet("getFollowersCount")]
-        public async Task<IActionResult> GetFollowersCount(string userId)
+        public IActionResult GetFollowersCount(string userId)
         {
             var followers = unit.Follows.Find(f => f.FollowingId == userId);
             return Ok(followers.Count());
         }
 
         [HttpGet("getFollowingsCount")]
-        public async Task<IActionResult> GetFollowingsCount(string userId)
+        public IActionResult GetFollowingsCount(string userId)
         {
             var followings = unit.Follows.Find(f => f.FollowerId == userId);
             return Ok(followings.Count());
         }
 
         [HttpGet("getIsFollowing")]
-        public async Task<IActionResult> GetIsFollowing(string followingId)
+        public IActionResult GetIsFollowing(string followingId)
         {
             var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return Ok(unit.Follows.Find(f => f.FollowerId == followerId && f.FollowingId == followingId).Any());
         }
 
         [HttpPost("follow")]
-        public async Task<IActionResult> Follow(string followingId)
+        public IActionResult Follow(string followingId)
         {
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (loggedInUserId == null) return Unauthorized();
 
                 unit.Follows.Add(new Follow
                 {
@@ -114,13 +120,12 @@ namespace PicHub.Server.Controllers
             }
             catch (Exception)
             {
-                var followingUser = await userManager.FindByIdAsync(followingId);
-                return BadRequest($"Could not follow {followingUser.UserName}.");
+                return BadRequest();
             }
         }
 
         [HttpDelete("unFollow")]
-        public async Task<IActionResult> UnFollow(string followingId)
+        public IActionResult UnFollow(string followingId)
         {
             try
             {
@@ -134,8 +139,7 @@ namespace PicHub.Server.Controllers
             }
             catch (Exception)
             {
-                var followingUser = await userManager.FindByIdAsync(followingId);
-                return BadRequest($"Could not unfollow {followingUser.UserName}.");
+                return BadRequest();
             }
         }
     }

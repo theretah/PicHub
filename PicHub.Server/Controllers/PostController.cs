@@ -28,32 +28,50 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IEnumerable<Post>> GetAll()
+        public IAsyncEnumerable<Post> GetAll()
         {
-            return unit.Posts.GetAll().OrderByDescending(p => p.CreateDate);
+            return unit.Posts.GetAllPostsDescendigAsync();
         }
 
         [HttpGet("getAllByAuthorId")]
-        public async Task<IEnumerable<Post>> GetAllByAuthorId(string authorId)
+        public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorId(string authorId)
         {
-            return unit.Posts.Find(p => p.AuthorId == authorId);
+            try
+            {
+                return Ok(unit.Posts.GetAllByAuthorIdAsync(authorId));
+            }
+            catch (Exception)
+            {
+                return BadRequest("Could not find posts created by this user.");
+            }
         }
 
         [HttpGet("getAllByAuthorUserName")]
-        public async Task<IEnumerable<Post>> GetAllByAuthorUserName(string userName)
+        public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorUserName(string userName)
         {
-            var user = await userManager.FindByNameAsync(userName);
-            return unit.Posts.Find(p => p.AuthorId == user.Id);
+            try
+            {
+                var user = userManager.FindByNameAsync(userName).Result;
+                if (user == null)
+                {
+                    return BadRequest("User not found.");
+                }
+                return Ok(unit.Posts.GetAllByAuthorIdAsync(user.Id));
+            }
+            catch (Exception)
+            {
+                return BadRequest("Could not find posts created by this user.");
+            }
         }
 
         [HttpGet("get")]
-        public async Task<Post> Get(int id)
+        public Post Get(int id)
         {
             return unit.Posts.Get(id);
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(int id)
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -68,7 +86,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<IActionResult> Create(CreatePostViewModel model)
+        public IActionResult Create(CreatePostViewModel model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -96,7 +114,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<IActionResult> Save(int postId)
+        public IActionResult Save(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId != null)
@@ -122,7 +140,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("isSaved")]
-        public async Task<IActionResult> IsSaved(int postId)
+        public IActionResult IsSaved(int postId)
         {
             try
             {
@@ -137,7 +155,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("isLiked")]
-        public async Task<IActionResult> IsLiked(int postId)
+        public IActionResult IsLiked(int postId)
         {
             try
             {
@@ -152,7 +170,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("like")]
-        public async Task<IActionResult> Like(int postId)
+        public IActionResult Like(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId != null)
@@ -185,9 +203,12 @@ namespace PicHub.Server.Controllers
         public async IAsyncEnumerable<Post> GetSaveds()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            foreach (var save in await unit.Saves.GetSavesByUserId(userId))
+            if (userId != null)
             {
-                yield return unit.Posts.Find(p => p.Id == save.PostId).Single();
+                foreach (var save in await unit.Saves.GetSavesByUserId(userId))
+                {
+                    yield return unit.Posts.Find(p => p.Id == save.PostId).Single();
+                }
             }
         }
 
@@ -201,7 +222,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getLikesCount")]
-        public async Task<IActionResult> GetLikesCount(int postId)
+        public IActionResult GetLikesCount(int postId)
         {
             var post = unit.Posts.Get(postId);
             return Ok(post.LikesCount);

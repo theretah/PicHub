@@ -9,10 +9,10 @@ namespace PicHub.Server.Entities
     public class AppUser : IdentityUser
     {
         public string FullName { get; set; }
-        public byte[] ProfileImageUrl { get; set; }
+        public byte[]? ProfileImageUrl { get; set; }
         public DateTime RegistrationDate { get; set; }
         public int Gender { get; set; }
-        public string Bio { get; set; }
+        public string? Bio { get; set; }
 
         public int FollowersCount { get; set; }
         public int FollowingsCount { get; set; }
