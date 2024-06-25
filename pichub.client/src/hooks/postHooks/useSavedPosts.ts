@@ -2,9 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Post } from "../../entities/Post";
 
-const useSavedPosts = () => {
+interface Props {
+  userId: string;
+}
+const useSavedPosts = ({ userId }: Props) => {
   return useQuery<Post[], Error>({
-    queryKey: ["savedPosts"],
+    queryKey: ["savedPosts", userId],
     queryFn: async () =>
       await axios
         .get<Post[]>(`/api/post/getSavedPosts`, {

@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       { path: "/profile/:userName", element: <Posts /> },
       { path: "/profile/:userName/reels", element: <ProfileReels /> },
       { path: "/profile/:userName/tagged", element: <Tagged /> },
-      { path: "/profile/:saved", element: <Saved /> },
+      { path: "/profile/saved", element: <Saved /> },
       { path: "/post/:id", element: <PostDetailsPage /> },
       { path: "/explore", element: <Explore /> },
       { path: "/explore/reels", element: <ExploreReel /> },

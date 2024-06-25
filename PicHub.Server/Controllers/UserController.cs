@@ -98,7 +98,12 @@ namespace PicHub.Server.Controllers
         public IActionResult GetIsFollowing(string followingId)
         {
             var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Ok(unit.Follows.Find(f => f.FollowerId == followerId && f.FollowingId == followingId).Any());
+            if (followerId == null) return Unauthorized();
+
+            var isFollowing = unit.Follows
+                .Find(f => f.FollowerId == followerId && f.FollowingId == followingId).Any();
+
+            return Ok(isFollowing);
         }
 
         [HttpPost("follow")]

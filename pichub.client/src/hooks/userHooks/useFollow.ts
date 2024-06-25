@@ -5,8 +5,8 @@ interface Props {
 }
 const useFollow = ({ followingId }: Props) => {
   return useMutation({
-    mutationFn: async () =>
-      await axios.post(
+    mutationFn: () =>
+      axios.post(
         `/api/user/follow?followingId=${followingId}`,
         {},
         {

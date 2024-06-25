@@ -8,7 +8,7 @@ const Saved = () => {
   const { user } = useAuthStore();
   if (!user) return <Navigate to={"/login"} />;
 
-  const { data, error, isLoading } = useSavedPosts();
+  const { data, error, isLoading } = useSavedPosts({ userId: user.id });
   if (error) return <p className="text-light">{error.message}</p>;
   if (isLoading) return <LoadingIndicator />;
 

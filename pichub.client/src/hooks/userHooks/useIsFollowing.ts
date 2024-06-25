@@ -3,9 +3,10 @@ import axios from "axios";
 
 interface Props {
   followingId: string | undefined;
+  enabled: boolean;
 }
 
-const useIsFollowing = ({ followingId }: Props) => {
+const useIsFollowing = ({ followingId, enabled }: Props) => {
   return useQuery<boolean, Error>({
     queryKey: ["isFollowing"],
     queryFn: () =>
@@ -14,6 +15,7 @@ const useIsFollowing = ({ followingId }: Props) => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => res.data),
+    enabled: enabled,
   });
 };
 

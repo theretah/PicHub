@@ -5,8 +5,8 @@ interface Props {
 }
 const useUnfollow = ({ followingId }: Props) => {
   return useMutation({
-    mutationFn: async () =>
-      await axios.delete(`/api/user/unFollow?followingId=${followingId}`, {
+    mutationFn: () =>
+      axios.delete(`/api/user/unFollow?followingId=${followingId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
