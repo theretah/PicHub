@@ -6,7 +6,7 @@ interface Props {
 }
 const usePostsByAuthorUserName = ({ userName }: Props) => {
   return useQuery<Post[], Error>({
-    queryKey: ["postsByAuthor", userName],
+    queryKey: ["postsByAuthorUserName", userName],
     queryFn: () =>
       axios
         .get<Post[]>(`/api/post/getAllByAuthorUserName?userName=${userName}`)

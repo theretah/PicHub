@@ -1,12 +1,13 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import Profile from "../../components/Profile/Profile";
 import usePostsByAuthorUserName from "../../hooks/postHooks/usePostsByAuthorUserName";
 
 const Posts = () => {
   const { userName } = useParams();
+  if (!userName) return <Navigate to={"/"} />;
   const { data, error, isLoading } = usePostsByAuthorUserName({
-    userName: userName || "",
+    userName: userName,
   });
   const squareSize = 150;
 

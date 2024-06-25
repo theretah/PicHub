@@ -4,7 +4,7 @@ import {
   MDBModalContent,
   MDBModalBody,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Post } from "../../entities/Post";
 import useAuthStore from "../../auth/store";
 import useDeletePost from "../../hooks/postHooks/useDeletePost";
@@ -16,13 +16,20 @@ interface PostModalProps {
 export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
   const { user } = useAuthStore();
   const userIsOwner = post.authorId == user?.id;
+  //const {} = url;
 
-  const m = useDeletePost({ postId: post.id });
+  const deletePostMutation = useDeletePost({ postId: post.id });
   function deletePost() {
-    m.mutate();
+    deletePostMutation.mutate();
   }
 
-  if (m.isSuccess) window.location.reload();
+  if (deletePostMutation.isSuccess) {
+    if (window.location.href == "https://localhost:5174/") {
+      window.location.reload();
+    } else {
+      return <Navigate to={`/`} />;
+    }
+  }
 
   return (
     <MDBModal open={modalOpen} onClose={toggleOpen} tabIndex="-1">

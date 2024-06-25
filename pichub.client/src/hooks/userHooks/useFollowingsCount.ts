@@ -1,16 +1,16 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 interface Props {
-  userName: string;
+  userId: string;
 }
-const usePostsCount = ({ userName }: Props) => {
+const useFollowingsCount = ({ userId }: Props) => {
   return useQuery<number, Error>({
-    queryKey: ["postsCount", userName],
+    queryKey: ["followersCount", userId],
     queryFn: async () =>
       await axios
-        .get<number>(`/api/user/getPostsCount?userName=${userName}`)
+        .get<number>(`/api/user/getFollowingsCount?userId=${userId}`)
         .then((res) => res.data),
   });
 };
 
-export default usePostsCount;
+export default useFollowingsCount;

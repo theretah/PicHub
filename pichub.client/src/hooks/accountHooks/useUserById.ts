@@ -7,7 +7,7 @@ interface Props {
 }
 const useUserById = ({ userId }: Props) => {
   return useQuery<User, Error>({
-    queryKey: ["author", userId],
+    queryKey: ["authorById", userId],
     queryFn: async () =>
       await axios
         .get<User>(`/api/account/getById?id=${userId}`)

@@ -56,7 +56,7 @@ const PostDetailsHorizontal = ({
                 />
                 &nbsp;
                 <Link
-                  to={`/profile/${author?.userName}/posts`}
+                  to={`/profile/${author?.userName}`}
                   className="fw-bold align-self-center text-decoration-none text-light"
                 >
                   {author?.userName}

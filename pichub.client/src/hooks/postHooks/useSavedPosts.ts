@@ -4,10 +4,10 @@ import { Post } from "../../entities/Post";
 
 const useSavedPosts = () => {
   return useQuery<Post[], Error>({
-    queryKey: ["postsByAuthor"],
-    queryFn: () =>
-      axios
-        .get(`/api/post/getSavedPosts`, {
+    queryKey: ["savedPosts"],
+    queryFn: async () =>
+      await axios
+        .get<Post[]>(`/api/post/getSavedPosts`, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => res.data),

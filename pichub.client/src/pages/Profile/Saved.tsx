@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import useSavedPosts from "../../hooks/postHooks/useSavedPosts";
 import Profile from "../../components/Profile/Profile";
@@ -6,13 +6,14 @@ import useAuthStore from "../../auth/store";
 
 const Saved = () => {
   const { user } = useAuthStore();
-  const { data, error, isLoading } = useSavedPosts();
+  if (!user) return <Navigate to={"/login"} />;
 
+  const { data, error, isLoading } = useSavedPosts();
   if (error) return <p className="text-light">{error.message}</p>;
   if (isLoading) return <LoadingIndicator />;
 
   return (
-    <Profile userName={user?.userName || ""} activeTab="saved">
+    <Profile userName={user.userName} activeTab="saved">
       {data?.map((post) => (
         <div className="col-4 p-1" key={post.id}>
           <Link to={`/post/${post.id}`}>

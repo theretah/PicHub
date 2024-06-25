@@ -7,7 +7,7 @@ interface Props {
 }
 const usePostById = ({ id }: Props) => {
   return useQuery<Post, Error>({
-    queryKey: ["post", id],
+    queryKey: ["postById", id],
     queryFn: async () =>
       await axios.get<Post>(`/api/post/get?id=${id}`).then((res) => res.data),
   });

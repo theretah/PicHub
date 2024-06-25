@@ -7,6 +7,11 @@ import axios from "axios";
 import useAuthStore from "../../auth/store";
 import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
 import usePostsCount from "../../hooks/userHooks/usePostsCount";
+import useFollowersCount from "../../hooks/userHooks/useFollowersCount";
+import useFollowingsCount from "../../hooks/userHooks/useFollowingsCount";
+import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
+import useFollow from "../../hooks/userHooks/useFollow";
+import useUnfollow from "../../hooks/userHooks/useUnfollow";
 
 const MoreButton = () => {
   return (
@@ -94,12 +99,35 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const { user, isAuthenticated } = useAuthStore();
 
   const { data: pageUser } = useUserByUserName({ userName: userName });
+
   const userIsPageOwner = userName == user?.userName;
   const { data: postsCount } = usePostsCount({ userName: userName });
+  const { data: followersCount } = useFollowersCount({
+    userId: pageUser?.id || "",
+  });
+  const { data: followingsCount } = useFollowingsCount({
+    userId: pageUser?.id || "",
+  });
+  const { data: isFollowing } = useIsFollowing({
+    followingId: pageUser?.id || "",
+  });
 
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [followersCount, setFollowersCount] = useState(0);
-  const [followingsCount, setFollowingsCount] = useState(0);
+  const [isFollowingState, setIsFollowingState] = useState<boolean>(
+    isFollowing || false
+  );
+
+  const follow = useFollow({ followingId: pageUser?.id || "" });
+  async function followUser() {
+    follow.mutateAsync();
+    setIsFollowingState(true);
+  }
+
+  const unFollow = useUnfollow({ followingId: pageUser?.id || "" });
+  async function unFollowUser() {
+    unFollow.mutateAsync();
+    setIsFollowingState(false);
+  }
+  useEffect(() => {}, [isFollowingState]);
 
   const md = 768;
   const sm = 576;
@@ -123,58 +151,6 @@ const Profile = ({ userName, children, activeTab }: Props) => {
       window.removeEventListener("resize", handleResize);
     };
   }, [windowWidth]);
-
-  useEffect(() => {
-    getFollowersCount();
-    getFollowingsCount();
-    if (!userIsPageOwner) {
-      getIsFollowing();
-    }
-  }, [userName, pageUser?.id]);
-
-  async function followUser() {
-    await axios.post(
-      `/api/user/follow?followingId=${pageUser?.id}`,
-      {},
-      { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-    );
-  }
-
-  async function unFollowUser() {
-    await axios.delete(`/api/user/unFollow?followingId=${pageUser?.id}`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-  }
-
-  async function getIsFollowing() {
-    await axios
-      .get(`/api/user/getIsFollowing?followingId=${pageUser?.id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        setIsFollowing(res.data);
-      });
-  }
-
-  async function getFollowersCount() {
-    await axios
-      .get(`/api/user/getFollowersCount?userId=${pageUser?.id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        setFollowersCount(res.data);
-      });
-  }
-
-  async function getFollowingsCount() {
-    await axios
-      .get(`/api/user/getFollowingsCount?userId=${pageUser?.id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => {
-        setFollowingsCount(res.data);
-      });
-  }
 
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
@@ -266,14 +242,14 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                                 <>
                                   <FollowButton
                                     follow={() => {
-                                      setIsFollowing(true);
+                                      setIsFollowingState(true);
                                       followUser();
                                     }}
                                     unFollow={() => {
-                                      setIsFollowing(false);
+                                      setIsFollowingState(false);
                                       unFollowUser();
                                     }}
-                                    isFollowing={isFollowing}
+                                    isFollowing={isFollowingState}
                                   />
                                   <MessageButton />
                                   <MoreButton />
@@ -310,15 +286,9 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                             ) : (
                               <>
                                 <FollowButton
-                                  follow={() => {
-                                    setIsFollowing(true);
-                                    followUser();
-                                  }}
-                                  unFollow={() => {
-                                    setIsFollowing(false);
-                                    unFollowUser();
-                                  }}
-                                  isFollowing={isFollowing}
+                                  follow={followUser}
+                                  unFollow={unFollowUser}
+                                  isFollowing={isFollowingState}
                                 />
                                 <MessageButton />
                                 <MoreButton />
@@ -378,7 +348,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
               >
                 <li className="nav-item">
                   <Link
-                    to={`/profile/${pageUser?.userName}/posts`}
+                    to={`/profile/${pageUser?.userName}`}
                     className={`nav-link ${
                       activeTab === "posts"
                         ? "border-bottom text-light"

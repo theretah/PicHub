@@ -113,7 +113,7 @@ const ImageCropper = ({
                 ref={imgRef}
                 src={imgSrc}
                 alt="Upload"
-                style={{ maxWidth: 400 }}
+                style={{ width: minDimension }}
                 onLoad={onImageLoad}
               />
             </ReactCrop>
@@ -128,10 +128,10 @@ const ImageCropper = ({
         <canvas
           ref={previewCanvasRef}
           className="mt-4 d-none border-1 object-fit-contain"
-          // style={{
-          //   width: MIN_DIMENSION,
-          //   height: MIN_DIMENSION,
-          // }}
+          style={{
+            width: minDimension,
+            height: minDimension,
+          }}
         />
       )}
     </>
