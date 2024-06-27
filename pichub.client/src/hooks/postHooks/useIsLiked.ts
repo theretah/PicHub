@@ -3,8 +3,9 @@ import axios from "axios";
 
 interface Props {
   postId: number;
+  enabled: boolean;
 }
-const useIsLiked = ({ postId }: Props) => {
+const useIsLiked = ({ postId, enabled }: Props) => {
   return useQuery<boolean, Error>({
     queryKey: ["isLiked", postId],
     queryFn: () =>
@@ -13,6 +14,7 @@ const useIsLiked = ({ postId }: Props) => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => res.data),
+    enabled: enabled,
   });
 };
 

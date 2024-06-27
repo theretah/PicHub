@@ -3,8 +3,9 @@ import axios from "axios";
 
 interface Props {
   postId: number;
+  enabled: boolean;
 }
-const useIsSaved = ({ postId }: Props) => {
+const useIsSaved = ({ postId, enabled }: Props) => {
   return useQuery<boolean, Error>({
     queryKey: ["isSaved", postId],
     queryFn: () =>
@@ -13,6 +14,7 @@ const useIsSaved = ({ postId }: Props) => {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         })
         .then((res) => res.data),
+    enabled: enabled,
   });
 };
 

@@ -7,6 +7,8 @@ import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { Post } from "../../entities/Post";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
+import useAuthStore from "../../auth/store";
+import { isatty } from "tty";
 
 interface Props {
   post: Post;
@@ -18,15 +20,7 @@ interface Like {
 }
 
 const PostDetails = ({ post, onlyVertical }: Props) => {
-  const { data: author } = useUserById({
-    userId: post.authorId,
-  });
-  const { data: isFollowing } = useIsFollowing({
-    followingId: post.authorId,
-  });
-
-  const { data: isLiked } = useIsLiked({ postId: post.id });
-  const { data: isSaved } = useIsSaved({ postId: post.id });
+  const { isAuthenticated } = useAuthStore();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -42,11 +36,52 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [window.innerWidth]);
+
+  const { data: author } = useUserById({
+    userId: post.authorId,
+  });
+
+  const enabled = author != null && isAuthenticated;
+  const { data: isFollowing } = useIsFollowing({
+    followingId: post.authorId,
+    enabled: enabled,
+  });
+
+  const { data: isLiked } = useIsLiked({ postId: post.id, enabled: enabled });
+  const { data: isSaved } = useIsSaved({ postId: post.id, enabled: enabled });
 
   async function handleLikeButton() {}
 
   async function handleSaveButton() {}
+
+  if (!isAuthenticated && author) {
+    return (
+      <div className="row mx-auto">
+        {isSmallScreen || onlyVertical ? (
+          <PostDetailsVertical
+            author={author}
+            post={post}
+            isFollowing={false}
+            isSaved={false}
+            handleSaveButton={() => console.log("Unauthorized")}
+            isLiked={false}
+            handleLikeButton={() => console.log("Unauthorized")}
+          />
+        ) : (
+          <PostDetailsHorizontal
+            author={author}
+            post={post}
+            isFollowing={false}
+            isSaved={false}
+            handleSaveButton={() => console.log("Unauthorized")}
+            isLiked={false}
+            handleLikeButton={() => console.log("Unauthorized")}
+          />
+        )}
+      </div>
+    );
+  }
 
   if (
     author == undefined ||

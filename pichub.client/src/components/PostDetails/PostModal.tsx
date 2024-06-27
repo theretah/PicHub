@@ -24,7 +24,7 @@ export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
   }
 
   if (deletePostMutation.isSuccess) {
-    if (window.location.href == "https://localhost:5174/") {
+    if (window.location.href == "https://localhost:3000/") {
       window.location.reload();
     } else {
       return <Navigate to={`/`} />;

@@ -230,40 +230,90 @@ const Profile = ({ userName, children, activeTab }: Props) => {
             <div className="col"></div>
             <div className="col-xl-10 col-lg-12 col-md-12 p-0">
               <div className="mb-3 border-0 text-bg-dark">
-                <div className="row g-0">
-                  <div
-                    className={`d-flex ${
-                      isMedium
-                        ? "row"
-                        : "col-xl-4 col-md-4 col-sm-4 col-4 justify-content-center"
-                    }`}
-                  >
+                <div className="w-100 g-0 ">
+                  <div className="row">
                     <div
-                      className={`col-md-3 col-sm-3 col-3 align-self-center p-0`}
-                      style={windowWidth >= md ? { width: 180 } : {}}
+                      className={`d-flex ${
+                        isMedium
+                          ? ""
+                          : "col-xl-3 col-md-3 col-sm-3 col-3 justify-content-center"
+                      }`}
                     >
-                      <ProfileImage
-                        imageUrl={
-                          pageUser?.profileImageUrl
-                            ? `data:image/png;base64,${pageUser.profileImageUrl}`
-                            : "../../../images/profiles/default-profile.jpg"
-                        }
-                        widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
-                      />
-                    </div>
-                    {isMedium && (
                       <div
-                        className="col-md-9 col-sm-9 col-9 p-0"
-                        style={
-                          windowWidth >= md ? { width: windowWidth - 180 } : {}
-                        }
+                        className={`col-md-3 col-sm-3 col-3 align-self-center p-0`}
+                        style={windowWidth >= md ? { width: 180 } : {}}
                       >
-                        <div className="row">
-                          <div className="row mt-2">
-                            <div className="col d-flex align-items-center">
-                              <span className="h5 m-0 me-4 ">
+                        <ProfileImage
+                          imageUrl={
+                            pageUser?.profileImageUrl
+                              ? `data:image/png;base64,${pageUser.profileImageUrl}`
+                              : "../../../images/profiles/default-profile.jpg"
+                          }
+                          widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
+                        />
+                      </div>
+                      {isMedium && (
+                        <div
+                          className="col-md-9 col-sm-9 col-9 p-0"
+                          style={
+                            windowWidth >= md
+                              ? { width: windowWidth - 180 }
+                              : {}
+                          }
+                        >
+                          <div className="row">
+                            <div className="row mt-2 w-100">
+                              <div className="col d-flex align-items-center justify-content-between">
+                                <span className="h5 m-0 me-4 ">
+                                  {pageUser?.userName}
+                                </span>
+                                {userIsPageOwner ? (
+                                  <>
+                                    <EditProfileButton />
+                                    <SettingsButton />
+                                  </>
+                                ) : (
+                                  <>
+                                    <FollowButton
+                                      follow={() => {
+                                        setIsFollowingState(true);
+                                        followUser();
+                                      }}
+                                      unFollow={() => {
+                                        setIsFollowingState(false);
+                                        unFollowUser();
+                                      }}
+                                      isFollowing={isFollowingState}
+                                    />
+                                    <MessageButton />
+                                    <MoreButton />
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div
+                      className={`${
+                        isMedium
+                          ? "w-100 mt-3"
+                          : "col-xl-8 col-md-8 col-sm-8 col-8"
+                      }`}
+                    >
+                      <div className="p-0 w-100">
+                        <div className="row d-flex align-items-center">
+                          {windowWidth > 768 && (
+                            <div className="col-sm-4 col-md-4">
+                              <h5 className="d-inline m-0 me-4">
                                 {pageUser?.userName}
-                              </span>
+                              </h5>
+                            </div>
+                          )}
+
+                          {windowWidth >= md && (
+                            <div className="col-sm-8 col-md-8">
                               {userIsPageOwner ? (
                                 <>
                                   <EditProfileButton />
@@ -272,14 +322,8 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                               ) : (
                                 <>
                                   <FollowButton
-                                    follow={() => {
-                                      setIsFollowingState(true);
-                                      followUser();
-                                    }}
-                                    unFollow={() => {
-                                      setIsFollowingState(false);
-                                      unFollowUser();
-                                    }}
+                                    follow={followUser}
+                                    unFollow={unFollowUser}
                                     isFollowing={isFollowingState}
                                   />
                                   <MessageButton />
@@ -287,91 +331,56 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                                 </>
                               )}
                             </div>
-                          </div>
+                          )}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={`${
-                      isMedium ? "row mt-3" : "col-xl-8 col-md-8 col-sm-8 col-8"
-                    }`}
-                  >
-                    <div className="p-0">
-                      <div className="row d-flex align-items-center">
-                        {windowWidth > 768 && (
-                          <div className="col-sm-4 col-md-4">
-                            <h5 className="d-inline m-0 me-4">
-                              {pageUser?.userName}
-                            </h5>
-                          </div>
-                        )}
-
-                        {windowWidth >= md && (
-                          <div className="col-sm-8 col-md-8">
-                            {userIsPageOwner ? (
-                              <>
-                                <EditProfileButton />
-                                <SettingsButton />
-                              </>
-                            ) : (
-                              <>
-                                <FollowButton
-                                  follow={followUser}
-                                  unFollow={unFollowUser}
-                                  isFollowing={isFollowingState}
-                                />
-                                <MessageButton />
-                                <MoreButton />
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div
-                        className={`d-flex justify-content-between mt-3 ${
-                          windowWidth > 768 ? "w-75" : ""
-                        }`}
-                      >
-                        <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">{postsCount} </span> Posts
-                        </p>
-                        <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">
-                            {followersCountState}{" "}
-                          </span>
-                          Followers
-                        </p>
-                        <p className="card-title d-inline fs-6">
-                          <span className="fw-bold">
-                            {followingsCountState}{" "}
-                          </span>
-                          Following
-                        </p>
-                      </div>
-
-                      <p className="fw-bold mb-0 mt-3" style={{ fontSize: 15 }}>
-                        {pageUser?.fullName}
-                      </p>
-
-                      <p
-                        className="my-0 text-light text-gray"
-                        style={{ fontSize: 14 }}
-                      >
-                        Personal account
-                      </p>
-                      <p className="card-text mt-1" style={{ fontSize: 15 }}>
-                        {pageUser?.bio}
-                      </p>
-                      <p className="card-text mt-3" style={{ fontSize: 13 }}>
-                        <span className="text-gray">Followed by</span>
-                        <a
-                          href="#"
-                          className="text-decoration-none text-light fw-bold"
+                        <div
+                          className={`d-flex justify-content-between mt-3 ${
+                            windowWidth > 768 ? "w-75" : ""
+                          }`}
                         >
-                          &nbsp;someuser
-                        </a>
-                      </p>
+                          <p className="card-title d-inline fs-6">
+                            <span className="fw-bold">{postsCount} </span> Posts
+                          </p>
+                          <p className="card-title d-inline fs-6">
+                            <span className="fw-bold">
+                              {followersCountState}{" "}
+                            </span>
+                            Followers
+                          </p>
+                          <p className="card-title d-inline fs-6">
+                            <span className="fw-bold">
+                              {followingsCountState}{" "}
+                            </span>
+                            Following
+                          </p>
+                        </div>
+
+                        <p
+                          className="fw-bold mb-0 mt-3"
+                          style={{ fontSize: 15 }}
+                        >
+                          {pageUser?.fullName}
+                        </p>
+
+                        <p
+                          className="my-0 text-light text-gray"
+                          style={{ fontSize: 14 }}
+                        >
+                          Personal account
+                        </p>
+                        <p className="card-text mt-1" style={{ fontSize: 15 }}>
+                          {pageUser?.bio}
+                        </p>
+                        <p className="card-text mt-3" style={{ fontSize: 13 }}>
+                          <span className="text-gray">Followed by</span>
+                          <a
+                            href="#"
+                            className="text-decoration-none text-light fw-bold"
+                          >
+                            &nbsp;someuser
+                          </a>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -7,7 +7,7 @@
     <InvariantGlobalization>false</InvariantGlobalization>
     <SpaRoot>..\pichub.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:5174</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:3000</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
