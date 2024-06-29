@@ -177,3 +177,5 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Microsoft.As
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\SixLabors.ImageSharp.dll

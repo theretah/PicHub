@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.Data;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,9 +24,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
-string connectionString = builder.Configuration.GetConnectionString("SqlServerConnection");
+var mappingConfig = new MapperConfiguration(cfg =>
+{
+    cfg.CreateMap<AppUser, UserDto>();
+});
+var mapper = mappingConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
+
 builder.Services.AddDbContext<PicHubContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
 
 builder.Services.AddIdentityCore<AppUser>(options =>
 {
@@ -68,6 +76,7 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    mappingConfig.AssertConfigurationIsValid();
     app.UseSwagger();
     app.UseSwaggerUI();
 }

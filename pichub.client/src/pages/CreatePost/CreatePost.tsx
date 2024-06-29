@@ -184,11 +184,14 @@ const CreatePost = () => {
                 ></textarea>
               </div>
               <div className="mt-2">
-                <select className="form-select bg-gray text-light border-0">
-                  <option selected>Add location</option>
-                  <option value="1">One</option>
-                  <option value="2">Two</option>
-                  <option value="3">Three</option>
+                <select
+                  defaultValue={0}
+                  className="form-select bg-gray text-light border-0"
+                >
+                  <option value={0}>Add location</option>
+                  <option value={1}>One</option>
+                  <option value={2}>Two</option>
+                  <option value={3}>Three</option>
                 </select>
               </div>
               <div className="mt-2">

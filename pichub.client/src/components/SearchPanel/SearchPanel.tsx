@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
+import useSearch from "../../hooks/userHooks/useSearch";
 
 interface Props {
   isOpen: boolean;
@@ -8,7 +9,13 @@ interface Props {
 const SearchPanel = ({ isOpen }: Props) => {
   const translate = "translate(53px, -184px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  let i = 0;
+
+  const [searchQueryState, setSearchQueryState] = useState<string>("");
+  const { data: searchResult } = useSearch({ searchQuery: searchQueryState });
+
+  function handleSearch(e: ChangeEvent<HTMLInputElement>) {
+    setSearchQueryState(e.target.value);
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -40,6 +47,7 @@ const SearchPanel = ({ isOpen }: Props) => {
           className="form-control"
           style={{ borderRadius: 8 }}
           placeholder="Search"
+          onChange={handleSearch}
         />
       </div>
 
@@ -49,8 +57,8 @@ const SearchPanel = ({ isOpen }: Props) => {
         <h5 className="text-light">Recent</h5>
       </div>
       <div className="container">
-        {Array.from({ length: 5 }, () => (
-          <SearchRecord key={i++} />
+        {searchResult?.map((user) => (
+          <SearchRecord key={user.id} user={user} />
         ))}
       </div>
     </div>

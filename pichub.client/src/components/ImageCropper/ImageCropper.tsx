@@ -1,12 +1,12 @@
 import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 import ReactCrop, {
   Crop,
+  PercentCrop,
   PixelCrop,
   centerCrop,
   convertToPixelCrop,
   makeAspectCrop,
 } from "react-image-crop";
-import setCanvasPreview from "../../setCanvasPreview";
 import "react-image-crop/dist/ReactCrop.css";
 
 interface ImageCropperProps {
@@ -15,6 +15,26 @@ interface ImageCropperProps {
   updateAvatar: (dataUrl: string) => void;
   aspectRatio: number;
   minDimension: number;
+}
+
+function centerAspectCrop(
+  mediaWidth: number,
+  mediaHeight: number,
+  aspect: number
+) {
+  return centerCrop(
+    makeAspectCrop(
+      {
+        unit: "%",
+        width: 90,
+      },
+      aspect,
+      mediaWidth,
+      mediaHeight
+    ),
+    mediaWidth,
+    mediaHeight
+  );
 }
 
 const ImageCropper = ({
@@ -28,6 +48,11 @@ const ImageCropper = ({
   const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [imgSrc, setImgSrc] = useState("");
   const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+
+  const handleCropComplete = (crop: PixelCrop) => {
+    setCompletedCrop(crop);
+  };
 
   const onSelectFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,19 +60,7 @@ const ImageCropper = ({
 
     const reader = new FileReader();
     reader.addEventListener("load", () => {
-      const imageElement = new Image();
       const imageUrl = reader.result?.toString() || "";
-      imageElement.src = imageUrl;
-
-      // imageElement.addEventListener("load", (e) => {
-      //   if (error) setError("");
-      //   const { naturalWidth, naturalHeight } =
-      //     e.currentTarget as HTMLImageElement;
-      //   if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
-      //     setError("Image must be at least 150 x 150 pixels.");
-      //     return setImgSrc("");
-      //   }
-      // });
       setImgSrc(imageUrl);
     });
     reader.readAsDataURL(file);
@@ -55,38 +68,61 @@ const ImageCropper = ({
 
   const onImageLoad = (e: SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
-    const cropWidthInPercent = (minDimension / width) * 100;
-
-    const crop = makeAspectCrop(
-      {
-        unit: "%",
-        width: cropWidthInPercent,
-      },
-      aspectRatio,
-      width,
-      height
-    );
-    const centeredCrop = centerCrop(crop, width, height);
-    setCrop(centeredCrop);
+    setCrop(centerAspectCrop(width, height, aspectRatio));
   };
 
   const handleCropImage = () => {
-    if (imgRef.current && previewCanvasRef.current && crop) {
-      const pixelCrop = convertToPixelCrop(
-        crop,
-        imgRef.current.width,
-        imgRef.current.height
-      ) as PixelCrop;
-      setCanvasPreview(
-        imgRef.current, // HTMLImageElement
-        previewCanvasRef.current, // HTMLCanvasElement
-        pixelCrop
+    const image = imgRef.current;
+    const canvas = previewCanvasRef.current;
+
+    if (image && canvas && completedCrop) {
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        console.error("Failed to get 2D context from canvas");
+        return;
+      }
+
+      const cropX = completedCrop.x * scaleX;
+      const cropY = completedCrop.y * scaleY;
+      const cropWidth = completedCrop.width * scaleX;
+      const cropHeight = completedCrop.height * scaleY;
+
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+
+      ctx.imageSmoothingQuality = "high"; // Improve image rendering quality
+
+      ctx.drawImage(
+        image,
+        cropX,
+        cropY,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
       );
-      const dataUrl = previewCanvasRef.current.toDataURL();
-      updateAvatar(dataUrl);
-      closeModal();
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const dataUrl = reader.result as string;
+            updateAvatar(dataUrl);
+            closeModal();
+          };
+          reader.readAsDataURL(blob);
+        } else {
+          console.error("Failed to create Blob from canvas data");
+        }
+      }, "image/jpeg");
     }
   };
+
   return (
     <>
       <div className="form-group mb-3 text-bg-dark">
@@ -95,7 +131,7 @@ const ImageCropper = ({
           accept="image/*"
           onChange={onSelectFile}
           className="form-control text-bg-dark border-gray"
-          id="profilePhoto"
+          id="picture"
         />
       </div>
       {imgSrc && (
@@ -103,17 +139,25 @@ const ImageCropper = ({
           <div className="position-relative d-inline-block">
             <ReactCrop
               crop={crop}
-              onChange={(c, percentCrop) => setCrop(percentCrop)}
+              onChange={(_, percentCrop) => setCrop(percentCrop)}
+              onComplete={(crop) =>
+                handleCropComplete(
+                  convertToPixelCrop(
+                    crop,
+                    imgRef.current?.width || 0,
+                    imgRef.current?.height || 0
+                  )
+                )
+              }
               circularCrop={circularCrop}
-              keepSelection
               aspect={aspectRatio}
-              // minWidth={MIN_DIMENSION}
+              keepSelection
             >
               <img
                 ref={imgRef}
                 src={imgSrc}
                 alt="Upload"
-                style={{ width: minDimension }}
+                style={{ maxWidth: "100%" }}
                 onLoad={onImageLoad}
               />
             </ReactCrop>
@@ -124,13 +168,13 @@ const ImageCropper = ({
           </button>
         </div>
       )}
-      {crop && (
+      {completedCrop && (
         <canvas
           ref={previewCanvasRef}
           className="mt-4 d-none border-1 object-fit-contain"
           style={{
-            width: minDimension,
-            height: minDimension,
+            maxWidth: completedCrop.width,
+            maxHeight: completedCrop.height,
           }}
         />
       )}

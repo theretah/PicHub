@@ -48,7 +48,7 @@ const SelectPostPictureModal = ({
                   <div className="w-100">
                     <ImageCropper
                       aspectRatio={1}
-                      minDimension={900}
+                      minDimension={3000}
                       circularCrop={false}
                       updateAvatar={updateAvatar}
                       closeModal={closeModal}

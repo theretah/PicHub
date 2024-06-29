@@ -249,7 +249,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                               ? `data:image/png;base64,${pageUser.profileImageUrl}`
                               : "../../../images/profiles/default-profile.jpg"
                           }
-                          widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 180}
+                          widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 150}
                         />
                       </div>
                       {isMedium && (

@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import usePosts from "../../hooks/postHooks/usePosts";
 import { Post } from "../../entities/Post";
+import useSearch from "../../hooks/userHooks/useSearch";
 interface PostItemProps {
   post: Post;
 }
@@ -34,7 +35,7 @@ function ExplorePostsPanel() {
   return (
     <div className="row p-1">
       {data?.map((post) => (
-        <ExplorePostItem post={post} />
+        <ExplorePostItem key={post.id} post={post} />
       ))}
     </div>
   );
@@ -44,6 +45,13 @@ export default function Explore() {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [searchQueryState, setSearchQueryState] = useState<string>("");
+  const { data: searchResult } = useSearch({ searchQuery: searchQueryState });
+
+  function handleSearch(e: ChangeEvent<HTMLInputElement>) {
+    setSearchQueryState(e.target.value);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -83,13 +91,16 @@ export default function Explore() {
                 <div className="mx-auto px-1 w-100">
                   <input
                     onClick={() => toggleSearchPanel()}
+                    onChange={handleSearch}
                     type="text"
                     className="form-control text-light border-0"
                     placeholder="Search"
                     style={{ borderRadius: 8, backgroundColor: "#323436" }}
                   />
                 </div>
-                <ExploreSearchPanel isOpen={isOpen} />
+                {searchResult && (
+                  <ExploreSearchPanel isOpen={isOpen} records={searchResult} />
+                )}
               </div>
             </div>
           )}

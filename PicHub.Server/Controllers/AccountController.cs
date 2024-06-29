@@ -1,12 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using PicHub.Server.Utilities;
 using PicHub.Server.ViewModels;
@@ -20,9 +22,11 @@ namespace PicHub.Server.Controllers
         private readonly IConfiguration configuration;
         private readonly UserManager<AppUser> userManager;
         private readonly IUserStore<AppUser> userStore;
+        private readonly IMapper mapper;
 
-        public AccountController(IConfiguration configuration, UserManager<AppUser> userManager, IUserStore<AppUser> userStore)
+        public AccountController(IMapper mapper, IConfiguration configuration, UserManager<AppUser> userManager, IUserStore<AppUser> userStore)
         {
+            this.mapper = mapper;
             this.userStore = userStore;
             this.configuration = configuration;
             this.userManager = userManager;
@@ -35,7 +39,7 @@ namespace PicHub.Server.Controllers
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
             {
-                return Unauthorized("User is not authenticated. From GetLoggedInUser().");
+                return Unauthorized();
             }
 
             var user = await userManager.FindByIdAsync(loggedInUserId);
@@ -44,39 +48,30 @@ namespace PicHub.Server.Controllers
                 return NotFound();
             }
 
-            return Ok(new
-            {
-                user.Id,
-                user.UserName,
-                user.Email,
-                user.FullName,
-                user.Bio,
-                user.Gender,
-                user.ProfileImageUrl
-            });
+            return Ok(mapper.Map<UserDto>(user));
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            var existedByEmail = await userManager.FindByEmailAsync(model.Email);
-            if (existedByEmail != null)
+            if (await userManager.FindByEmailAsync(model.Email) != null)
             {
                 return BadRequest("User with this email address already exists.");
             }
 
-            var existedUser = await userManager.FindByNameAsync(model.UserName);
-            if (existedUser != null)
+            if (await userManager.FindByNameAsync(model.UserName) != null)
             {
                 return BadRequest("User with this username already exists.");
             }
 
-            var user = Activator.CreateInstance<AppUser>();
-            user.FullName = model.FullName;
-            user.UserName = model.UserName;
-            user.Email = model.Email;
-            user.EmailConfirmed = true;
-            user.RegistrationDate = DateTime.Now;
+            var user = new AppUser
+            {
+                UserName = model.UserName,
+                FullName = model.FullName,
+                Email = model.Email,
+                EmailConfirmed = true,
+                RegistrationDate = DateTime.Now,
+            };
 
 
             var result = await userManager.CreateAsync(user, model.Password);
@@ -114,41 +109,62 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IEnumerable<AppUser>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
-            return await userManager.Users.ToListAsync();
+            return Ok(mapper.Map<IEnumerable<UserDto>>(await userManager.Users.ToListAsync()));
         }
         [HttpGet("getUsersCount")]
-        public async Task<int> GetUsersCountAsync()
+        public async Task<IActionResult> GetUsersCountAsync()
         {
-            return await userManager.Users.CountAsync();
+            return Ok(await userManager.Users.CountAsync());
         }
 
         [HttpGet("getByEmail")]
         public async Task<IActionResult> GetUserByEmail(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            return user != null ? Ok(user) : NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
         }
 
         [HttpGet("getById")]
         public async Task<IActionResult> GetUserById(string id)
         {
             var user = await userManager.FindByIdAsync(id);
-            return user != null ? Ok(user) : NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
         }
 
         [HttpGet("getByUserName")]
         public async Task<IActionResult> GetUserByUsername(string userName)
         {
             var user = await userManager.FindByNameAsync(userName);
-            return user != null ? Ok(user) : NotFound();
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
         }
 
         [HttpGet("lastRegistered")]
-        public async Task<IEnumerable<AppUser>> GetLastRegisteredUsers()
+        public async Task<IActionResult> GetLastRegisteredUsers()
         {
-            return await userManager.Users.OrderByDescending(u => u.RegistrationDate).ToListAsync();
+            try
+            {
+                var lastRegisteredUsers = await userManager.Users.OrderByDescending(u => u.RegistrationDate).ToListAsync();
+                return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
+            }
+            catch (Exception)
+            {
+                return BadRequest("Problem occured while fetching last registerd users.");
+            }
+
         }
 
         [HttpDelete("delete")]

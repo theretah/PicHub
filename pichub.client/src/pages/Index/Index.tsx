@@ -1,9 +1,10 @@
 import HomePostsColumn from "../../components/HomePostsColumn/HomePostsColumn";
 import Layout from "../../components/Layout/Layout";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 import HomeSideBar from "../../components/HomeSideBar/HomeSideBar";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import { Link } from "react-router-dom";
+import useSearch from "../../hooks/userHooks/useSearch";
 
 const Index = () => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);
@@ -11,6 +12,13 @@ const Index = () => {
 
   const [isSearchPanelOpen, setIsSearchPanelOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [searchQueryState, setSearchQueryState] = useState<string>("");
+  const { data: searchResult } = useSearch({ searchQuery: searchQueryState });
+
+  function handleSearch(e: ChangeEvent<HTMLInputElement>) {
+    setSearchQueryState(e.target.value);
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,13 +62,19 @@ const Index = () => {
                   <div className="mx-auto px-1 w-100">
                     <input
                       onClick={() => toggleSearchPanel()}
+                      onChange={handleSearch}
                       type="text"
                       className="form-control text-light border-0"
                       placeholder="Search"
                       style={{ borderRadius: 8, backgroundColor: "#323436" }}
                     />
                   </div>
-                  <ExploreSearchPanel isOpen={isSearchPanelOpen} />
+                  {searchResult && (
+                    <ExploreSearchPanel
+                      isOpen={isSearchPanelOpen}
+                      records={searchResult}
+                    />
+                  )}
                 </div>
 
                 <Link to={"/notifications"} className="btn text-light">

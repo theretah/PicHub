@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Pichub.Server.Utilities;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
+using SixLabors.ImageSharp;
 
 namespace PicHub.Server.Controllers
 {
@@ -45,7 +48,9 @@ namespace PicHub.Server.Controllers
             }
             if (model.ProfileImageFile != null)
             {
-                user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile);
+                var imageFile = ImageUtilities.CompressImage(model.ProfileImageFile, 150);
+                user.ProfileImageUrl = FileUtilities.FileToByteArray(imageFile);
+                // user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile);
             }
             else
             {
@@ -135,7 +140,8 @@ namespace PicHub.Server.Controllers
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var follow = unit.Follows.Find(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId).Single();
+                var follow = unit.Follows
+                    .Find(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId).Single();
 
                 unit.Follows.Remove(follow);
                 unit.Complete();
@@ -146,6 +152,17 @@ namespace PicHub.Server.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search(string? query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return Ok(new List<AppUser>());
+            }
+            return Ok(await userManager.Users.Where(u => u.UserName.ToLower().Contains(query.ToLower()))
+                .ToListAsync());
         }
     }
 }

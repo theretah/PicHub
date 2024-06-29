@@ -8,7 +8,7 @@ interface Props {
 
 const useIsFollowing = ({ followingId, enabled }: Props) => {
   return useQuery<boolean, Error>({
-    queryKey: ["isFollowing"],
+    queryKey: ["isFollowing", followingId],
     queryFn: () =>
       axios
         .get<boolean>(`/api/user/getIsFollowing?followingId=${followingId}`, {

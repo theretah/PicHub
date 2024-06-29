@@ -1,24 +1,26 @@
 import { Link } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
-
-const SearchRecord = () => {
+import { User } from "../../entities/User";
+interface Props {
+  user: User;
+}
+const SearchRecord = ({ user }: Props) => {
   return (
-    <Link to={"/page"} className="text-decoration-none">
+    <Link to={`/profile/${user.userName}`} className="text-decoration-none">
       <div className="row py-2 my-1">
         <div className="col-2 d-flex align-items-center">
           <ProfileImage
+            imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
             widthHeight={40}
-            imageUrl="../../../images/profiles/default-profile.jpg"
           />
         </div>
         <div className="col-8 text-light px-0">
           <div className="row">
-            <span className="fw-bold">username</span>
+            <span className="fw-bold">{user.userName}</span>
           </div>
           <div className="row">
-            <span className="text-light text-gray">
-              FullName - 32M Followers
-            </span>
+            <span className="text-light text-gray">{user.fullName}</span>
+            <span className="text-light text-gray">{"32M Followers"}</span>
           </div>
         </div>
         <div className="col-2 text-light d-flex align-items-center justify-content-center">

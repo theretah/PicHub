@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
+import useSearch from "../../hooks/userHooks/useSearch";
+import { User } from "../../entities/User";
 
 interface Props {
   isOpen: boolean;
+  records: User[];
 }
 
-const ExploreSearchPanel = ({ isOpen }: Props) => {
+const ExploreSearchPanel = ({ isOpen, records }: Props) => {
   const panelWidth = 350;
   const [marginLeft, setMarginLeft] = useState(
     (window.innerWidth - panelWidth) / 2
   );
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -40,8 +44,8 @@ const ExploreSearchPanel = ({ isOpen }: Props) => {
         <h5 className="text-light">Recent</h5>
       </div>
       <div className="container">
-        {Array.from({ length: 5 }, () => (
-          <SearchRecord />
+        {records?.map((user) => (
+          <SearchRecord key={user.id} user={user} />
         ))}
       </div>
     </div>

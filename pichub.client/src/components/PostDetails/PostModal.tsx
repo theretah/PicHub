@@ -27,7 +27,7 @@ export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
     if (window.location.href == "https://localhost:3000/") {
       window.location.reload();
     } else {
-      return <Navigate to={`/`} />;
+      return <Navigate to={`/profile/${user?.userName}`} />;
     }
   }
 

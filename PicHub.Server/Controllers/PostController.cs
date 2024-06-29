@@ -96,13 +96,14 @@ namespace PicHub.Server.Controllers
 
             try
             {
+                var imageFile = ImageUtilities.CompressImage(model.ImageFile, 1080);
                 unit.Posts.Add(new Post
                 {
                     Caption = model.Caption,
                     CommentsAllowed = !model.TurnOffComments,
                     AuthorId = loggedInUserId,
                     CreateDate = DateTime.Now,
-                    PhotoContent = FileUtilities.FileToByteArray(model.ImageFile),
+                    PhotoContent = FileUtilities.FileToByteArray(imageFile),
                 });
                 unit.Complete();
                 return Ok();
