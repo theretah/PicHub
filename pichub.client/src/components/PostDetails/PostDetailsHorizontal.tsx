@@ -17,6 +17,7 @@ const PostDetailsHorizontal = ({
   isSaved,
   handleLikeButton,
   handleSaveButton,
+  likesCount,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
@@ -99,7 +100,10 @@ const PostDetailsHorizontal = ({
                 />
               </div>
               <hr className="my-0 mx-0" />
-              <div className="overflow-y-auto p-2" style={{ height: 275 }}>
+              <div
+                className="overflow-y-auto p-2"
+                style={{ height: post.commentsAllowed ? 275 : 315 }}
+              >
                 <p>{post?.caption}</p>
               </div>
               <hr className="my-0" />
@@ -113,11 +117,13 @@ const PostDetailsHorizontal = ({
                         handleLikeButton={handleLikeButton}
                       />
                     </div>
+                    {post.commentsAllowed && (
+                      <div className="me-2">
+                        <ChatButton size={22} postId={post.id} />
+                      </div>
+                    )}
                     <div className="me-2">
-                      <ChatButton size={22} />
-                    </div>
-                    <div className="me-2">
-                      <ShareButton size={22} />
+                      <ShareButton size={22} postId={post.id} />
                     </div>
                   </div>
                   <div className="col d-flex justify-content-end">
@@ -129,30 +135,32 @@ const PostDetailsHorizontal = ({
                   </div>
                 </div>
                 <button className="btn fw-bold p-0 mb-0 mt-3 text-light">
-                  {post.likesCount} likes
+                  {likesCount} likes
                 </button>
                 <p className="text-gray p-0">3 hours ago</p>
-                <div className="d-flex">
-                  <ProfileImage
-                    imageUrl={"/images/profiles/default-profile.jpg"}
-                    widthHeight={35}
-                  />
-                  <input
-                    id="commentText"
-                    value={commentText}
-                    onChange={(event) => setCommentText(event.target.value)}
-                    type="text"
-                    className="form-control text-bg-dark border-0 "
-                    placeholder="Add a comment..."
-                  />
-                  <button
-                    className={`btn text-primary fw-bold px-1 ${
-                      commentText === "" ? "invisible" : "visible"
-                    }`}
-                  >
-                    Post
-                  </button>
-                </div>
+                {post.commentsAllowed && (
+                  <div className="d-flex">
+                    <ProfileImage
+                      imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
+                      widthHeight={35}
+                    />
+                    <input
+                      id="commentText"
+                      value={commentText}
+                      onChange={(event) => setCommentText(event.target.value)}
+                      type="text"
+                      className="form-control text-bg-dark border-0 "
+                      placeholder="Add a comment..."
+                    />
+                    <button
+                      className={`btn text-primary fw-bold px-1 ${
+                        commentText === "" ? "invisible" : "visible"
+                      }`}
+                    >
+                      Post
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

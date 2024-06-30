@@ -19,9 +19,13 @@ namespace CMSReactDotNet.Server.Data.Repositories
             context.Saves.Update(save);
         }
 
-        public async Task<IEnumerable<Save>> GetSavesByUserId(string userId)
+
+        public async IAsyncEnumerable<Save> GetSavesByUserId(string userId)
         {
-            return await context.Saves.Where(s => s.UserId == userId).ToListAsync();
+            await foreach (var saved in context.Saves.Where(s => s.UserId == userId).AsAsyncEnumerable())
+            {
+                yield return saved;
+            }
         }
     }
 }

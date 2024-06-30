@@ -91,9 +91,9 @@ const CreatePost = () => {
     <Layout currentPage="Create">
       <div
         className={`mx-auto mt-3 shadow-lg ${
-          isSmallScreen ? "p-1" : "p-0 border border-secondary rounded"
+          isSmallScreen ? "p-1" : "p-0 border border-secondary"
         }`}
-        style={!isSmallScreen ? { width: 802, height: 487 } : {}}
+        style={!isSmallScreen ? { width: 730, height: 487 } : {}}
       >
         <form
           className={`${isSmallScreen ? "w-100" : "row h-100"} g-0`}
@@ -117,7 +117,7 @@ const CreatePost = () => {
             } d-flex justify-content-center`}
           >
             {avatar ? (
-              <button type="button" className="btn" onClick={toggleOpen}>
+              <button type="button" className="btn p-0" onClick={toggleOpen}>
                 <img
                   src={avatar}
                   className="mx-auto object-fit-contain"

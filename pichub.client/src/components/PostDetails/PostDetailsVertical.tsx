@@ -17,6 +17,7 @@ const PostDetailsVertical = ({
   isSaved,
   handleLikeButton,
   handleSaveButton,
+  likesCount,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
@@ -101,11 +102,13 @@ const PostDetailsVertical = ({
                 handleLikeButton={handleLikeButton}
               />
             </div>
+            {post.commentsAllowed && (
+              <div className="me-2">
+                <ChatButton size={22} postId={post.id} />
+              </div>
+            )}
             <div className="me-2">
-              <ChatButton size={22} />
-            </div>
-            <div className="me-2">
-              <ShareButton size={22} />
+              <ShareButton size={22} postId={post.id} />
             </div>
           </div>
           <div className="col d-flex justify-content-end">
@@ -117,7 +120,7 @@ const PostDetailsVertical = ({
           </div>
         </div>
 
-        <p className="card-title fw-bold mt-2">{post.likesCount} likes</p>
+        <p className="card-title fw-bold mt-2">{likesCount} likes</p>
         <Link
           to={`/profile/${author.userName}`}
           className="card-title fw-bold d-inline text-decoration-none"

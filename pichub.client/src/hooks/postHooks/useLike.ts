@@ -1,13 +1,16 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-const postLike = () => {
+interface Props {
+  postId: number;
+}
+const useLike = ({ postId }: Props) => {
   return useMutation({
-    mutationFn: (postId: number) =>
+    mutationFn: () =>
       axios
         .post(
-          `/api/post/like`,
-          { postId },
+          `/api/post/like?postId=${postId}`,
+          {},
           {
             headers: {
               Authorization: `bearer ${localStorage.getItem("token")}`,
@@ -18,4 +21,4 @@ const postLike = () => {
   });
 };
 
-export default postLike;
+export default useLike;

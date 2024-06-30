@@ -12,4 +12,6 @@ export interface PostDetailsProps {
 
   isLiked: boolean;
   handleLikeButton: () => void;
+
+  likesCount: number;
 }

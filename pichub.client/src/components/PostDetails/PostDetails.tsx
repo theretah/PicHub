@@ -9,6 +9,8 @@ import { Post } from "../../entities/Post";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/store";
 import { isatty } from "tty";
+import useLike from "../../hooks/postHooks/useLike";
+import useSave from "../../hooks/postHooks/useSave";
 
 interface Props {
   post: Post;
@@ -23,10 +25,9 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const { isAuthenticated } = useAuthStore();
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
-
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 920);
+      setIsSmallScreen(window.innerWidth <= 935);
     };
 
     handleResize();
@@ -49,11 +50,36 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   });
 
   const { data: isLiked } = useIsLiked({ postId: post.id, enabled: enabled });
+  const [isLikedState, setIsLikedState] = useState<boolean>(isLiked || false);
+
   const { data: isSaved } = useIsSaved({ postId: post.id, enabled: enabled });
+  const [isSavedState, setIsSavedState] = useState<boolean>(isSaved || false);
 
-  async function handleLikeButton() {}
+  const [likesCount, setLikesCount] = useState<number>(post.likesCount);
+  useEffect(() => {
+    setLikesCount(post.likesCount);
+  }, [post.likesCount]);
 
-  async function handleSaveButton() {}
+  useEffect(() => {
+    if (isLiked != undefined) setIsLikedState(isLiked);
+    if (isSaved != undefined) setIsSavedState(isSaved);
+  }, [isLiked, isSaved]);
+
+  const likeMutation = useLike({ postId: post.id });
+  function handleLikeButton() {
+    likeMutation.mutate();
+    setIsLikedState(!isLikedState);
+    if (isLikedState == true) {
+      setLikesCount(likesCount - 1);
+    } else {
+      setLikesCount(likesCount + 1);
+    }
+  }
+  const saveMutation = useSave({ postId: post.id });
+  function handleSaveButton() {
+    saveMutation.mutate();
+    setIsSavedState(!isSavedState);
+  }
 
   if (!isAuthenticated && author) {
     return (
@@ -67,6 +93,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={() => console.log("Unauthorized")}
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
+            likesCount={post.likesCount}
           />
         ) : (
           <PostDetailsHorizontal
@@ -77,6 +104,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={() => console.log("Unauthorized")}
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
+            likesCount={post.likesCount}
           />
         )}
       </div>
@@ -85,11 +113,12 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
 
   if (
     author == undefined ||
-    isLiked == undefined ||
-    isSaved == undefined ||
+    isLikedState == undefined ||
+    isSavedState == undefined ||
     isFollowing == undefined
-  )
+  ) {
     return <LoadingIndicator />;
+  }
 
   return (
     <div className="row mx-auto">
@@ -98,20 +127,22 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
           author={author}
           post={post}
           isFollowing={isFollowing}
-          isSaved={isSaved}
+          isSaved={isSavedState}
           handleSaveButton={handleSaveButton}
-          isLiked={isLiked}
+          isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
+          likesCount={likesCount}
         />
       ) : (
         <PostDetailsHorizontal
           author={author}
           post={post}
           isFollowing={isFollowing}
-          isSaved={isSaved}
+          isSaved={isSavedState}
           handleSaveButton={handleSaveButton}
-          isLiked={isLiked}
+          isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
+          likesCount={likesCount}
         />
       )}
     </div>

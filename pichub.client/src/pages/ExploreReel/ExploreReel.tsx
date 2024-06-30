@@ -27,11 +27,7 @@ const ExploreReel = () => {
       <div className="mt-4">
         {data?.map((post) => (
           <div key={post.id} className="p-0 mb-4">
-            <PostDetails
-              key={post.id}
-              post={post}
-              onlyVertical={isSmallScreen || false}
-            />
+            <PostDetails key={post.id} post={post} onlyVertical={false} />
           </div>
         ))}
       </div>

@@ -49,6 +49,7 @@ namespace PicHub.Server.Controllers
         [HttpGet("getAllByAuthorUserName")]
         public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorUserName(string userName)
         {
+
             try
             {
                 var user = userManager.FindByNameAsync(userName).Result;
@@ -65,9 +66,16 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("get")]
-        public Post Get(int id)
+        public IActionResult Get(int id)
         {
-            return unit.Posts.Get(id);
+            try
+            {
+                return Ok(unit.Posts.Get(id));
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
 
         [HttpDelete("delete")]
@@ -117,13 +125,20 @@ namespace PicHub.Server.Controllers
         [HttpPost("save")]
         public IActionResult Save(int postId)
         {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId != null)
+            try
             {
+                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (loggedInUserId == null)
+                {
+                    return Unauthorized();
+                }
+
                 var save = unit.Saves.Find(s => s.UserId == loggedInUserId && s.PostId == postId).FirstOrDefault();
                 if (save != null)
                 {
                     unit.Saves.Remove(save);
+                    unit.Complete();
+                    return NoContent();
                 }
                 else
                 {
@@ -132,12 +147,15 @@ namespace PicHub.Server.Controllers
                         PostId = postId,
                         UserId = loggedInUserId
                     });
+                    unit.Complete();
+                    return Created();
                 }
-                unit.Complete();
-                return Ok();
-            }
 
-            return BadRequest("Could not save this post.");
+            }
+            catch (Exception)
+            {
+                return BadRequest("A problem occured.");
+            }
         }
 
         [HttpGet("isSaved")]
@@ -151,7 +169,7 @@ namespace PicHub.Server.Controllers
             }
             catch (Exception)
             {
-                throw new Exception("Could not get data.");
+                return BadRequest("Could not get data.");
             }
         }
 
@@ -166,7 +184,7 @@ namespace PicHub.Server.Controllers
             }
             catch (Exception)
             {
-                throw new Exception("Could not get data.");
+                return BadRequest("Could not get data.");
             }
         }
 
@@ -174,7 +192,8 @@ namespace PicHub.Server.Controllers
         public IActionResult Like(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId != null)
+            if (loggedInUserId == null) return Unauthorized();
+            try
             {
                 var post = unit.Posts.Get(postId);
                 var existingLike = unit.Likes.Find(l => l.UserId == loggedInUserId && l.PostId == postId).FirstOrDefault();
@@ -183,6 +202,9 @@ namespace PicHub.Server.Controllers
                     unit.Likes.Remove(existingLike);
                     post.LikesCount--;
                     unit.Posts.Update(post);
+                    unit.Complete();
+
+                    return NoContent();
                 }
                 else
                 {
@@ -193,23 +215,49 @@ namespace PicHub.Server.Controllers
                     });
                     post.LikesCount++;
                     unit.Posts.Update(post);
+                    unit.Complete();
+
+                    return Created();
                 }
-                unit.Complete();
-                return Created();
             }
-            return BadRequest("Could not like this post.");
+            catch (Exception)
+            {
+                return BadRequest("A problem occured.");
+            }
         }
 
         [HttpGet("getSavedPosts")]
-        public async IAsyncEnumerable<Post> GetSaveds()
+        public async Task<ActionResult> GetSaveds()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId != null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
             {
-                foreach (var save in await unit.Saves.GetSavesByUserId(userId))
+                return Unauthorized();
+            }
+            try
+            {
+                var postIds = new List<int>();
+
+                await foreach (var save in unit.Saves.GetSavesByUserId(loggedInUserId))
                 {
-                    yield return unit.Posts.Find(p => p.Id == save.PostId).Single();
+                    postIds.Add(save.PostId);
                 }
+
+                var savedPosts = new List<Post>();
+                foreach (var postId in postIds)
+                {
+                    var post = unit.Posts.Get(postId);
+                    if (post != null)
+                    {
+                        savedPosts.Add(post);
+                    }
+                }
+
+                return Ok(savedPosts);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
             }
         }
 
