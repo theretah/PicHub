@@ -16,6 +16,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
             Saves = new SaveRepository(context);
             Likes = new LikeRepository(context);
             Follows = new FollowRepository(context);
+            Chats = new ChatRepository(context);
+            Messages = new MessageRepository(context);
         }
 
         public IPostRepository Posts { get; private set; }
@@ -25,6 +27,10 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public ILikeRepository Likes { get; private set; }
 
         public IFollowRepository Follows { get; private set; }
+
+        public IChatRepository Chats { get; private set; }
+
+        public IMessageRepository Messages { get; private set; }
 
         public int Complete()
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
@@ -13,7 +14,6 @@ namespace PicHub.Server.Entities
         public DateTime RegistrationDate { get; set; }
         public int Gender { get; set; }
         public string? Bio { get; set; }
-
         public int FollowersCount { get; set; }
         public int FollowingsCount { get; set; }
 
@@ -21,5 +21,6 @@ namespace PicHub.Server.Entities
         public IEnumerable<Save> SavedPosts { get; set; }
         public IEnumerable<Like> LikedPosts { get; set; }
         public IEnumerable<Follow> Follows { get; set; }
+        public IEnumerable<Chat> Chats { get; set; }
     }
 }

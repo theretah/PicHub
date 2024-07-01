@@ -22,5 +22,7 @@ namespace PicHub.Server.Data
         public DbSet<Save> Saves { get; set; }
         public DbSet<Like> Likes { get; set; }
         public DbSet<Follow> Follows { get; set; }
+        public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
     }
 }
