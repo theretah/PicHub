@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import ChatButton from "../PostControlButtons/ChatButton";
 import LikeButton from "../PostControlButtons/LikeButton";
 import SaveButton from "../PostControlButtons/SaveButton";

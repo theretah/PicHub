@@ -113,6 +113,7 @@ namespace PicHub.Server.Controllers
         {
             return Ok(mapper.Map<IEnumerable<UserDto>>(await userManager.Users.ToListAsync()));
         }
+
         [HttpGet("getUsersCount")]
         public async Task<IActionResult> GetUsersCountAsync()
         {

@@ -1,4 +1,4 @@
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import BottomBarButton from "./BottomBarButton";
 
@@ -123,7 +123,7 @@ const BottomBar = ({ currentPage }: Props) => {
             <BottomBarButton
               activePage={currentPage}
               buttonText="Messages"
-              to="/messages"
+              to="/messages/inbox"
             >
               {currentPage === "Messages" ? (
                 <svg

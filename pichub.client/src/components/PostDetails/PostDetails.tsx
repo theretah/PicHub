@@ -7,18 +7,13 @@ import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { Post } from "../../entities/Post";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
-import useAuthStore from "../../auth/store";
-import { isatty } from "tty";
+import useAuthStore from "../../auth/authStore";
 import useLike from "../../hooks/postHooks/useLike";
 import useSave from "../../hooks/postHooks/useSave";
 
 interface Props {
   post: Post;
   onlyVertical: boolean;
-}
-interface Like {
-  postId: number;
-  userId: string;
 }
 
 const PostDetails = ({ post, onlyVertical }: Props) => {

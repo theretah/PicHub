@@ -1,7 +1,16 @@
-import React from "react";
-
-const MessageButton = () => {
-  return <button className="btn btn-secondary me-1 py-1">Message</button>;
+import { Link } from "react-router-dom";
+interface Props {
+  userName: string;
+}
+const MessageButton = ({ userName }: Props) => {
+  return (
+    <Link
+      to={`/messages/direct/${userName}`}
+      className="btn btn-secondary me-1 py-1"
+    >
+      Message
+    </Link>
+  );
 };
 
 export default MessageButton;

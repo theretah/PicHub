@@ -6,7 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Navigate, useNavigate } from "react-router-dom";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";

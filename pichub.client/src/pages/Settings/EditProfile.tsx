@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SettingsLayout from "../../components/Settings/SettingsLayout";

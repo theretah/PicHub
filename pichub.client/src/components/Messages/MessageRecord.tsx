@@ -14,7 +14,7 @@ const MessageRecord = ({ isMedium, isSelected, selectRecord }: Props) => {
       <div className="row" style={{ width: 395 }}>
         <div className="p-0" style={{ width: 55, height: 55 }}>
           <img
-            src={"../../../public/images/profiles/square.png"}
+            src={"../../../public/images/profiles/default-profile.jpg"}
             alt=""
             height={55}
             width={55}

@@ -1,5 +1,5 @@
 import axios from "axios";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import { useNavigate } from "react-router-dom";
 import SettingsLayout from "../../components/Settings/SettingsLayout";
 

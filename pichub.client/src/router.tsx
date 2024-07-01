@@ -4,7 +4,7 @@ import Explore from "./pages/Explore/Explore";
 import ExploreReel from "./pages/ExploreReel/ExploreReel";
 import Index from "./pages/Index/Index";
 import Login from "./pages/Login/Login";
-import Messages from "./pages/Messages/Messages";
+import MessagesLayout from "./components/Messages/MessagesLayout";
 import Notifications from "./pages/Notifications/Notifications";
 import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage";
 import Posts from "./pages/Profile/Posts";
@@ -16,6 +16,8 @@ import Register from "./pages/Register/Register";
 import EditProfile from "./pages/Settings/EditProfile";
 import Account from "./pages/Settings/Account";
 import ErrorPage from "./pages/ErrorPage";
+import Direct from "./pages/Messages/Direct";
+import Inbox from "./pages/Messages/Inbox";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +33,8 @@ const router = createBrowserRouter([
       { path: "/post/:id", element: <PostDetailsPage /> },
       { path: "/explore", element: <Explore /> },
       { path: "/explore/reels", element: <ExploreReel /> },
-      { path: "/messages", element: <Messages /> },
+      { path: "/messages/inbox", element: <Inbox /> },
+      { path: "/messages/direct/:userName", element: <Direct /> },
       { path: "/createPost", element: <CreatePost /> },
       { path: "/reels", element: <Reels /> },
       { path: "/notifications", element: <Notifications /> },

@@ -1,25 +1,11 @@
-import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import PostDetails from "../../components/PostDetails/PostDetails";
 import usePosts from "../../hooks/postHooks/usePosts";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 
 const ExploreReel = () => {
-  const [isSmallScreen, setIsSmallScreen] = useState<boolean>();
-  const { data, error, isLoading } = usePosts();
-  useEffect(() => {
-    const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 992);
-    };
+  const { data, isLoading } = usePosts();
 
-    handleResize();
-
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
   if (isLoading) return <LoadingIndicator />;
 
   return (

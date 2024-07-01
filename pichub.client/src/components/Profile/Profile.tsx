@@ -3,7 +3,7 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import Layout from "../Layout/Layout";
 import { Link, Navigate } from "react-router-dom";
 
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
 import usePostsCount from "../../hooks/userHooks/usePostsCount";
 import useFollowersCount from "../../hooks/userHooks/useFollowersCount";
@@ -211,7 +211,9 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                                       }}
                                       isFollowing={isFollowingState}
                                     />
-                                    <MessageButton />
+                                    <MessageButton
+                                      userName={pageUser?.userName || ""}
+                                    />
                                     <MoreButton />
                                   </>
                                 )}
@@ -252,7 +254,9 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                                     unFollow={unFollowUser}
                                     isFollowing={isFollowingState}
                                   />
-                                  <MessageButton />
+                                  <MessageButton
+                                    userName={pageUser?.userName || ""}
+                                  />
                                   <MoreButton />
                                 </>
                               )}

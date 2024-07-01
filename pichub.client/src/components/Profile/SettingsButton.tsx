@@ -1,5 +1,3 @@
-import React from "react";
-
 const SettingsButton = () => {
   return (
     <button className="btn text-light py-1">

@@ -2,7 +2,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import { useState } from "react";
 import { LoginData } from "../../entities/LoginData";
 

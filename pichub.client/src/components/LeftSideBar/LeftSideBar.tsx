@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import SearchButton from "../LeftSideBarButtons/SearchButton";
 import LeftSideBarButton from "./LeftSideBarButton";
-import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../auth/store";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthStore from "../../auth/authStore";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
 interface Props {
@@ -83,15 +83,16 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
     >
       <ul className="list-group" style={{ height: 675 }}>
         <div className="list-group-item bg-dark border-0 mb-4">
-          <span
-            className={`text-light px-0 d-flex h2 ${
+          <Link
+            to={"/"}
+            className={`text-decoration-none text-light px-0 d-flex h2 ${
               showFullButton && currentPage != "Messages"
                 ? "justify-content-start"
                 : "justify-content-center"
             }`}
           >
             {showFullButton && currentPage != "Messages" ? "PicHub" : "P"}
-          </span>
+          </Link>
         </div>
         <div
           className="d-flex flex-column justify-content-between"
@@ -201,7 +202,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             activePage={currentPage}
             buttonText="Messages"
             showFullButton={showFullButton && currentPage != "Messages"}
-            to="/messages"
+            to="/messages/inbox"
           >
             {currentPage === "Messages" ? (
               <svg

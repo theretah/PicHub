@@ -1,6 +1,5 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
-import useSearch from "../../hooks/userHooks/useSearch";
 import { User } from "../../entities/User";
 
 interface Props {

@@ -6,7 +6,7 @@ import {
 } from "mdb-react-ui-kit";
 import { Link, Navigate } from "react-router-dom";
 import { Post } from "../../entities/Post";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import useDeletePost from "../../hooks/postHooks/useDeletePost";
 interface PostModalProps {
   post: Post;

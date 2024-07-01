@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import { LoginData } from "../../entities/LoginData";
 
 const Login = () => {

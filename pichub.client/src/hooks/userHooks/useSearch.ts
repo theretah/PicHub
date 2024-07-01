@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { Post } from "../../entities/Post";
+import { useQuery } from "@tanstack/react-query";
 import { User } from "../../entities/User";
 interface Props {
   searchQuery: string;

@@ -1,7 +1,6 @@
 import { ChangeEvent, SyntheticEvent, useRef, useState } from "react";
 import ReactCrop, {
   Crop,
-  PercentCrop,
   PixelCrop,
   centerCrop,
   convertToPixelCrop,
@@ -39,7 +38,6 @@ function centerAspectCrop(
 
 const ImageCropper = ({
   aspectRatio,
-  minDimension,
   circularCrop,
   closeModal,
   updateAvatar,

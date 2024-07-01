@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import useSavedPosts from "../../hooks/postHooks/useSavedPosts";
 import Profile from "../../components/Profile/Profile";
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 
 const Saved = () => {
   const { user } = useAuthStore();

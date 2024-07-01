@@ -3,7 +3,7 @@ import Layout from "../Layout/Layout";
 import { Navigate } from "react-router-dom";
 import "./Settings.css";
 
-import useAuthStore from "../../auth/store";
+import useAuthStore from "../../auth/authStore";
 import SettingsNavbar from "./SettingsNavbar";
 import SettingsNavbarButton from "./SettingsNavbarButton";
 interface Props {
