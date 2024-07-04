@@ -80,7 +80,7 @@ namespace PicHub.Server.Controllers
                 var createdUser = await userManager.FindByNameAsync(model.UserName);
                 if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
+                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, createdUser.Id);
                     var response = new { UserName = createdUser.UserName, Password = model.Password };
                     return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
                 }
@@ -100,7 +100,7 @@ namespace PicHub.Server.Controllers
             {
                 if (await userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, model.UserName);
+                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, user.Id);
                     return Ok(new { token });
                 }
                 return BadRequest("Failed to login with this password.");

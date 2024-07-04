@@ -4,11 +4,69 @@ import MessagesLayout from "../../components/Messages/MessagesLayout";
 import DirectChatMessage from "../../components/Messages/DirectChatMessage";
 import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
+import useChatExists from "../../hooks/messageHooks/useChatExists";
+import useAuthStore from "../../auth/authStore";
+import useSendMessage from "../../hooks/messageHooks/useSendMessage";
+import useStartChat from "../../hooks/messageHooks/useStartChat";
+import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import useGetChat from "../../hooks/messageHooks/useGetChat";
+import useGetMessages from "../../hooks/messageHooks/useGetMessages";
 
 const Direct = () => {
+  const { user } = useAuthStore();
   const { userName } = useParams<string>();
-  const { data: targetUser } = useUserByUserName({ userName: userName });
-  const [messageText, setMessageText] = useState("");
+  const [messageText, setMessageText] = useState<string>("");
+
+  const {
+    data: targetUser,
+    isLoading,
+    error,
+    isSuccess,
+  } = useUserByUserName({
+    userName: userName,
+  });
+
+  const { data: chatExists } = useChatExists({
+    recieverId: targetUser?.id || "",
+    senderId: user?.id || "",
+    enabled: !!targetUser,
+  });
+
+  const { data: chat } = useGetChat({
+    recieverId: targetUser?.id || "",
+    senderId: user?.id || "",
+    enabled: chatExists == true,
+  });
+
+  const { data: messages } = useGetMessages({
+    chatId: chat?.id || 0,
+  });
+
+  const startChat = useStartChat({
+    recieverId: targetUser?.id || "",
+  });
+
+  const sendMessage = useSendMessage({
+    chatId: chat?.id || 0,
+    content: messageText,
+  });
+
+  function handleSendButton() {
+    if (chatExists == false) {
+      startChat.mutate();
+      if (startChat.isSuccess) {
+        sendMessage.mutate();
+        if (sendMessage.isSuccess) {
+          setMessageText("");
+        }
+      }
+    } else {
+      sendMessage.mutate();
+      if (sendMessage.isSuccess) {
+        setMessageText("");
+      }
+    }
+  }
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
@@ -24,6 +82,9 @@ const Direct = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [window.innerWidth]);
+
+  if (isLoading) return <LoadingIndicator />;
+  if (error) return <p className="text-light">{error.message}</p>;
 
   return (
     <MessagesLayout>
@@ -91,36 +152,33 @@ const Direct = () => {
           className="row overflow-y-auto"
           style={{ height: isSmallScreen ? "78vh" : "83vh" }}
         >
-          <div className="col d-flex justify-content-center mt-4">
-            <div className="text-center">
-              <ProfileImage
-                imageUrl={`data:image/png;base64,${targetUser?.profileImageUrl}`}
-                widthHeight={100}
+          {messages && user && targetUser && messages?.length > 0 ? (
+            messages.map((message) => (
+              <DirectChatMessage
+                message={message}
+                sender={message.authorId == user?.id ? user : targetUser}
               />
-              <h4 className="mb-0 text-light mt-2">{targetUser?.userName}</h4>
-              <span className="text-gray d-block" style={{ fontSize: 14 }}>
-                {targetUser?.userName} · PicHub
-              </span>
-              <Link
-                to={`/profile/${targetUser?.userName}`}
-                className="btn btn-secondary mt-3"
-              >
-                View profile
-              </Link>
+            ))
+          ) : (
+            <div className="col d-flex justify-content-center mt-4">
+              <div className="text-center">
+                <ProfileImage
+                  imageUrl={`data:image/png;base64,${targetUser?.profileImageUrl}`}
+                  widthHeight={100}
+                />
+                <h4 className="mb-0 text-light mt-2">{targetUser?.userName}</h4>
+                <span className="text-gray d-block" style={{ fontSize: 14 }}>
+                  {targetUser?.userName} · PicHub
+                </span>
+                <Link
+                  to={`/profile/${targetUser?.userName}`}
+                  className="btn btn-secondary mt-3"
+                >
+                  View profile
+                </Link>
+              </div>
             </div>
-          </div>
-          {/* {Array.from({ length: 2 }, () => (
-            <DirectChatMessage sender={1} />
-          ))}
-          {Array.from({ length: 4 }, () => (
-            <DirectChatMessage sender={0} />
-          ))}
-          {Array.from({ length: 5 }, () => (
-            <DirectChatMessage sender={1} />
-          ))}
-          {Array.from({ length: 3 }, () => (
-            <DirectChatMessage sender={0} />
-          ))} */}
+          )}
         </div>
         <div className="row p-2 ">
           <div className="input-group border border-gray rounded-pill">
@@ -144,6 +202,7 @@ const Direct = () => {
               placeholder="Message..."
               value={messageText}
               onChange={(event) => setMessageText(event.target.value)}
+              autoComplete="off"
             />
             {messageText === "" ? (
               <>
@@ -187,7 +246,9 @@ const Direct = () => {
                 </button>
               </>
             ) : (
-              <button className="btn text-primary">Send</button>
+              <button onClick={handleSendButton} className="btn text-primary">
+                Send
+              </button>
             )}
           </div>
         </div>

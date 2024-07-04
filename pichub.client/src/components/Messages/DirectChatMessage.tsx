@@ -1,11 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import DirectChatMessageButton from "./DirectChatMessageButton";
+import { MessageDto } from "../../entities/Message";
+import useAuthStore from "../../auth/authStore";
+import { User } from "../../entities/User";
 
 interface Props {
-  sender: number;
+  message: MessageDto;
+  sender: User;
 }
 
-const DirectChatMessage = ({ sender }: Props) => {
+const DirectChatMessage = ({ message, sender }: Props) => {
+  const { user } = useAuthStore();
+  const sentByUser = sender.id == user?.id;
   const [buttonVisible, setButtonVisible] = useState(false);
 
   function onEnter() {
@@ -45,23 +51,23 @@ const DirectChatMessage = ({ sender }: Props) => {
       </div> */}
       <div
         className={`d-flex mt-1 ${
-          sender == 1 ? "justify-content-end" : "justify-content-start"
+          sentByUser ? "justify-content-end" : "justify-content-start"
         }`}
         onPointerEnter={onEnter}
         onPointerLeave={onLeave}
         ref={divRef}
       >
-        {sender === 1 && buttonVisible && (
-          <DirectChatMessageButton sender={sender} />
+        {sentByUser && buttonVisible && (
+          <DirectChatMessageButton sentByUser={sentByUser} />
         )}
         <div
           style={{ width: window.innerWidth < 768 ? "85%" : "65%" }}
           onClick={onClick}
         >
           <div
-            className={`card p-1 text-light ${sender == 1 && ""}`}
+            className={`card p-1 text-light ${sentByUser && ""}`}
             style={
-              sender == 1
+              sentByUser
                 ? {
                     backgroundImage:
                       "linear-gradient(to bottom right, #0aa2c0, #0d6efd)",
@@ -70,16 +76,12 @@ const DirectChatMessage = ({ sender }: Props) => {
             }
           >
             <div className="card-body p-0">
-              <span style={{ fontSize: 17 }}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore
-                recusandae dolore incidunt expedita minima voluptatibus est
-                tempora nostrum, iusto dignissimos!
-              </span>
+              <span style={{ fontSize: 17 }}>{message.content}</span>
             </div>
           </div>
         </div>
-        {sender === 0 && buttonVisible && (
-          <DirectChatMessageButton sender={sender} />
+        {!sentByUser && buttonVisible && (
+          <DirectChatMessageButton sentByUser={sentByUser} />
         )}
       </div>
     </>

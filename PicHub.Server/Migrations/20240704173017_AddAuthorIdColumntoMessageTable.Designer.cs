@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PicHub.Server.Data;
 
@@ -11,9 +12,11 @@ using PicHub.Server.Data;
 namespace PicHub.Server.Migrations
 {
     [DbContext(typeof(PicHubContext))]
-    partial class PichubContextModelSnapshot : ModelSnapshot
+    [Migration("20240704173017_AddAuthorIdColumntoMessageTable")]
+    partial class AddAuthorIdColumntoMessageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -14,9 +14,8 @@ using PicHub.Server.Entities;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers().AddNewtonsoftJson(o => o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(o => o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -28,8 +27,7 @@ var mappingConfig = new MapperConfiguration(cfg =>
 {
     cfg.CreateMap<AppUser, UserDto>();
 });
-var mapper = mappingConfig.CreateMapper();
-builder.Services.AddSingleton(mapper);
+builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
 builder.Services.AddDbContext<PicHubContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
@@ -39,8 +37,8 @@ builder.Services.AddIdentityCore<AppUser>(options =>
     options.SignIn.RequireConfirmedAccount = false;
     options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier;
 })
-.AddEntityFrameworkStores<PicHubContext>()
-.AddDefaultTokenProviders();
+    .AddEntityFrameworkStores<PicHubContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {

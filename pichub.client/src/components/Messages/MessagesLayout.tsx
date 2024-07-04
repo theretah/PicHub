@@ -1,22 +1,25 @@
 import { ReactNode, useEffect, useState } from "react";
 import Layout from "../Layout/Layout";
 import { Link, Navigate } from "react-router-dom";
-import MessageRecord from "./MessageRecord";
 import useAuthStore from "../../auth/authStore";
+import useGetChats from "../../hooks/messageHooks/useGetChats";
+import ChatRecord from "./ChatRecord";
 interface Props {
   children: ReactNode;
 }
 const MessagesLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useAuthStore();
+
+  const { data: chats } = useGetChats();
+
+  const [activeChat, setActiveChat] = useState<number>();
+
   const md = 768;
   const xl = 1200;
-
   let initialInboxWidth =
     window.innerWidth >= xl ? 200 : window.innerWidth < md ? 0 : 65;
-
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [inboxWidth, setInboxWidth] = useState(initialInboxWidth);
-
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -121,12 +124,18 @@ const MessagesLayout = ({ children }: Props) => {
                     borderRadius: 0,
                   }}
                 >
-                  {/* messages list */}
-                  {/* <MessageRecord
-                    isMedium={windowWidth <= 900}
-                    isSelected={activeMessage}
-                    selectRecord={() => setActiveMessage(!activeMessage)}
-                  /> */}
+                  {chats?.map((chat) => (
+                    <ChatRecord
+                      isActive={activeChat == chat.id}
+                      setActive={() => setActiveChat(chat.id)}
+                      userId={
+                        chat.recieverId == user?.id
+                          ? chat.senderId
+                          : chat.recieverId
+                      }
+                      isMedium={windowWidth <= 1100}
+                    />
+                  ))}
                 </ul>
               </div>
             </div>

@@ -7,6 +7,8 @@ namespace PicHub.Server.Entities
         public int ChatId { get; set; }
         public Chat Chat { get; set; }
 
+        public string AuthorId { get; set; }
+
         public string? Content { get; set; }
         public DateTime Date { get; set; }
     }

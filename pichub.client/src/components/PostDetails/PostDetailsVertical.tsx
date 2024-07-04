@@ -127,20 +127,20 @@ const PostDetailsVertical = ({
         >
           {author.userName}{" "}
         </Link>
-        {isCaptionExpanded ? (
-          post.caption
-        ) : (
-          <a
-            href="#"
-            onClick={(event) => {
-              event.preventDefault();
-              setIsCaptionExpanded(true);
-            }}
-            className="text-gray text-decoration-none py-0"
-          >
-            ...more
-          </a>
-        )}
+        {isCaptionExpanded
+          ? post.caption
+          : post.caption && (
+              <a
+                href="#"
+                onClick={(event) => {
+                  event.preventDefault();
+                  setIsCaptionExpanded(true);
+                }}
+                className="text-gray text-decoration-none py-0"
+              >
+                ...more
+              </a>
+            )}
 
         <p className="card-title">
           <a href="" className="text-decoration-none text-gray">

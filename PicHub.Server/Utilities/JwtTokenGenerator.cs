@@ -13,9 +13,8 @@ namespace PicHub.Server.Utilities
 {
     public class JwtTokenGenerator
     {
-        public static string GenerateJwtToken(UserManager<AppUser> userManager, IConfiguration configuration, string userName)
+        public static string GenerateJwtToken(UserManager<AppUser> userManager, IConfiguration configuration, string userId)
         {
-            var user = userManager.FindByNameAsync(userName).Result;
             var secret = configuration["JwtConfig:Secret"];
             var issuer = configuration["JwtConfig:ValidIssuer"];
             var audience = configuration["JwtConfig:ValidAudience"];
@@ -25,10 +24,7 @@ namespace PicHub.Server.Utilities
             }
             var claims = new[]
             {
-                // new Claim(JwtRegisteredClaimNames.Sub, userName),
-                // new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                // new Claim(ClaimTypes.Name, userName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, userId),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));

@@ -1,18 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 
 interface BtnProps {
-  sender: number;
+  sentByUser: boolean;
 }
 
-const DirectChatMessageButton = ({ sender }: BtnProps) => {
+const DirectChatMessageButton = ({ sentByUser }: BtnProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isDropup, setIsDropup] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const dropdownTranslate =
-    sender === 0 ? "translate(5px, 35px)" : "translate(-135px, 35px)";
-  const dropupTranslate =
-    sender === 0 ? "translate(5px, -195px)" : "translate(-135px, -195px)";
+  const dropdownTranslate = !sentByUser
+    ? "translate(5px, 35px)"
+    : "translate(-135px, 35px)";
+  const dropupTranslate = !sentByUser
+    ? "translate(5px, -195px)"
+    : "translate(-135px, -195px)";
 
   const [translate, setTranslate] = useState(
     isDropup ? dropupTranslate : dropdownTranslate
@@ -137,7 +139,7 @@ const DirectChatMessageButton = ({ sender }: BtnProps) => {
           </a>
         </li>
         <hr className="p-0 my-1" />
-        {sender == 0 ? (
+        {!sentByUser ? (
           <li>
             <a
               className="dropdown-item text-danger d-flex justify-content-between align-items-center"
