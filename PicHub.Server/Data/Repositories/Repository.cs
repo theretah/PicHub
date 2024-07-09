@@ -8,7 +8,7 @@ namespace CMSReactDotNet.Server.Data.Repositories
     public class Repository<T> : IRepository<T> where T : class
     {
         protected readonly IdentityDbContext Context;
-        private DbSet<T> set;
+        private readonly DbSet<T> set;
 
         public Repository(IdentityDbContext context)
         {

@@ -13,7 +13,7 @@ namespace PicHub.Server.Utilities
 {
     public class JwtTokenGenerator
     {
-        public static string GenerateJwtToken(UserManager<AppUser> userManager, IConfiguration configuration, string userId)
+        public static string GenerateJwtToken(IConfiguration configuration, string userId)
         {
             var secret = configuration["JwtConfig:Secret"];
             var issuer = configuration["JwtConfig:ValidIssuer"];

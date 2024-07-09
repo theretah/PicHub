@@ -2,17 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import DirectChatMessageButton from "./DirectChatMessageButton";
 import { MessageDto } from "../../entities/Message";
 import useAuthStore from "../../auth/authStore";
-import { User } from "../../entities/User";
+import useUnSendMessage from "../../hooks/messageHooks/useUnSendMessage";
 
 interface Props {
   message: MessageDto;
-  sender: User;
+  senderId: string;
 }
 
-const DirectChatMessage = ({ message, sender }: Props) => {
+const DirectChatMessage = ({ message, senderId }: Props) => {
   const { user } = useAuthStore();
-  const sentByUser = sender.id == user?.id;
+  const sentByUser = senderId == user?.id;
   const [buttonVisible, setButtonVisible] = useState(false);
+  const [isDeleted, setIsDeleted] = useState(false);
 
   function onEnter() {
     setButtonVisible(true);
@@ -40,6 +41,15 @@ const DirectChatMessage = ({ message, sender }: Props) => {
     };
   }, [divRef]);
 
+  const unSendMessage = useUnSendMessage({
+    messageId: message.id,
+  });
+
+  function unSend() {
+    unSendMessage.mutate();
+    setIsDeleted(true);
+  }
+
   return (
     <>
       {/* <div className="row mt-2">
@@ -49,41 +59,53 @@ const DirectChatMessage = ({ message, sender }: Props) => {
           </span>
         </div>
       </div> */}
-      <div
-        className={`d-flex mt-1 ${
-          sentByUser ? "justify-content-end" : "justify-content-start"
-        }`}
-        onPointerEnter={onEnter}
-        onPointerLeave={onLeave}
-        ref={divRef}
-      >
-        {sentByUser && buttonVisible && (
-          <DirectChatMessageButton sentByUser={sentByUser} />
-        )}
+      {!isDeleted && (
         <div
-          style={{ width: window.innerWidth < 768 ? "85%" : "65%" }}
-          onClick={onClick}
+          className={`w-100 d-flex mt-1 ${
+            sentByUser ? "justify-content-end" : "justify-content-start"
+          }`}
+          onPointerEnter={onEnter}
+          onPointerLeave={onLeave}
+          ref={divRef}
         >
+          {sentByUser && buttonVisible && (
+            <DirectChatMessageButton
+              sentByUser={sentByUser}
+              handleUnSendButton={unSend}
+            />
+          )}
           <div
-            className={`card p-1 text-light ${sentByUser && ""}`}
-            style={
-              sentByUser
-                ? {
-                    backgroundImage:
-                      "linear-gradient(to bottom right, #0aa2c0, #0d6efd)",
-                  }
-                : { backgroundColor: "#343a40" }
-            }
+            style={{
+              width: window.innerWidth < 768 ? "85%" : "65%",
+            }}
+            onClick={onClick}
           >
-            <div className="card-body p-0">
-              <span style={{ fontSize: 17 }}>{message.content}</span>
+            <div
+              className={` p-1 text-light ${
+                sentByUser ? "rounded-start" : "rounded-end"
+              }`}
+              style={
+                sentByUser
+                  ? {
+                      backgroundImage:
+                        "linear-gradient(to bottom right, #0aa2c0, #0d6efd)",
+                    }
+                  : { backgroundColor: "#343a40" }
+              }
+            >
+              <div className="card-body p-0">
+                <span style={{ fontSize: 17 }}>{message.content}</span>
+              </div>
             </div>
           </div>
+          {!sentByUser && buttonVisible && (
+            <DirectChatMessageButton
+              sentByUser={sentByUser}
+              handleUnSendButton={unSend}
+            />
+          )}
         </div>
-        {!sentByUser && buttonVisible && (
-          <DirectChatMessageButton sentByUser={sentByUser} />
-        )}
-      </div>
+      )}
     </>
   );
 };

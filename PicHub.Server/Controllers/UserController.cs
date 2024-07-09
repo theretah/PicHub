@@ -157,12 +157,12 @@ namespace PicHub.Server.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search(string? query)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            var users = await userManager.Users.ToListAsync();
+            if (string.IsNullOrWhiteSpace(query) || users.Count == 0)
             {
                 return Ok(new List<AppUser>());
             }
-            return Ok(await userManager.Users.Where(u => u.UserName.ToLower().Contains(query.ToLower()))
-                .ToListAsync());
+            return Ok(users.Where(u => u.UserName.ToLower().Contains(query.ToLower())));
         }
     }
 }

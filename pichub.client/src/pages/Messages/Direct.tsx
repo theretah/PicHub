@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import MessagesLayout from "../../components/Messages/MessagesLayout";
 import DirectChatMessage from "../../components/Messages/DirectChatMessage";
 import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
@@ -11,9 +11,13 @@ import useStartChat from "../../hooks/messageHooks/useStartChat";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import useGetChat from "../../hooks/messageHooks/useGetChat";
 import useGetMessages from "../../hooks/messageHooks/useGetMessages";
+import { MessageDto } from "../../entities/Message";
+import useDeleteChat from "../../hooks/messageHooks/useDeleteChat";
 
 const Direct = () => {
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  if (!isAuthenticated) return <Navigate to={"/login"} />;
+
   const { userName } = useParams<string>();
   const [messageText, setMessageText] = useState<string>("");
 
@@ -42,6 +46,12 @@ const Direct = () => {
     chatId: chat?.id || 0,
   });
 
+  const [newMessages, setNewMessages] = useState<MessageDto[] | undefined>([]);
+
+  useEffect(() => {
+    setNewMessages(messages);
+  }, [messages]);
+
   const startChat = useStartChat({
     recieverId: targetUser?.id || "",
   });
@@ -51,18 +61,43 @@ const Direct = () => {
     content: messageText,
   });
 
+  const deleteChat = useDeleteChat({
+    chatId: chat?.id || 0,
+  });
+
+  function addMessage(message: MessageDto) {
+    setNewMessages(
+      (prevMessages) => prevMessages && [...prevMessages, message]
+    );
+  }
   function handleSendButton() {
     if (chatExists == false) {
       startChat.mutate();
       if (startChat.isSuccess) {
         sendMessage.mutate();
-        if (sendMessage.isSuccess) {
+        if (sendMessage.isSuccess && user) {
+          let m: MessageDto = {
+            authorId: user.id,
+            chatId: 1,
+            content: messageText,
+            date: new Date(Date.now()),
+            id: 1,
+          };
+          addMessage(m);
           setMessageText("");
         }
       }
     } else {
       sendMessage.mutate();
-      if (sendMessage.isSuccess) {
+      if (sendMessage.isSuccess && user) {
+        let m: MessageDto = {
+          authorId: user.id,
+          chatId: 1,
+          content: messageText,
+          date: new Date(Date.now()),
+          id: 1,
+        };
+        addMessage(m);
         setMessageText("");
       }
     }
@@ -149,14 +184,17 @@ const Direct = () => {
           </div>
         </div>
         <div
-          className="row overflow-y-auto"
+          className=" overflow-y-auto"
           style={{ height: isSmallScreen ? "78vh" : "83vh" }}
         >
-          {messages && user && targetUser && messages?.length > 0 ? (
-            messages.map((message) => (
+          {newMessages && user && targetUser && newMessages?.length > 0 ? (
+            newMessages.map((message) => (
               <DirectChatMessage
+                key={message.id}
                 message={message}
-                sender={message.authorId == user?.id ? user : targetUser}
+                senderId={
+                  message.authorId == user?.id ? user.id : targetUser.id
+                }
               />
             ))
           ) : (

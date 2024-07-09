@@ -69,11 +69,43 @@ namespace PicHub.Server.Controllers
                     Date = DateTime.Now,
                 });
                 unit.Complete();
-                return Ok();
+                return Created();
             }
             catch (Exception)
             {
                 return BadRequest("Could not send message");
+            }
+        }
+
+        [HttpDelete("unSend")]
+        public IActionResult UnSend(int messageId)
+        {
+            try
+            {
+                unit.Messages.Remove(messageId);
+                unit.Complete();
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest("Could not delete message.");
+            }
+        }
+
+        [HttpDelete("deleteChat")]
+        public IActionResult DeleteChat(int chatId)
+        {
+            try
+            {
+                unit.Chats.Remove(chatId);
+                unit.Complete();
+
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest("Could not delete chat.");
             }
         }
 
@@ -97,7 +129,7 @@ namespace PicHub.Server.Controllers
         [HttpGet("getChats")]
         public IActionResult GetChats()
         {
-            string UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            string? UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (UserId == null) { return Unauthorized(); }
 
             return Ok(unit.Chats.Find(c => c.SenderId == UserId || c.RecieverId == UserId).ToList());

@@ -126,6 +126,7 @@ const MessagesLayout = ({ children }: Props) => {
                 >
                   {chats?.map((chat) => (
                     <ChatRecord
+                      key={chat.id}
                       isActive={activeChat == chat.id}
                       setActive={() => setActiveChat(chat.id)}
                       userId={

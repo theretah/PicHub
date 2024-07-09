@@ -21,13 +21,11 @@ namespace PicHub.Server.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly UserManager<AppUser> userManager;
-        private readonly IUserStore<AppUser> userStore;
         private readonly IMapper mapper;
 
-        public AccountController(IMapper mapper, IConfiguration configuration, UserManager<AppUser> userManager, IUserStore<AppUser> userStore)
+        public AccountController(IMapper mapper, IConfiguration configuration, UserManager<AppUser> userManager)
         {
             this.mapper = mapper;
-            this.userStore = userStore;
             this.configuration = configuration;
             this.userManager = userManager;
         }
@@ -80,7 +78,7 @@ namespace PicHub.Server.Controllers
                 var createdUser = await userManager.FindByNameAsync(model.UserName);
                 if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, createdUser.Id);
+                    var token = JwtTokenGenerator.GenerateJwtToken(configuration, createdUser.Id);
                     var response = new { UserName = createdUser.UserName, Password = model.Password };
                     return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
                 }
@@ -100,7 +98,7 @@ namespace PicHub.Server.Controllers
             {
                 if (await userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(userManager, configuration, user.Id);
+                    var token = JwtTokenGenerator.GenerateJwtToken(configuration, user.Id);
                     return Ok(new { token });
                 }
                 return BadRequest("Failed to login with this password.");
