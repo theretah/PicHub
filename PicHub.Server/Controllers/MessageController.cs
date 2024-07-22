@@ -24,7 +24,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("createChat")]
-        public IActionResult CreateChat(string recieverId)
+        public async Task<IActionResult> CreateChat(string recieverId)
         {
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (senderId == null)
@@ -34,15 +34,16 @@ namespace PicHub.Server.Controllers
 
             try
             {
-                unit.Chats.Add(new Chat
+                await unit.Chats.AddAsync(new Chat
                 {
                     RecieverId = recieverId,
                     SenderId = senderId
                 });
-                unit.Complete();
-                return Ok(unit.Chats.Find(c =>
-                (c.SenderId == senderId && c.RecieverId == recieverId) ||
-                (c.SenderId == recieverId && c.RecieverId == senderId)).Single().Id);
+                await unit.CompleteAsync();
+
+                return Ok(unit.Chats.GetByPredicateAsync(c =>
+                    (c.SenderId == senderId && c.RecieverId == recieverId) ||
+                    (c.SenderId == recieverId && c.RecieverId == senderId)).Id);
             }
             catch (Exception)
             {
@@ -51,7 +52,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("send")]
-        public IActionResult Send(int chatId, string content)
+        public async Task<IActionResult> Send(int chatId, string content)
         {
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (senderId == null)
@@ -61,14 +62,14 @@ namespace PicHub.Server.Controllers
 
             try
             {
-                unit.Messages.Add(new Message
+                await unit.Messages.AddAsync(new Message
                 {
                     AuthorId = senderId,
                     ChatId = chatId,
                     Content = content,
                     Date = DateTime.Now,
                 });
-                unit.Complete();
+                await unit.CompleteAsync();
                 return Created();
             }
             catch (Exception)
@@ -78,12 +79,12 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("unSend")]
-        public IActionResult UnSend(int messageId)
+        public async Task<IActionResult> UnSend(int messageId)
         {
             try
             {
-                unit.Messages.Remove(messageId);
-                unit.Complete();
+                await unit.Messages.RemoveByIdAsync(messageId);
+                await unit.CompleteAsync();
 
                 return Ok();
             }
@@ -94,12 +95,12 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("deleteChat")]
-        public IActionResult DeleteChat(int chatId)
+        public async Task<IActionResult> DeleteChat(int chatId)
         {
             try
             {
-                unit.Chats.Remove(chatId);
-                unit.Complete();
+                await unit.Chats.RemoveByIdAsync(chatId);
+                await unit.CompleteAsync();
 
                 return Ok();
             }
@@ -112,33 +113,32 @@ namespace PicHub.Server.Controllers
         [HttpGet("chatExists")]
         public IActionResult ChatExists(string recieverId, string senderId)
         {
-            return Ok(unit.Chats.Find(c =>
+            return Ok(unit.Chats.ExistsByPredicateAsync(c =>
                 (c.SenderId == senderId && c.RecieverId == recieverId) ||
-                (c.SenderId == recieverId && c.RecieverId == senderId))
-                .Any());
+                (c.SenderId == recieverId && c.RecieverId == senderId)));
         }
 
         [HttpGet("getChat")]
-        public IActionResult GetChat(string recieverId, string senderId)
+        public async Task<IActionResult> GetChat(string recieverId, string senderId)
         {
-            return Ok(unit.Chats.Find(c =>
+            return Ok(await unit.Chats.GetByPredicateAsync(c =>
                 (c.SenderId == senderId && c.RecieverId == recieverId) ||
-                (c.SenderId == recieverId && c.RecieverId == senderId)).Single());
+                (c.SenderId == recieverId && c.RecieverId == senderId)));
         }
 
         [HttpGet("getChats")]
-        public IActionResult GetChats()
+        public async Task<IActionResult> GetChats()
         {
             string? UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (UserId == null) { return Unauthorized(); }
 
-            return Ok(unit.Chats.Find(c => c.SenderId == UserId || c.RecieverId == UserId).ToList());
+            return Ok(unit.Chats.FindByPredicateAsync(c => c.SenderId == UserId || c.RecieverId == UserId));
         }
 
         [HttpGet("getMessages")]
-        public IActionResult GetMessages(int chatId)
+        public async Task<IActionResult> GetMessages(int chatId)
         {
-            return Ok(unit.Messages.Find(m => m.ChatId == chatId).ToList());
+            return Ok(unit.Messages.FindByPredicateAsync(m => m.ChatId == chatId));
         }
     }
 }

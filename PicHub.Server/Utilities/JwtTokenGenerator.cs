@@ -13,14 +13,11 @@ namespace PicHub.Server.Utilities
 {
     public class JwtTokenGenerator
     {
-        public static string GenerateJwtToken(IConfiguration configuration, string userId)
+        public static string GenerateJwtToken(string? secret, string? validIssuer, string? validAudience, string userId)
         {
-            var secret = configuration["JwtConfig:Secret"];
-            var issuer = configuration["JwtConfig:ValidIssuer"];
-            var audience = configuration["JwtConfig:ValidAudience"];
-            if (secret is null || issuer is null || audience is null)
+            if (secret is null || validIssuer is null || validAudience is null)
             {
-                throw new ApplicationException("Jwt config is not set.");
+                throw new ApplicationException($"Jwt config is not set. Secret: {secret != null}, Issuer: {validIssuer != null}, Audience: {validAudience != null}.");
             }
             var claims = new[]
             {
@@ -31,8 +28,8 @@ namespace PicHub.Server.Utilities
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: issuer,
-                audience: audience,
+                issuer: validIssuer,
+                audience: validAudience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddDays(1),
                 signingCredentials: creds);

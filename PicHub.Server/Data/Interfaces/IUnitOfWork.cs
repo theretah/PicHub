@@ -8,6 +8,6 @@
         ISaveRepository Saves { get; }
         ILikeRepository Likes { get; }
         IFollowRepository Follows { get; }
-        int Complete();
+        Task<int> CompleteAsync();
     }
 }

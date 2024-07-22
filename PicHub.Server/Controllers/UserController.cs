@@ -81,50 +81,50 @@ namespace PicHub.Server.Controllers
         {
             var user = await userManager.FindByNameAsync(userName);
             if (user == null) return NotFound();
-            var posts = unit.Posts.Find(p => p.AuthorId == user.Id);
+            var posts = await unit.Posts.FindByPredicateAsync(p => p.AuthorId == user.Id);
             return Ok(posts.Count());
         }
 
         [HttpGet("getFollowersCount")]
-        public IActionResult GetFollowersCount(string userId)
+        public async Task<IActionResult> GetFollowersCount(string userId)
         {
-            var followers = unit.Follows.Find(f => f.FollowingId == userId);
+            var followers = await unit.Follows.FindByPredicateAsync(f => f.FollowingId == userId);
             return Ok(followers.Count());
         }
 
         [HttpGet("getFollowingsCount")]
-        public IActionResult GetFollowingsCount(string userId)
+        public async Task<IActionResult> GetFollowingsCount(string userId)
         {
-            var followings = unit.Follows.Find(f => f.FollowerId == userId);
+            var followings = await unit.Follows.FindByPredicateAsync(f => f.FollowerId == userId);
             return Ok(followings.Count());
         }
 
         [HttpGet("getIsFollowing")]
-        public IActionResult GetIsFollowing(string followingId)
+        public async Task<IActionResult> GetIsFollowing(string followingId)
         {
             var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (followerId == null) return Unauthorized();
 
-            var isFollowing = unit.Follows
-                .Find(f => f.FollowerId == followerId && f.FollowingId == followingId).Any();
+            var follow = await unit.Follows
+                .ExistsByPredicateAsync(f => f.FollowerId == followerId && f.FollowingId == followingId);
 
-            return Ok(isFollowing);
+            return Ok(follow);
         }
 
         [HttpPost("follow")]
-        public IActionResult Follow(string followingId)
+        public async Task<IActionResult> Follow(string followingId)
         {
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (loggedInUserId == null) return Unauthorized();
 
-                unit.Follows.Add(new Follow
+                await unit.Follows.AddAsync(new Follow
                 {
                     FollowerId = loggedInUserId,
                     FollowingId = followingId
                 });
-                unit.Complete();
+                await unit.CompleteAsync();
 
                 return Ok();
             }
@@ -135,16 +135,16 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("unFollow")]
-        public IActionResult UnFollow(string followingId)
+        public async Task<IActionResult> UnFollow(string followingId)
         {
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var follow = unit.Follows
-                    .Find(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId).Single();
+                var follow = await unit.Follows
+                    .GetByPredicateAsync(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId);
 
                 unit.Follows.Remove(follow);
-                unit.Complete();
+                await unit.CompleteAsync();
 
                 return Ok();
             }

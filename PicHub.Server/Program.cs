@@ -21,29 +21,28 @@ builder.Services.AddControllers()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-
-    var securityScheme = new OpenApiSecurityScheme
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
+        Description = "JWT Authorization header using the Bearer scheme.",
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "JWY Authorization header using the Bearer scheme."
-    };
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "bearer",
+    });
 
-    c.AddSecurityDefinition("Bearer", securityScheme);
-
-    var securityRequirement = new OpenApiSecurityRequirement{
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement{
         {
-            securityScheme, new[] {"Bearer"}
+            new OpenApiSecurityScheme{
+                Reference  = new OpenApiReference{
+                    Type= ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[]{}
         }
-    };
-
-    c.AddSecurityRequirement(securityRequirement);
+    });
 });
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -69,12 +68,14 @@ builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
 }).AddJwtBearer(options =>
 {
-    var secret = builder.Configuration["JwtConfig:Secret"];
-    var issuer = builder.Configuration["JwtConfig:ValidIssuer"];
-    var audience = builder.Configuration["JwtConfig:ValidAudience"];
-    if (secret is null || issuer is null || audience is null)
+    var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
+    var secret = jwtConfigSection["Secret"];
+    var validIssuer = jwtConfigSection["ValidIssuer"];
+    var validAudience = jwtConfigSection["ValidAudience"];
+    if (secret is null || validIssuer is null || validAudience is null)
     {
         throw new ApplicationException("Jwt config is not set.");
     }
@@ -87,11 +88,12 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = issuer,
-        ValidAudience = audience,
+        ValidIssuer = validIssuer,
+        ValidAudience = validAudience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
     };
 });
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
@@ -103,7 +105,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseDefaultFiles();
 app.UseStaticFiles();
 app.UseHttpsRedirection();

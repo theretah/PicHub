@@ -16,34 +16,38 @@ namespace CMSReactDotNet.Server.Data.Repositories
             set = context.Set<T>();
         }
 
-        public void Add(T entity)
+        public async Task AddAsync(T entity)
         {
-            set.Add(entity);
+            await set.AddAsync(entity);
         }
 
-        public void AddRange(IEnumerable<T> entities)
+        public async Task AddRangeAsync(IEnumerable<T> entities)
         {
-            set.AddRange(entities);
+            await set.AddRangeAsync(entities);
         }
 
-        public bool Exists(int id)
+        public async Task<bool> ExistsAsync(int id)
         {
-            return set.Find(id) != null;
+            return await set.FindAsync(id) != null;
         }
 
-        public IEnumerable<T> Find(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> FindByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
-            return set.Where(predicate);
+            return await set.Where(predicate).ToListAsync();
+        }
+        public async Task<T> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await set.Where(predicate).SingleOrDefaultAsync();
         }
 
-        public T Get(int id)
+        public async Task<T> GetByIdAsync(int id)
         {
-            return set.Find(id);
+            return await set.FindAsync(id);
         }
 
-        public IEnumerable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return set.ToList();
+            return await set.ToListAsync();
         }
 
         public void Remove(T entity)
@@ -51,14 +55,21 @@ namespace CMSReactDotNet.Server.Data.Repositories
             set.Remove(entity);
         }
 
-        public void Remove(int id)
+        public async Task RemoveByIdAsync(int id)
         {
-            set.Remove(Get(id));
+            var entity = await GetByIdAsync(id);
+            set.Remove(entity);
         }
 
         public void RemoveRange(IEnumerable<T> entities)
         {
             set.RemoveRange(entities);
+        }
+
+        public async Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate)
+        {
+            var entity = await set.Where(predicate).SingleOrDefaultAsync();
+            return entity != null;
         }
     }
 }

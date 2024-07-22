@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CMSReactDotNet.Server.Data.IRepositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -49,7 +50,6 @@ namespace PicHub.Server.Controllers
         [HttpGet("getAllByAuthorUserName")]
         public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorUserName(string userName)
         {
-
             try
             {
                 var user = userManager.FindByNameAsync(userName).Result;
@@ -66,25 +66,32 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("get")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             try
             {
-                return Ok(unit.Posts.Get(id));
+                var post = await unit.Posts.GetByIdAsync(id);
+                if (post != null)
+                {
+                    return Ok(post);
+                }
+                else
+                {
+                    return NotFound();
+                }
             }
             catch (Exception)
             {
-                return NotFound();
+                return BadRequest();
             }
         }
-
         [HttpDelete("delete")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                unit.Posts.Remove(id);
-                unit.Complete();
+                await unit.Posts.RemoveByIdAsync(id);
+                await unit.CompleteAsync();
                 return Ok();
             }
             catch (Exception)
@@ -94,7 +101,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("create")]
-        public IActionResult Create(CreatePostViewModel model)
+        public async Task<IActionResult> Create(CreatePostViewModel model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -105,7 +112,7 @@ namespace PicHub.Server.Controllers
             try
             {
                 var imageFile = ImageUtilities.CompressImage(model.ImageFile, 1080);
-                unit.Posts.Add(new Post
+                await unit.Posts.AddAsync(new Post
                 {
                     Caption = model.Caption,
                     CommentsAllowed = !model.TurnOffComments,
@@ -113,7 +120,7 @@ namespace PicHub.Server.Controllers
                     CreateDate = DateTime.Now,
                     PhotoContent = FileUtilities.FileToByteArray(imageFile),
                 });
-                unit.Complete();
+                await unit.CompleteAsync();
                 return Ok();
             }
             catch (Exception)
@@ -123,7 +130,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("save")]
-        public IActionResult Save(int postId)
+        public async Task<IActionResult> Save(int postId)
         {
             try
             {
@@ -133,21 +140,21 @@ namespace PicHub.Server.Controllers
                     return Unauthorized();
                 }
 
-                var save = unit.Saves.Find(s => s.UserId == loggedInUserId && s.PostId == postId).FirstOrDefault();
+                var save = await unit.Saves.GetByPredicateAsync(s => s.UserId == loggedInUserId && s.PostId == postId);
                 if (save != null)
                 {
                     unit.Saves.Remove(save);
-                    unit.Complete();
+                    await unit.CompleteAsync();
                     return NoContent();
                 }
                 else
                 {
-                    unit.Saves.Add(new Save()
+                    await unit.Saves.AddAsync(new Save()
                     {
                         PostId = postId,
                         UserId = loggedInUserId
                     });
-                    unit.Complete();
+                    await unit.CompleteAsync();
                     return Created();
                 }
 
@@ -159,12 +166,12 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("isSaved")]
-        public IActionResult IsSaved(int postId)
+        public async Task<IActionResult> IsSaved(int postId)
         {
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isSaved = unit.Saves.Find(l => l.PostId == postId && l.UserId == loggedInUserId).Any();
+                var isSaved = await unit.Saves.ExistsByPredicateAsync(l => l.PostId == postId && l.UserId == loggedInUserId);
                 return Ok(isSaved);
             }
             catch (Exception)
@@ -174,12 +181,12 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("isLiked")]
-        public IActionResult IsLiked(int postId)
+        public async Task<IActionResult> IsLiked(int postId)
         {
             try
             {
                 var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isLiked = unit.Likes.Find(l => l.PostId == postId && l.UserId == loggedInUserId).Any();
+                var isLiked = await unit.Likes.ExistsByPredicateAsync(l => l.PostId == postId && l.UserId == loggedInUserId);
                 return Ok(isLiked);
             }
             catch (Exception)
@@ -189,33 +196,33 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("like")]
-        public IActionResult Like(int postId)
+        public async Task<IActionResult> Like(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null) return Unauthorized();
             try
             {
-                var post = unit.Posts.Get(postId);
-                var existingLike = unit.Likes.Find(l => l.UserId == loggedInUserId && l.PostId == postId).FirstOrDefault();
+                var post = await unit.Posts.GetByIdAsync(postId);
+                var existingLike = await unit.Likes.GetByPredicateAsync(l => l.UserId == loggedInUserId && l.PostId == postId);
                 if (existingLike != null)
                 {
                     unit.Likes.Remove(existingLike);
                     post.LikesCount--;
                     unit.Posts.Update(post);
-                    unit.Complete();
+                    await unit.CompleteAsync();
 
                     return NoContent();
                 }
                 else
                 {
-                    unit.Likes.Add(new Like
+                    await unit.Likes.AddAsync(new Like
                     {
                         UserId = loggedInUserId,
                         PostId = postId,
                     });
                     post.LikesCount++;
                     unit.Posts.Update(post);
-                    unit.Complete();
+                    await unit.CompleteAsync();
 
                     return Created();
                 }
@@ -246,7 +253,7 @@ namespace PicHub.Server.Controllers
                 var savedPosts = new List<Post>();
                 foreach (var postId in postIds)
                 {
-                    var post = unit.Posts.Get(postId);
+                    var post = await unit.Posts.GetByIdAsync(postId);
                     if (post != null)
                     {
                         savedPosts.Add(post);
@@ -266,14 +273,14 @@ namespace PicHub.Server.Controllers
         {
             foreach (var like in await unit.Likes.GetLikesByUserId(userId))
             {
-                yield return unit.Posts.Find(p => p.Id == like.PostId).Single();
+                yield return await unit.Posts.GetByPredicateAsync(p => p.Id == like.PostId);
             }
         }
 
         [HttpGet("getLikesCount")]
-        public IActionResult GetLikesCount(int postId)
+        public async Task<IActionResult> GetLikesCount(int postId)
         {
-            var post = unit.Posts.Get(postId);
+            var post = await unit.Posts.GetByIdAsync(postId);
             return Ok(post.LikesCount);
         }
     }

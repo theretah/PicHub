@@ -191,3 +191,5 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\refint\PicHub
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\PicHub.Tests.pdb
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\PicHub.Tests.genruntimeconfig.cache
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\ref\PicHub.Tests.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Castle.Core.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Moq.dll

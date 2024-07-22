@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -9,10 +10,14 @@ namespace PicHub.Server.Entities
 {
     public class AppUser : IdentityUser
     {
-        public string FullName { get; set; }
+        [MaxLength(50, ErrorMessage = "Full name cannot have more than 50 characters")]
+        public string? FullName { get; set; }
+
         public byte[]? ProfileImageUrl { get; set; }
         public DateTime RegistrationDate { get; set; }
         public int Gender { get; set; }
+
+        [MaxLength(250, ErrorMessage = "Bio cannot have more than 250 characters")]
         public string? Bio { get; set; }
         public int FollowersCount { get; set; }
         public int FollowingsCount { get; set; }

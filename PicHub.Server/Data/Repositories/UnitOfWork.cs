@@ -32,9 +32,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public IMessageRepository Messages { get; private set; }
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return context.SaveChanges();
+            return await context.SaveChangesAsync();
         }
 
         public void Dispose()

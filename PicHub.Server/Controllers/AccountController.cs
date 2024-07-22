@@ -78,7 +78,13 @@ namespace PicHub.Server.Controllers
                 var createdUser = await userManager.FindByNameAsync(model.UserName);
                 if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(configuration, createdUser.Id);
+                    var jwtConfigSection = configuration.GetSection("JwtConfig");
+                    var token = JwtTokenGenerator.GenerateJwtToken(
+                        jwtConfigSection["Secret"],
+                        jwtConfigSection["ValidIssuer"],
+                        jwtConfigSection["ValidAudience"],
+                        user.Id
+                    );
                     var response = new { UserName = createdUser.UserName, Password = model.Password };
                     return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
                 }
@@ -98,7 +104,12 @@ namespace PicHub.Server.Controllers
             {
                 if (await userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(configuration, user.Id);
+                    var token = JwtTokenGenerator.GenerateJwtToken(
+                        configuration["JwtConfig:Secret"],
+                        configuration["JwtConfig:ValidIssuer"],
+                        configuration["JwtConfig:ValidAudience"],
+                        user.Id
+                    );
                     return Ok(new { token });
                 }
                 return BadRequest("Failed to login with this password.");

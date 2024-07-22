@@ -11,11 +11,11 @@ import useFollowingsCount from "../../hooks/userHooks/useFollowingsCount";
 import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
 import useFollow from "../../hooks/userHooks/useFollow";
 import useUnfollow from "../../hooks/userHooks/useUnfollow";
-import EditProfileButton from "./EditProfileButton";
-import FollowButton from "./FollowButton";
-import MessageButton from "./MessageButton";
-import MoreButton from "./MoreButton";
-import SettingsButton from "./SettingsButton";
+import EditProfileButton from "./Buttons/EditProfileButton";
+import FollowButton from "./Buttons/FollowButton";
+import MessageButton from "./Buttons/MessageButton";
+import MoreButton from "./Buttons/MoreButton";
+import SettingsButton from "./Buttons/SettingsButton";
 
 interface Props {
   userName: string;
