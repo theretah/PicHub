@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Pichub.Server.Utilities;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
@@ -21,17 +22,24 @@ namespace PicHub.Server.Controllers
     {
         private readonly IUnitOfWork unit;
         private readonly UserManager<AppUser> userManager;
+        private readonly IMemoryCache cache;
 
-        public PostController(IUnitOfWork unit, UserManager<AppUser> userManager)
+        public PostController(IUnitOfWork unit, UserManager<AppUser> userManager, IMemoryCache cache)
         {
             this.unit = unit;
             this.userManager = userManager;
+            this.cache = cache;
         }
 
         [HttpGet("getAll")]
-        public IAsyncEnumerable<Post> GetAll()
+        public async Task<ActionResult<IEnumerable<Post>>> GetAll()
         {
-            return unit.Posts.GetAllPostsDescendigAsync();
+            if (!cache.TryGetValue("posts", out IEnumerable<Post> posts))
+            {
+                posts = await unit.Posts.GetAllAsync();
+                cache.Set("posts", posts, TimeSpan.FromMinutes(5));
+            }
+            return Ok(posts);
         }
 
         [HttpGet("getAllByAuthorId")]

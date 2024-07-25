@@ -8,7 +8,7 @@ import { LoginData } from "../../entities/LoginData";
 
 interface RegisterData {
   email: string;
-  fullName: string;
+  fullName: string | null;
   userName: string;
   password: string;
 }
@@ -73,7 +73,7 @@ const Register = () => {
               <input
                 id="fullName"
                 {...register("fullName", {
-                  required: "Full name is required.",
+                  required: false,
                 })}
                 type="text"
                 className="form-control"

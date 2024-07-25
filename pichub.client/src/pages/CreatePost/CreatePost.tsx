@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
-
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -101,10 +100,19 @@ const CreatePost = () => {
         >
           {isSmallScreen && (
             <div className="mb-2">
-              <ProfileImage
-                imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
-                widthHeight={30}
-              />
+              {user?.profileImageUrl ? (
+                <ProfileImage
+                  imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
+                  widthHeight={30}
+                />
+              ) : (
+                <ProfileImage
+                  imageUrl={
+                    "../../../public/images/profiles/default-profile.jpg"
+                  }
+                  widthHeight={30}
+                />
+              )}
               &nbsp;
               <span className="fw-bold align-self-center text-light">
                 {user?.userName}

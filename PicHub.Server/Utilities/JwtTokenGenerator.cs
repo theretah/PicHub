@@ -17,7 +17,7 @@ namespace PicHub.Server.Utilities
         {
             if (secret is null || validIssuer is null || validAudience is null)
             {
-                throw new ApplicationException($"Jwt config is not set. Secret: {secret != null}, Issuer: {validIssuer != null}, Audience: {validAudience != null}.");
+                throw new ApplicationException("Jwt config is not set.");
             }
             var claims = new[]
             {
