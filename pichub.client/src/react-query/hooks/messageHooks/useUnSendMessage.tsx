@@ -1,12 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import messageService from "../../services/messageService";
 interface Props {
   messageId: number;
 }
 const useUnSendMessage = ({ messageId }: Props) => {
   return useMutation({
-    mutationFn: () =>
-      axios.delete(`/api/message/unSend?messageId=${messageId}`),
+    mutationFn: () => messageService.unSendMessage(messageId),
   });
 };
 

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Chat } from "../../../entities/Chat";
+import messageService from "../../services/messageService";
 interface Props {
   recieverId: string;
   enabled: boolean;
@@ -9,12 +9,7 @@ interface Props {
 const useGetChat = ({ recieverId, senderId, enabled }: Props) => {
   return useQuery<Chat>({
     queryKey: ["getChat", recieverId, senderId],
-    queryFn: () =>
-      axios
-        .get<Chat>(
-          `/api/message/getChat?recieverId=${recieverId}&senderId=${senderId}`
-        )
-        .then((res) => res.data),
+    queryFn: () => messageService.getChat(recieverId, senderId),
     enabled: enabled,
   });
 };
