@@ -1,16 +1,12 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../../entities/User";
+import userService from "../../services/userService";
 interface Props {
   searchQuery: string;
 }
 const useSearch = ({ searchQuery }: Props) => {
   return useQuery({
     queryKey: ["search", searchQuery],
-    queryFn: () =>
-      axios
-        .get<User[]>(`/api/user/search?query=${searchQuery}`)
-        .then((res) => res.data),
+    queryFn: () => userService.search(searchQuery),
   });
 };
 

@@ -1,16 +1,11 @@
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import userService from "../../services/userService";
 interface Props {
   followingId: string;
 }
 const useUnfollow = ({ followingId }: Props) => {
   return useMutation({
-    mutationFn: () =>
-      axios.delete(`/api/user/unFollow?followingId=${followingId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }),
+    mutationFn: () => userService.unFollow(followingId),
   });
 };
 

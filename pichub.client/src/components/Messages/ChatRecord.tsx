@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import useUserById from "../../react-query/hooks/accountHooks/useUserById";
+import ProfileImage from "../ProfileImage/ProfileImage";
 
 interface Props {
   isMedium: boolean;
@@ -20,13 +21,7 @@ const ChatRecord = ({ isMedium, userId, isActive, setActive }: Props) => {
     >
       <div className="row" style={{ width: isMedium ? 85 : 395 }}>
         <div className="p-0" style={{ width: 55, height: 55 }}>
-          <img
-            src={`data:image/png;base64,${targetUser?.profileImageUrl}`}
-            alt=""
-            height={55}
-            width={55}
-            className="rounded-circle object-fit-contain d-inline"
-          />
+          <ProfileImage user={targetUser} widthHeight={55} />
         </div>
         {!isMedium && (
           <div className="col ps-2">

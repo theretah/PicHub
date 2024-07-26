@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Post } from "../../../entities/Post";
 import postService from "../../services/postService";
 interface Props {

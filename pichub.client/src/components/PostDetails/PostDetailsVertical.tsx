@@ -33,14 +33,7 @@ const PostDetailsVertical = ({
         <div className="row g-0">
           <div className="d-flex">
             <Link to={`/profile/${author?.userName}`}>
-              <ProfileImage
-                imageUrl={
-                  author?.profileImageUrl
-                    ? `data:image/png;base64,${author.profileImageUrl}`
-                    : "../../../images/profiles/default-profile.jpg"
-                }
-                widthHeight={40}
-              />
+              <ProfileImage user={author} widthHeight={40} />
             </Link>
 
             <div className="card-body p-0 align-self-center">

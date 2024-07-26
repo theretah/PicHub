@@ -154,17 +154,7 @@ const BottomBar = ({ currentPage }: Props) => {
               buttonText="Profile"
               to={user ? `/profile/${user.userName}` : "/login"}
             >
-              {isAuthenticated && user?.profileImageUrl ? (
-                <ProfileImage
-                  imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
-                  widthHeight={26}
-                />
-              ) : (
-                <ProfileImage
-                  imageUrl={`/images/profiles/default-profile.jpg`}
-                  widthHeight={26}
-                />
-              )}
+              {isAuthenticated && <ProfileImage user={user} widthHeight={26} />}
             </BottomBarButton>
           </ul>
         </div>

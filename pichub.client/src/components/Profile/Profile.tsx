@@ -32,7 +32,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const userIsPageOwner = userName == user?.userName;
 
   const { data: postsCount } = usePostsCount({
-    userName: userName,
+    userId: userName,
     enabled: isSuccess,
   });
 
@@ -170,11 +170,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                         style={windowWidth >= md ? { width: 180 } : {}}
                       >
                         <ProfileImage
-                          imageUrl={
-                            pageUser?.profileImageUrl
-                              ? `data:image/png;base64,${pageUser.profileImageUrl}`
-                              : "../../../images/profiles/default-profile.jpg"
-                          }
+                          user={pageUser}
                           widthHeight={isExtraSmall ? 75 : isMedium ? 100 : 150}
                         />
                       </div>

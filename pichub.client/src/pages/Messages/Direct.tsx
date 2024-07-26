@@ -12,7 +12,6 @@ import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator
 import useGetChat from "../../react-query/hooks/messageHooks/useGetChat";
 import useGetMessages from "../../react-query/hooks/messageHooks/useGetMessages";
 import { MessageDto } from "../../entities/Message";
-import useDeleteChat from "../../react-query/hooks/messageHooks/useDeleteChat";
 
 const Direct = () => {
   const { user, isAuthenticated } = useAuthStore();
@@ -25,9 +24,8 @@ const Direct = () => {
     data: targetUser,
     isLoading,
     error,
-    isSuccess,
   } = useUserByUserName({
-    userName: userName,
+    userName: userName || "",
   });
 
   const { data: chatExists } = useChatExists({
@@ -61,9 +59,9 @@ const Direct = () => {
     content: messageText,
   });
 
-  const deleteChat = useDeleteChat({
-    chatId: chat?.id || 0,
-  });
+  // const deleteChat = useDeleteChat({
+  //   chatId: chat?.id || 0,
+  // });
 
   function addMessage(message: MessageDto) {
     setNewMessages(
@@ -130,10 +128,7 @@ const Direct = () => {
             style={{ width: 45, height: 45 }}
           >
             <div>
-              <ProfileImage
-                imageUrl={`data:image/png;base64,${targetUser?.profileImageUrl}`}
-                widthHeight={45}
-              />
+              <ProfileImage user={targetUser} widthHeight={45} />
 
               <a href="" className="text-light text-decoration-none h5 ms-2">
                 {targetUser?.userName}
@@ -200,10 +195,7 @@ const Direct = () => {
           ) : (
             <div className="col d-flex justify-content-center mt-4">
               <div className="text-center">
-                <ProfileImage
-                  imageUrl={`data:image/png;base64,${targetUser?.profileImageUrl}`}
-                  widthHeight={100}
-                />
+                <ProfileImage user={targetUser} widthHeight={100} />
                 <h4 className="mb-0 text-light mt-2">{targetUser?.userName}</h4>
                 <span className="text-gray d-block" style={{ fontSize: 14 }}>
                   {targetUser?.userName} · PicHub

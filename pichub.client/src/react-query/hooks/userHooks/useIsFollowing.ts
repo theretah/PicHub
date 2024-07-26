@@ -1,20 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import userService from "../../services/userService";
 
 interface Props {
-  followingId: string | undefined;
+  followingId: string;
   enabled: boolean;
 }
 
 const useIsFollowing = ({ followingId, enabled }: Props) => {
   return useQuery<boolean, Error>({
     queryKey: ["isFollowing", followingId],
-    queryFn: () =>
-      axios
-        .get<boolean>(`/api/user/getIsFollowing?followingId=${followingId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-        .then((res) => res.data),
+    queryFn: () => userService.isFollowing(followingId),
     enabled: enabled,
   });
 };

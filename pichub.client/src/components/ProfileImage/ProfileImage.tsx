@@ -1,12 +1,16 @@
+import { User } from "../../entities/User";
 interface Props {
-  imageUrl: string;
+  user: User | null | undefined;
   widthHeight: number;
 }
-const ProfileImage = ({ widthHeight, imageUrl }: Props) => {
+const ProfileImage = ({ widthHeight, user }: Props) => {
+  const src = user?.profileImageUrl
+    ? `data:image/png;base64,${user?.profileImageUrl}`
+    : "/images/profiles/default-profile.jpg";
   return (
     <img
-      src={imageUrl}
-      alt=""
+      src={src}
+      alt="profile image"
       height={widthHeight}
       width={widthHeight}
       className="rounded-circle object-fit-contain"

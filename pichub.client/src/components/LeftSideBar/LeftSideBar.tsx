@@ -299,17 +299,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             showFullButton={showFullButton && currentPage != "Messages"}
             to={user ? `/profile/${user.userName}` : "/login"}
           >
-            {isAuthenticated && user?.profileImageUrl ? (
-              <ProfileImage
-                imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
-                widthHeight={26}
-              />
-            ) : (
-              <ProfileImage
-                imageUrl={`/images/profiles/default-profile.jpg`}
-                widthHeight={26}
-              />
-            )}
+            {isAuthenticated && <ProfileImage user={user} widthHeight={26} />}
           </LeftSideBarButton>
         </div>
       </ul>

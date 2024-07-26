@@ -47,14 +47,7 @@ const PostDetailsHorizontal = ({
           <div className="" style={{ width: 300, height: 500 }}>
             <div className="card-body bg-dark text-light border-0">
               <div className="d-flex justify-content-start p-2">
-                <ProfileImage
-                  imageUrl={
-                    author?.profileImageUrl
-                      ? `data:image/png;base64,${author?.profileImageUrl}`
-                      : "/images/profiles/default-profile.jpg"
-                  }
-                  widthHeight={35}
-                />
+                <ProfileImage user={author} widthHeight={35} />
                 &nbsp;
                 <Link
                   to={`/profile/${author?.userName}`}
@@ -140,10 +133,7 @@ const PostDetailsHorizontal = ({
                 <p className="text-gray p-0">3 hours ago</p>
                 {post.commentsAllowed && (
                   <div className="d-flex">
-                    <ProfileImage
-                      imageUrl={`data:image/png;base64,${user?.profileImageUrl}`}
-                      widthHeight={35}
-                    />
+                    <ProfileImage user={post.author} widthHeight={35} />
                     <input
                       id="commentText"
                       value={commentText}

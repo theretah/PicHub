@@ -4,7 +4,6 @@ import Explore from "./pages/Explore/Explore";
 import ExploreReel from "./pages/ExploreReel/ExploreReel";
 import Index from "./pages/Index/Index";
 import Login from "./pages/Login/Login";
-import MessagesLayout from "./components/Messages/MessagesLayout";
 import Notifications from "./pages/Notifications/Notifications";
 import PostDetailsPage from "./pages/PostDetailsPage/PostDetailsPage";
 import Posts from "./pages/Profile/Posts";

@@ -1,16 +1,13 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import userService from "../../services/userService";
 interface Props {
-  userName: string;
+  userId: string;
   enabled: boolean;
 }
-const usePostsCount = ({ userName, enabled }: Props) => {
+const usePostsCount = ({ userId, enabled }: Props) => {
   return useQuery<number, Error>({
-    queryKey: ["postsCount", userName],
-    queryFn: async () =>
-      await axios
-        .get<number>(`/api/user/getPostsCount?userName=${userName}`)
-        .then((res) => res.data),
+    queryKey: ["postsCount", userId],
+    queryFn: () => userService.postsCount(userId),
     enabled: enabled,
   });
 };

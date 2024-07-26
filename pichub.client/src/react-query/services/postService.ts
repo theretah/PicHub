@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   baseURL: `/api/post/`,
 });
 
-class AccountService {
+class PostService {
   getById = (id: number) => {
     return axiosInstance.get<Post>(`get?id=${id}`).then((res) => res.data);
   };
@@ -83,4 +83,4 @@ class AccountService {
   };
 }
 
-export default new AccountService();
+export default new PostService();

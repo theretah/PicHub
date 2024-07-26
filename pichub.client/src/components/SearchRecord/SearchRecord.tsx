@@ -9,10 +9,7 @@ const SearchRecord = ({ user }: Props) => {
     <Link to={`/profile/${user.userName}`} className="text-decoration-none">
       <div className="row py-2 my-1">
         <div className="col-2 d-flex align-items-center">
-          <ProfileImage
-            imageUrl={`data:image/png;base64,${user.profileImageUrl}`}
-            widthHeight={40}
-          />
+          <ProfileImage user={user} widthHeight={40} />
         </div>
         <div className="col-8 text-light px-0">
           <div className="row">
