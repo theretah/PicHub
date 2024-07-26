@@ -17,7 +17,7 @@ using PicHub.Server.ViewModels;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/post")]
     public class PostController : ControllerBase
     {
         private readonly IUnitOfWork unit;

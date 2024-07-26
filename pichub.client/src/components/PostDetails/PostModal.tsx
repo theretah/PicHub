@@ -7,7 +7,7 @@ import {
 import { Link, Navigate } from "react-router-dom";
 import { Post } from "../../entities/Post";
 import useAuthStore from "../../auth/authStore";
-import useDeletePost from "../../hooks/postHooks/useDeletePost";
+import useDeletePost from "../../react-query/hooks/postHooks/useDeletePost";
 interface PostModalProps {
   post: Post;
   modalOpen: boolean;

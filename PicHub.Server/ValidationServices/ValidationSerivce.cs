@@ -11,51 +11,51 @@ namespace PicHub.Server.Validation
             this.configuration = configuration;
         }
 
-        public IEnumerable<ValidationResult> ValidatePaswword(string password)
+        public IEnumerable<ValidationResult> ValidatePassword(string password)
         {
-            var passordRegexErrorMessagesSection = configuration.GetSection("RegexErrorMessages:Password");
+            var passwordRegexErrorMessagesSection = configuration.GetSection("RegexErrorMessages:Password");
 
             // Password must be at least 8 characters.
             if (!Regex.IsMatch(password, "^.{8,}$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["LengthError"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["LengthError"], [nameof(password)]);
             }
 
             // Password to only contain characters (uppercase letters(A-Z), lowercase letters(a-z), special signs(!@#$%^&*), digits(0-9))
             if (!Regex.IsMatch(password, "^[A-Za-z0-9!@#$%^&*]+$"))
             {
 
-                yield return new ValidationResult(passordRegexErrorMessagesSection["ContainsIllegalCharacter"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["ContainsIllegalCharacter"], [nameof(password)]);
             }
 
             // Password cannot start with digits or special characters.
             if (!Regex.IsMatch(password, "^(?![0-9!@#$%^&*])[A-Za-z0-9!@#$%^&*]*$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["IllegalOrderOfCharacters"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["IllegalOrderOfCharacters"], [nameof(password)]);
             }
 
             // Password must contain at least 1 uppercase(A-Z) character.
             if (!Regex.IsMatch(password, "^(?=.*[A-Z]).*$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["LacksUppercase"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["LacksUppercase"], [nameof(password)]);
             }
 
             // Password must contain at least 1 lowercase(a-z) character.
             if (!Regex.IsMatch(password, "^(?=.*[a-z]).*$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["LacksLowercase"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["LacksLowercase"], [nameof(password)]);
             }
 
             // Password must contain at least 1 digit(0-9).
             if (!Regex.IsMatch(password, "^(?=.*[0-9]).*$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["LacksDigit"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["LacksDigit"], [nameof(password)]);
             }
 
             // Password must contain at least 1 special character(!@#$%^&*).
             if (!Regex.IsMatch(password, "^(?=.*[!@#$%^&*]).*$"))
             {
-                yield return new ValidationResult(passordRegexErrorMessagesSection["LacksSpecialCharacter"], [nameof(password)]);
+                yield return new ValidationResult(passwordRegexErrorMessagesSection["LacksSpecialCharacter"], [nameof(password)]);
             }
         }
 

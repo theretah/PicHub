@@ -1,25 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
-using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pichub.Server.Utilities;
 using PicHub.Server.Entities;
 using PicHub.Server.ViewModels;
-using SixLabors.ImageSharp;
 
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
@@ -50,7 +42,6 @@ namespace PicHub.Server.Controllers
             {
                 var imageFile = ImageUtilities.CompressImage(model.ProfileImageFile, 150);
                 user.ProfileImageUrl = FileUtilities.FileToByteArray(imageFile);
-                // user.ProfileImageUrl = FileUtilities.FileToByteArray(model.ProfileImageFile);
             }
             else
             {

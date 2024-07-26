@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Chat } from "../../entities/Chat";
+import { Chat } from "../../../entities/Chat";
 
 const useGetChats = () => {
   return useQuery<Chat[]>({

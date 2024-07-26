@@ -1,13 +1,9 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using PicHub.Server.Utilities;
@@ -16,7 +12,7 @@ using PicHub.Server.ViewModels;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly IConfiguration configuration;
@@ -70,7 +66,6 @@ namespace PicHub.Server.Controllers
                 EmailConfirmed = true,
                 RegistrationDate = DateTime.Now,
             };
-
 
             var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
@@ -174,7 +169,6 @@ namespace PicHub.Server.Controllers
             {
                 return BadRequest("Problem occured while fetching last registerd users.");
             }
-
         }
 
         [HttpDelete("delete")]
@@ -186,7 +180,6 @@ namespace PicHub.Server.Controllers
                 await userManager.DeleteAsync(user);
                 return Ok(new { success = true });
             }
-
             return BadRequest("A problem occured while removing the user.");
         }
     }

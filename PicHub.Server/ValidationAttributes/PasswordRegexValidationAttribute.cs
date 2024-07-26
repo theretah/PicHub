@@ -12,7 +12,7 @@ namespace PicHub.Server.ValidationAttributes
 
             if (validationService != null && password != null)
             {
-                var results = validationService.ValidatePaswword(password);
+                var results = validationService.ValidatePassword(password);
                 if (results != null && results.Any())
                 {
                     return results.First();

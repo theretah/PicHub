@@ -3,9 +3,9 @@ import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import usePosts from "../../hooks/postHooks/usePosts";
+import usePosts from "../../react-query/hooks/postHooks/usePosts";
 import { Post } from "../../entities/Post";
-import useSearch from "../../hooks/userHooks/useSearch";
+import useSearch from "../../react-query/hooks/userHooks/useSearch";
 interface PostItemProps {
   post: Post;
 }

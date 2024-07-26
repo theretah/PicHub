@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import MessagesLayout from "../../components/Messages/MessagesLayout";
 import DirectChatMessage from "../../components/Messages/DirectChatMessage";
-import useUserByUserName from "../../hooks/accountHooks/useUserByUserName";
+import useUserByUserName from "../../react-query/hooks/accountHooks/useUserByUserName";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
-import useChatExists from "../../hooks/messageHooks/useChatExists";
+import useChatExists from "../../react-query/hooks/messageHooks/useChatExists";
 import useAuthStore from "../../auth/authStore";
-import useSendMessage from "../../hooks/messageHooks/useSendMessage";
-import useStartChat from "../../hooks/messageHooks/useStartChat";
+import useSendMessage from "../../react-query/hooks/messageHooks/useSendMessage";
+import useStartChat from "../../react-query/hooks/messageHooks/useStartChat";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import useGetChat from "../../hooks/messageHooks/useGetChat";
-import useGetMessages from "../../hooks/messageHooks/useGetMessages";
+import useGetChat from "../../react-query/hooks/messageHooks/useGetChat";
+import useGetMessages from "../../react-query/hooks/messageHooks/useGetMessages";
 import { MessageDto } from "../../entities/Message";
-import useDeleteChat from "../../hooks/messageHooks/useDeleteChat";
+import useDeleteChat from "../../react-query/hooks/messageHooks/useDeleteChat";
 
 const Direct = () => {
   const { user, isAuthenticated } = useAuthStore();

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useUserById from "../../hooks/accountHooks/useUserById";
+import useUserById from "../../react-query/hooks/accountHooks/useUserById";
 
 interface Props {
   isMedium: boolean;

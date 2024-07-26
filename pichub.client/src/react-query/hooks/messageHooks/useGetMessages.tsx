@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { MessageDto } from "../../entities/Message";
+import { MessageDto } from "../../../entities/Message";
 import axios from "axios";
 interface Props {
   chatId: number;
 }
+
 const useGetMessages = ({ chatId }: Props) => {
   return useQuery<MessageDto[]>({
     queryKey: ["getMessages", chatId],

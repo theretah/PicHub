@@ -1,16 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Post } from "../../entities/Post";
+import { Post } from "../../../entities/Post";
+import postService from "../../services/postService";
 interface Props {
   authorId: string;
 }
 const usePostsByAuthorId = ({ authorId }: Props) => {
   return useQuery<Post[], Error>({
     queryKey: ["postsByAuthorId", authorId],
-    queryFn: () =>
-      axios
-        .get<Post[]>(`/api/post/getAllByAuthorId?authorId=${authorId}`)
-        .then((res) => res.data),
+    queryFn: () => postService.getAllByAuthorId(authorId),
   });
 };
 

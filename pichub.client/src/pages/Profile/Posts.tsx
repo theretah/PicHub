@@ -1,7 +1,7 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import Profile from "../../components/Profile/Profile";
-import usePostsByAuthorUserName from "../../hooks/postHooks/usePostsByAuthorUserName";
+import usePostsByAuthorUserName from "../../react-query/hooks/postHooks/usePostsByAuthorUserName";
 import useAuthStore from "../../auth/authStore";
 
 const Posts = () => {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../entities/User";
+import { User } from "../../../entities/User";
 interface Props {
   searchQuery: string;
 }

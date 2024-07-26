@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, ChangeEvent } from "react";
 import HomeSideBar from "../../components/HomeSideBar/HomeSideBar";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import { Link } from "react-router-dom";
-import useSearch from "../../hooks/userHooks/useSearch";
+import useSearch from "../../react-query/hooks/userHooks/useSearch";
 
 const Index = () => {
   const [isLargeScreen, setIsLargeScreen] = useState(false);

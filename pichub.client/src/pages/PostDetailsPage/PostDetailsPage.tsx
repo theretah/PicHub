@@ -3,7 +3,7 @@ import Layout from "../../components/Layout/Layout";
 import "./PostDetailsPage.css";
 import { Navigate, useParams } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import usePostById from "../../hooks/postHooks/usePostById";
+import usePostById from "../../react-query/hooks/postHooks/usePostById";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 
 const PostDetailsPage = () => {

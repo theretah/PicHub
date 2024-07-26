@@ -11,7 +11,7 @@ using PicHub.Server.Entities;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/message")]
     public class MessageController : ControllerBase
     {
         private readonly IUnitOfWork unit;
@@ -86,7 +86,7 @@ namespace PicHub.Server.Controllers
                 await unit.Messages.RemoveByIdAsync(messageId);
                 await unit.CompleteAsync();
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception)
             {
@@ -102,7 +102,7 @@ namespace PicHub.Server.Controllers
                 await unit.Chats.RemoveByIdAsync(chatId);
                 await unit.CompleteAsync();
 
-                return Ok();
+                return NoContent();
             }
             catch (Exception)
             {
@@ -121,24 +121,38 @@ namespace PicHub.Server.Controllers
         [HttpGet("getChat")]
         public async Task<IActionResult> GetChat(string recieverId, string senderId)
         {
-            return Ok(await unit.Chats.GetByPredicateAsync(c =>
+            var chat = await unit.Chats.GetByPredicateAsync(c =>
                 (c.SenderId == senderId && c.RecieverId == recieverId) ||
-                (c.SenderId == recieverId && c.RecieverId == senderId)));
+                (c.SenderId == recieverId && c.RecieverId == senderId));
+
+            if (chat == null)
+                return NotFound();
+
+            return Ok(chat);
         }
 
         [HttpGet("getChats")]
         public async Task<IActionResult> GetChats()
         {
             string? UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (UserId == null) { return Unauthorized(); }
+            if (UserId == null)
+                return Unauthorized();
 
-            return Ok(unit.Chats.FindByPredicateAsync(c => c.SenderId == UserId || c.RecieverId == UserId));
+            var chats = await unit.Chats.FindByPredicateAsync(c => c.SenderId == UserId || c.RecieverId == UserId);
+            if (chats == null)
+                return NotFound();
+
+            return Ok(chats);
         }
 
         [HttpGet("getMessages")]
         public async Task<IActionResult> GetMessages(int chatId)
         {
-            return Ok(unit.Messages.FindByPredicateAsync(m => m.ChatId == chatId));
+            var messages = await unit.Messages.FindByPredicateAsync(m => m.ChatId == chatId);
+            if (messages == null)
+                return NotFound();
+
+            return Ok(messages);
         }
     }
 }

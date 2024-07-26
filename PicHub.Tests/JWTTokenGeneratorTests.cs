@@ -3,8 +3,6 @@ using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using PicHub.Server.Utilities;
-using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace PicHub.Tests
 {
@@ -38,6 +36,7 @@ namespace PicHub.Tests
             //Assert
             Assert.NotNull(token);
         }
+
         [Fact]
         public void GenerateJwtToken_ValidConfig_UserIdIsEqualToClaimNameIdentifier()
         {
@@ -55,6 +54,7 @@ namespace PicHub.Tests
             //Assert
             Assert.Equal(UserId, jwtToken.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value);
         }
+
         [Theory]
         [InlineData(null, Issuer, Audience)]
         [InlineData(Secret, null, Audience)]

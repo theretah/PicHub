@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import postService from "../../services/postService";
 
 interface Props {
   postId: number;
@@ -8,12 +8,7 @@ interface Props {
 const useIsSaved = ({ postId, enabled }: Props) => {
   return useQuery<boolean, Error>({
     queryKey: ["isSaved", postId],
-    queryFn: () =>
-      axios
-        .get<boolean>(`/api/post/isSaved?postId=${postId}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-        .then((res) => res.data),
+    queryFn: () => postService.isSaved(postId),
     enabled: enabled,
   });
 };

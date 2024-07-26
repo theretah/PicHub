@@ -1,12 +1,11 @@
-import axios from "axios";
-import { Post } from "../../entities/Post";
+import { Post } from "../../../entities/Post";
 import { useQuery } from "@tanstack/react-query";
+import postService from "../../services/postService";
 
 const usePosts = () => {
   return useQuery<Post[], Error>({
     queryKey: ["allPosts"],
-    queryFn: async () =>
-      await axios.get<Post[]>(`/api/post/getAll`).then((res) => res.data),
+    queryFn: () => postService.getAll(),
   });
 };
 

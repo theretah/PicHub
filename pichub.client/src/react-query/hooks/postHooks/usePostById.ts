@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Post } from "../../entities/Post";
+import { Post } from "../../../entities/Post";
+import postService from "../../services/postService";
 
 interface Props {
-  id: number | undefined;
+  id: number;
 }
 const usePostById = ({ id }: Props) => {
   return useQuery<Post, Error>({
     queryKey: ["postById", id],
-    queryFn: async () =>
-      await axios.get<Post>(`/api/post/get?id=${id}`).then((res) => res.data),
+    queryFn: () => postService.getById(id),
   });
 };
 

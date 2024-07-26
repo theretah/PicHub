@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import DirectChatMessageButton from "./DirectChatMessageButton";
 import { MessageDto } from "../../entities/Message";
 import useAuthStore from "../../auth/authStore";
-import useUnSendMessage from "../../hooks/messageHooks/useUnSendMessage";
+import useUnSendMessage from "../../react-query/hooks/messageHooks/useUnSendMessage";
 
 interface Props {
   message: MessageDto;

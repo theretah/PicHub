@@ -1,13 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import postService from "../../services/postService";
 
 interface Props {
   postId: number;
 }
 const useDeletePost = ({ postId }: Props) => {
   return useMutation({
-    mutationFn: () =>
-      axios.delete(`/api/post/delete?id=${postId}`).then((res) => res.data),
+    mutationFn: () => postService.delete(postId),
   });
 };
 

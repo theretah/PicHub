@@ -1,6 +1,6 @@
 import PostDetails from "../PostDetails/PostDetails";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
-import usePosts from "../../hooks/postHooks/usePosts";
+import usePosts from "../../react-query/hooks/postHooks/usePosts";
 
 const HomePostsColumn = () => {
   const { data, error, isLoading } = usePosts();

@@ -35,6 +35,7 @@ namespace CMSReactDotNet.Server.Data.Repositories
         {
             return await set.Where(predicate).ToListAsync();
         }
+
         public async Task<T> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
             return await set.Where(predicate).SingleOrDefaultAsync();

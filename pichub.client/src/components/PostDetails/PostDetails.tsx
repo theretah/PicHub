@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import useUserById from "../../hooks/accountHooks/useUserById";
-import useIsLiked from "../../hooks/postHooks/useIsLiked";
-import useIsSaved from "../../hooks/postHooks/useIsSaved";
-import useIsFollowing from "../../hooks/userHooks/useIsFollowing";
+import useUserById from "../../react-query/hooks/accountHooks/useUserById";
+import useIsLiked from "../../react-query/hooks/postHooks/useIsLiked";
+import useIsSaved from "../../react-query/hooks/postHooks/useIsSaved";
+import useIsFollowing from "../../react-query/hooks/userHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { Post } from "../../entities/Post";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/authStore";
-import useLike from "../../hooks/postHooks/useLike";
-import useSave from "../../hooks/postHooks/useSave";
+import useLike from "../../react-query/hooks/postHooks/useLike";
+import useSave from "../../react-query/hooks/postHooks/useSave";
 
 interface Props {
   post: Post;
