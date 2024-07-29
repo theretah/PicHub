@@ -6,7 +6,7 @@ interface Props {
 }
 const SearchRecord = ({ user }: Props) => {
   return (
-    <Link to={`/profile/${user.userName}`} className="text-decoration-none">
+    <Link to={`/${user.userName}`} className="text-decoration-none">
       <div className="row py-2 my-1">
         <div className="col-2 d-flex align-items-center">
           <ProfileImage user={user} widthHeight={40} />

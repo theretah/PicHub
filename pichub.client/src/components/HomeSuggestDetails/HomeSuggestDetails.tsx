@@ -14,7 +14,7 @@ const HomeSuggestDetails = ({ user }: Props) => {
       <div className="col-7">
         <div className="row">
           <Link
-            to={`/profile/${user.userName}`}
+            to={`/${user.userName}`}
             className="m-0 fw-bold text-light text-decoration-none"
           >
             {user.userName}

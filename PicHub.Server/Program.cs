@@ -48,9 +48,9 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
 builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
 builder.Services.AddSingleton<IValidationService, ValidationService>();
-builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 var mappingConfig = new MapperConfiguration(cfg =>
 {
@@ -79,11 +79,11 @@ builder.Services.AddAuthentication(options =>
 {
     var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
     var secret = jwtConfigSection["Secret"];
-    var validIssuer = jwtConfigSection["ValidIssuer"];
-    var validAudience = jwtConfigSection["ValidAudience"];
-    if (secret is null || validIssuer is null || validAudience is null)
+    var issuer = jwtConfigSection["ValidIssuer"];
+    var audience = jwtConfigSection["ValidAudiences"];
+    if (secret is null || issuer is null || audience is null)
     {
-        throw new ApplicationException("Jwt config is not set.");
+        throw new ApplicationException("Jwt config is not set in the configuration.");
     }
 
     options.RequireHttpsMetadata = false;
@@ -92,10 +92,8 @@ builder.Services.AddAuthentication(options =>
     {
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = validIssuer,
-        ValidAudience = validAudience,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
     };
 });

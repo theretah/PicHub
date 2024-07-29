@@ -34,20 +34,25 @@ namespace PicHub.Server.Controllers
         [HttpGet("getAll")]
         public async Task<ActionResult<IEnumerable<Post>>> GetAll()
         {
-            if (!cache.TryGetValue("posts", out IEnumerable<Post> posts))
+            try
             {
-                posts = await unit.Posts.GetAllAsync();
-                cache.Set("posts", posts, TimeSpan.FromMinutes(5));
+                var posts = await unit.Posts.GetAllAsync();
+                if (posts.Count() == 0 || posts == null) return NoContent();
+                return Ok(posts);
             }
-            return Ok(posts);
+            catch (Exception)
+            {
+                return BadRequest("A problem occured while getting posts.");
+            }
         }
 
         [HttpGet("getAllByAuthorId")]
-        public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorId(string authorId)
+        public async Task<IActionResult> GetAllByAuthorId(string authorId)
         {
             try
             {
-                return Ok(unit.Posts.GetAllByAuthorIdAsync(authorId));
+                var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
+                return Ok(posts);
             }
             catch (Exception)
             {
@@ -56,16 +61,16 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getAllByAuthorUserName")]
-        public ActionResult<IAsyncEnumerable<Post>> GetAllByAuthorUserName(string userName)
+        public async Task<IActionResult> GetAllByAuthorUserName(string userName)
         {
             try
             {
-                var user = userManager.FindByNameAsync(userName).Result;
+                var user = await userManager.FindByNameAsync(userName);
                 if (user == null)
                 {
                     return BadRequest("User not found.");
                 }
-                return Ok(unit.Posts.GetAllByAuthorIdAsync(user.Id));
+                return Ok(await unit.Posts.GetAllByAuthorIdAsync(user.Id));
             }
             catch (Exception)
             {
@@ -215,7 +220,10 @@ namespace PicHub.Server.Controllers
                 if (existingLike != null)
                 {
                     unit.Likes.Remove(existingLike);
-                    post.LikesCount--;
+                    if (post.LikesCount > 0)
+                    {
+                        post.LikesCount--;
+                    }
                     unit.Posts.Update(post);
                     await unit.CompleteAsync();
 
@@ -253,7 +261,8 @@ namespace PicHub.Server.Controllers
             {
                 var postIds = new List<int>();
 
-                await foreach (var save in unit.Saves.GetSavesByUserId(loggedInUserId))
+                var savesByUserId = await unit.Saves.GetSavesByUserId(loggedInUserId);
+                foreach (var save in savesByUserId)
                 {
                     postIds.Add(save.PostId);
                 }

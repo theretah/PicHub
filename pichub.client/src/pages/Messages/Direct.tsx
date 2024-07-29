@@ -47,6 +47,7 @@ const Direct = () => {
   const [newMessages, setNewMessages] = useState<MessageDto[] | undefined>([]);
 
   useEffect(() => {
+    console.log(messages);
     setNewMessages(messages);
   }, [messages]);
 
@@ -182,33 +183,39 @@ const Direct = () => {
           className=" overflow-y-auto"
           style={{ height: isSmallScreen ? "78vh" : "83vh" }}
         >
-          {newMessages && user && targetUser && newMessages?.length > 0 ? (
-            newMessages.map((message) => (
-              <DirectChatMessage
-                key={message.id}
-                message={message}
-                senderId={
-                  message.authorId == user?.id ? user.id : targetUser.id
-                }
-              />
-            ))
-          ) : (
-            <div className="col d-flex justify-content-center mt-4">
-              <div className="text-center">
-                <ProfileImage user={targetUser} widthHeight={100} />
-                <h4 className="mb-0 text-light mt-2">{targetUser?.userName}</h4>
-                <span className="text-gray d-block" style={{ fontSize: 14 }}>
-                  {targetUser?.userName} · PicHub
-                </span>
-                <Link
-                  to={`/profile/${targetUser?.userName}`}
-                  className="btn btn-secondary mt-3"
-                >
-                  View profile
-                </Link>
+          {
+            // newMessages && user && targetUser && newMessages?.length > 0 ? (
+            //   newMessages.map((message) => (
+            messages && user && targetUser && messages?.length > 0 ? (
+              messages.map((message) => (
+                <DirectChatMessage
+                  key={message.id}
+                  message={message}
+                  senderId={
+                    message.authorId == user?.id ? user.id : targetUser.id
+                  }
+                />
+              ))
+            ) : (
+              <div className="col d-flex justify-content-center mt-4">
+                <div className="text-center">
+                  <ProfileImage user={targetUser} widthHeight={100} />
+                  <h4 className="mb-0 text-light mt-2">
+                    {targetUser?.userName}
+                  </h4>
+                  <span className="text-gray d-block" style={{ fontSize: 14 }}>
+                    {targetUser?.userName} · PicHub
+                  </span>
+                  <Link
+                    to={`/${targetUser?.userName}`}
+                    className="btn btn-secondary mt-3"
+                  >
+                    View profile
+                  </Link>
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }
         </div>
         <div className="row p-2 ">
           <div className="input-group border border-gray rounded-pill">

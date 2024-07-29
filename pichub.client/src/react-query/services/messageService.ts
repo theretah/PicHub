@@ -22,7 +22,7 @@ class MessageService {
   };
 
   deleteChat = (chatId: number) => {
-    return axios.delete(`deleteChat?chatId=${chatId}`);
+    return axiosInstance.delete(`deleteChat?chatId=${chatId}`);
   };
 
   chatExists = (recieverId: string, senderId: string) => {
@@ -46,13 +46,13 @@ class MessageService {
   };
 
   getMessages = (chatId: number) => {
-    return axios
+    return axiosInstance
       .get<MessageDto[]>(`getMessages?chatId=${chatId}`)
       .then((res) => res.data);
   };
 
   sendMessage = (chatId: number, content: string) => {
-    return axios.post(
+    return axiosInstance.post(
       `send?chatId=${chatId}&content=${content}`,
       {},
       {
@@ -64,7 +64,7 @@ class MessageService {
   };
 
   unSendMessage = (messageId: number) => {
-    return axios.delete(`unSend?messageId=${messageId}`);
+    return axiosInstance.delete(`unSend?messageId=${messageId}`);
   };
 }
 

@@ -6,7 +6,7 @@ interface Props {
 const ProfileImage = ({ widthHeight, user }: Props) => {
   const src = user?.profileImageUrl
     ? `data:image/png;base64,${user?.profileImageUrl}`
-    : "/images/profiles/default-profile.jpg";
+    : "../../../public/images/profiles/default-profile.jpg";
   return (
     <img
       src={src}

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pichub.Server.Utilities;
 using PicHub.Server.Entities;
+using PicHub.Server.Metadata;
 using PicHub.Server.ViewModels;
 
 namespace PicHub.Server.Controllers
@@ -16,9 +18,13 @@ namespace PicHub.Server.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IUnitOfWork unit;
+        private readonly ILogger<UserController> logger;
+        private readonly IAppUserRepository userRepository;
 
-        public UserController(UserManager<AppUser> userManager, IUnitOfWork unit)
+        public UserController(UserManager<AppUser> userManager, IAppUserRepository userRepository, IUnitOfWork unit, ILogger<UserController> logger)
         {
+            this.userRepository = userRepository;
+            this.logger = logger;
             this.userManager = userManager;
             this.unit = unit;
         }
@@ -27,12 +33,16 @@ namespace PicHub.Server.Controllers
         [HttpPut("update")]
         public async Task<IActionResult> Update(EditProfileViewModel model)
         {
+
+            var existingUser = await userManager.FindByNameAsync(model.UserName);
+            if (existingUser != null)
+                return BadRequest("User with this username already exists. Try another username.");
+
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
             {
                 return Unauthorized();
             }
-
             var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
             {
@@ -146,14 +156,13 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(string? query)
+        public async Task<IActionResult> Search(string? query, int pageNumber = 1, int pageSize = 5)
         {
-            var users = await userManager.Users.ToListAsync();
-            if (string.IsNullOrWhiteSpace(query) || users.Count == 0)
-            {
-                return Ok(new List<AppUser>());
-            }
-            return Ok(users.Where(u => u.UserName.ToLower().Contains(query.ToLower())));
+            var (users, paginationMetadata) = await userRepository
+                .Search(query, pageNumber, pageSize);
+
+            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
+            return Ok(users);
         }
     }
 }

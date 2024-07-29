@@ -32,14 +32,14 @@ const PostDetailsVertical = ({
       <div className="border-0 text-bg-dark">
         <div className="row g-0">
           <div className="d-flex">
-            <Link to={`/profile/${author?.userName}`}>
+            <Link to={`/${author?.userName}`}>
               <ProfileImage user={author} widthHeight={40} />
             </Link>
 
             <div className="card-body p-0 align-self-center">
               <Link
                 className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
-                to={`/profile/${author?.userName}`}
+                to={`/${author?.userName}`}
               >
                 {author?.userName}
               </Link>
@@ -115,7 +115,7 @@ const PostDetailsVertical = ({
 
         <p className="card-title fw-bold mt-2">{likesCount} likes</p>
         <Link
-          to={`/profile/${author.userName}`}
+          to={`/${author.userName}`}
           className="card-title fw-bold d-inline text-decoration-none"
         >
           {author.userName}{" "}

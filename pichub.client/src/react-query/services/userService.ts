@@ -19,7 +19,7 @@ class UserService {
   };
 
   unFollow = (followingId: string) => {
-    return axios.delete(`unFollow?followingId=${followingId}`, {
+    return axiosInstance.delete(`unFollow?followingId=${followingId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

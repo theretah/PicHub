@@ -32,7 +32,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const userIsPageOwner = userName == user?.userName;
 
   const { data: postsCount } = usePostsCount({
-    userId: userName,
+    userId: pageUser?.id || "",
     enabled: isSuccess,
   });
 
@@ -318,7 +318,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
               >
                 <li className="nav-item">
                   <Link
-                    to={`/profile/${pageUser?.userName}`}
+                    to={`/${pageUser?.userName}`}
                     className={`nav-link ${
                       activeTab === "posts"
                         ? "border-bottom text-light"
@@ -346,7 +346,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                 </li>
                 <li className="nav-item">
                   <Link
-                    to={`/profile/${pageUser?.userName}/reels`}
+                    to={`/${pageUser?.userName}/reels`}
                     className={`nav-link ${
                       activeTab === "reels"
                         ? "border-bottom text-light"
@@ -371,7 +371,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                 </li>
                 <li className="nav-item">
                   <Link
-                    to={`/profile/${pageUser?.userName}/tagged`}
+                    to={`/${pageUser?.userName}/tagged`}
                     className={`nav-link ${
                       activeTab === "tagged"
                         ? "border-bottom text-light"
@@ -399,7 +399,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                 {userIsPageOwner && (
                   <li className="nav-item">
                     <Link
-                      to={`/profile/saved`}
+                      to={`/saved`}
                       className={`nav-link ${
                         activeTab === "saved"
                           ? "border-bottom text-light"

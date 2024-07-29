@@ -1,9 +1,12 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using PicHub.Server.Utilities;
@@ -74,12 +77,7 @@ namespace PicHub.Server.Controllers
                 if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
                 {
                     var jwtConfigSection = configuration.GetSection("JwtConfig");
-                    var token = JwtTokenGenerator.GenerateJwtToken(
-                        jwtConfigSection["Secret"],
-                        jwtConfigSection["ValidIssuer"],
-                        jwtConfigSection["ValidAudience"],
-                        user.Id
-                    );
+                    var token = GenerateToken(user.Id);
                     var response = new { UserName = createdUser.UserName, Password = model.Password };
                     return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
                 }
@@ -99,17 +97,38 @@ namespace PicHub.Server.Controllers
             {
                 if (await userManager.CheckPasswordAsync(user, model.Password))
                 {
-                    var token = JwtTokenGenerator.GenerateJwtToken(
-                        configuration["JwtConfig:Secret"],
-                        configuration["JwtConfig:ValidIssuer"],
-                        configuration["JwtConfig:ValidAudience"],
-                        user.Id
-                    );
+                    var token = GenerateToken(user.Id);
                     return Ok(new { token });
                 }
                 return BadRequest("Failed to login with this password.");
             }
             return BadRequest("User with this username does not exist.");
+        }
+
+        private string? GenerateToken(string userId)
+        {
+            var jwtConfigSection = configuration.GetSection("JwtConfig");
+            var secret = jwtConfigSection["Secret"];
+            var issuer = jwtConfigSection["ValidIssuer"];
+            var audience = jwtConfigSection["ValidAudiences"];
+            if (secret is null || issuer is null || audience is null)
+            {
+                throw new ApplicationException("Jwt config is not set in the configuration.");
+            }
+
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) }),
+                Expires = DateTime.UtcNow.AddDays(1),
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+            };
+            var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+
+            return tokenHandler.WriteToken(securityToken);
         }
 
         [HttpGet("getAll")]

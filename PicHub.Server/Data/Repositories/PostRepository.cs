@@ -14,16 +14,14 @@ namespace CMSReactDotNet.Server.Data.Repositories
             this.context = context;
         }
 
-        public IAsyncEnumerable<Post> GetAllByAuthorIdAsync(string authorId)
+        public async Task<IEnumerable<Post>> GetAllByAuthorIdAsync(string authorId)
         {
-            return context.Posts.Where(p => p.AuthorId == authorId).OrderByDescending(p => p.CreateDate).AsAsyncEnumerable();
+            return await context.Posts.Where(p => p.AuthorId == authorId).OrderByDescending(p => p.CreateDate).ToListAsync();
         }
 
-
-
-        public IAsyncEnumerable<Post> GetAllPostsDescendigAsync()
+        public async Task<IEnumerable<Post>> GetAllPostsDescendingAsync()
         {
-            return context.Posts.OrderByDescending(p => p.CreateDate).AsAsyncEnumerable();
+            return await context.Posts.OrderByDescending(p => p.CreateDate).ToListAsync();
         }
 
         public void Update(Post post)

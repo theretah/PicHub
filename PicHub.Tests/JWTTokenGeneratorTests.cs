@@ -20,7 +20,7 @@ namespace PicHub.Tests
         {
             Config.SetupGet(c => c["JwtConfig:Secret"]).Returns(Secret);
             Config.SetupGet(c => c["JwtConfig:ValidIssuer"]).Returns(Issuer);
-            Config.SetupGet(c => c["JwtConfig:ValidAudience"]).Returns(Audience);
+            Config.SetupGet(c => c["JwtConfig:ValidAudiences"]).Returns(Audience);
         }
 
         [Fact]
@@ -30,7 +30,7 @@ namespace PicHub.Tests
             var token = JwtTokenGenerator.GenerateJwtToken(
                 Config.Object["JwtConfig:Secret"],
                 Config.Object["JwtConfig:ValidIssuer"],
-                Config.Object["JwtConfig:ValidAudience"],
+                Config.Object["JwtConfig:ValidAudiences"],
                 UserId);
 
             //Assert
@@ -47,7 +47,7 @@ namespace PicHub.Tests
             var token = JwtTokenGenerator.GenerateJwtToken(
                     Config.Object["JwtConfig:Secret"],
                     Config.Object["JwtConfig:ValidIssuer"],
-                    Config.Object["JwtConfig:ValidAudience"],
+                    Config.Object["JwtConfig:ValidAudiences"],
                     UserId);
             var jwtToken = handler.ReadJwtToken(token);
 
@@ -65,16 +65,16 @@ namespace PicHub.Tests
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.SetupGet(config => config["JwtConfig:Secret"]).Returns(secret);
             mockConfiguration.SetupGet(config => config["JwtConfig:ValidIssuer"]).Returns(issuer);
-            mockConfiguration.SetupGet(config => config["JwtConfig:ValidAudience"]).Returns(audience);
+            mockConfiguration.SetupGet(config => config["JwtConfig:ValidAudiences"]).Returns(audience);
 
             //Act & Assert 
             var exception = Assert.Throws<ApplicationException>(() =>
                 JwtTokenGenerator.GenerateJwtToken(
                     mockConfiguration.Object["JwtConfig:Secret"],
                     mockConfiguration.Object["JwtConfig:ValidIssuer"],
-                    mockConfiguration.Object["JwtConfig:ValidAudience"],
+                    mockConfiguration.Object["JwtConfig:ValidAudiences"],
                     UserId));
-            Assert.Equal("Jwt config is not set.", exception.Message);
+            Assert.Equal("Jwt config is not set in the configuration.", exception.Message);
         }
     }
 }

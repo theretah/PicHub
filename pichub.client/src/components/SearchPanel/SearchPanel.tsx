@@ -57,9 +57,10 @@ const SearchPanel = ({ isOpen }: Props) => {
         <h5 className="text-light">Recent</h5>
       </div>
       <div className="container">
-        {searchResult?.map((user) => (
-          <SearchRecord key={user.id} user={user} />
-        ))}
+        {searchResult &&
+          searchResult?.map((user) => (
+            <SearchRecord key={user.id} user={user} />
+          ))}
       </div>
     </div>
   );
