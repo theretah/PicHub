@@ -100,6 +100,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddApiVersioning(setupAction =>
+{
+    setupAction.ReportApiVersions = true;
+    setupAction.AssumeDefaultVersionWhenUnspecified = true;
+}).AddMvc();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

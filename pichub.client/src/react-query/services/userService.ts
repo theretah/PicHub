@@ -6,24 +6,10 @@ const axiosInstance = axios.create({
 });
 
 class UserService {
-  follow = (followingId: string) => {
-    return axiosInstance.post(
-      `follow?followingId=${followingId}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-  };
-
-  unFollow = (followingId: string) => {
-    return axiosInstance.delete(`unFollow?followingId=${followingId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+  postsCount = (userId: string) => {
+    return axiosInstance
+      .get<number>(`getPostsCount?userId=${userId}`)
+      .then((res) => res.data);
   };
 
   search = (searchQuery: string) => {
@@ -32,29 +18,15 @@ class UserService {
       .then((res) => res.data);
   };
 
-  followersCount = (userId: string) => {
-    return axiosInstance
-      .get<number>(`getFollowersCount?userId=${userId}`)
+  getByIdAsync = async (id: string) => {
+    return await axiosInstance
+      .get<User>(`getById?id=${id}`)
       .then((res) => res.data);
   };
 
-  followingsCount = (userId: string) => {
-    return axiosInstance
-      .get<number>(`getFollowingsCount?userId=${userId}`)
-      .then((res) => res.data);
-  };
-
-  postsCount = (userId: string) => {
-    return axiosInstance
-      .get<number>(`getPostsCount?userId=${userId}`)
-      .then((res) => res.data);
-  };
-
-  isFollowing = (followingId: string) => {
-    return axiosInstance
-      .get<boolean>(`getIsFollowing?followingId=${followingId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
+  getByUserNameAsync = async (userName: string) => {
+    return await axiosInstance
+      .get<User>(`getByUserName?userName=${userName}`)
       .then((res) => res.data);
   };
 }

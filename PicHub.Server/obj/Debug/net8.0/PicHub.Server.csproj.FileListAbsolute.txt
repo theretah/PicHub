@@ -179,3 +179,6 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Newtonsoft.J
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\AutoMapper.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\SixLabors.ImageSharp.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Asp.Versioning.Abstractions.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Asp.Versioning.Http.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Server\bin\Debug\net8.0\Asp.Versioning.Mvc.dll

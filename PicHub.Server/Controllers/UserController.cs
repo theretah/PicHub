@@ -1,13 +1,14 @@
 using System.Security.Claims;
 using System.Text.Json;
+using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Pichub.Server.Utilities;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using PicHub.Server.Metadata;
 using PicHub.Server.ViewModels;
 
 namespace PicHub.Server.Controllers
@@ -19,21 +20,26 @@ namespace PicHub.Server.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly IUnitOfWork unit;
         private readonly ILogger<UserController> logger;
+        private readonly IMapper mapper;
         private readonly IAppUserRepository userRepository;
 
-        public UserController(UserManager<AppUser> userManager, IAppUserRepository userRepository, IUnitOfWork unit, ILogger<UserController> logger)
+        public UserController(UserManager<AppUser> userManager,
+            IAppUserRepository userRepository,
+            IUnitOfWork unit,
+            ILogger<UserController> logger,
+            IMapper mapper)
         {
             this.userRepository = userRepository;
             this.logger = logger;
+            this.mapper = mapper;
             this.userManager = userManager;
             this.unit = unit;
         }
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> Update(EditProfileViewModel model)
+        public async Task<IActionResult> UpdateProfile(EditProfileViewModel model)
         {
-
             var existingUser = await userManager.FindByNameAsync(model.UserName);
             if (existingUser != null)
                 return BadRequest("User with this username already exists. Try another username.");
@@ -86,75 +92,6 @@ namespace PicHub.Server.Controllers
             return Ok(posts.Count());
         }
 
-        [HttpGet("getFollowersCount")]
-        public async Task<IActionResult> GetFollowersCount(string userId)
-        {
-            var followers = await unit.Follows.FindByPredicateAsync(f => f.FollowingId == userId);
-            return Ok(followers.Count());
-        }
-
-        [HttpGet("getFollowingsCount")]
-        public async Task<IActionResult> GetFollowingsCount(string userId)
-        {
-            var followings = await unit.Follows.FindByPredicateAsync(f => f.FollowerId == userId);
-            return Ok(followings.Count());
-        }
-
-        [HttpGet("getIsFollowing")]
-        public async Task<IActionResult> GetIsFollowing(string followingId)
-        {
-            var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (followerId == null) return Unauthorized();
-
-            var follow = await unit.Follows
-                .ExistsByPredicateAsync(f => f.FollowerId == followerId && f.FollowingId == followingId);
-
-            return Ok(follow);
-        }
-
-        [HttpPost("follow")]
-        public async Task<IActionResult> Follow(string followingId)
-        {
-            try
-            {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (loggedInUserId == null) return Unauthorized();
-
-                await unit.Follows.AddAsync(new Follow
-                {
-                    FollowerId = loggedInUserId,
-                    FollowingId = followingId
-                });
-                await unit.CompleteAsync();
-
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
-        [HttpDelete("unFollow")]
-        public async Task<IActionResult> UnFollow(string followingId)
-        {
-            try
-            {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var follow = await unit.Follows
-                    .GetByPredicateAsync(f => f.FollowerId == loggedInUserId && f.FollowingId == followingId);
-
-                unit.Follows.Remove(follow);
-                await unit.CompleteAsync();
-
-                return Ok();
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
-        }
-
         [HttpGet("search")]
         public async Task<IActionResult> Search(string? query, int pageNumber = 1, int pageSize = 5)
         {
@@ -163,6 +100,77 @@ namespace PicHub.Server.Controllers
 
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
             return Ok(users);
+        }
+
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            return Ok(mapper.Map<IEnumerable<UserDto>>(await userManager.Users.ToListAsync()));
+        }
+
+        [HttpGet("getUsersCount")]
+        public async Task<IActionResult> GetUsersCountAsync()
+        {
+            return Ok(await userManager.Users.CountAsync());
+        }
+
+        [HttpGet("getByEmail")]
+        public async Task<IActionResult> GetUserByEmail(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("getById")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("getByUserName")]
+        public async Task<IActionResult> GetUserByUsername(string userName)
+        {
+            var user = await userManager.FindByNameAsync(userName);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("lastRegistered")]
+        public async Task<IActionResult> GetLastRegisteredUsers()
+        {
+            try
+            {
+                var lastRegisteredUsers = await userManager.Users.OrderByDescending(u => u.RegistrationDate).ToListAsync();
+                return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
+            }
+            catch (Exception)
+            {
+                return BadRequest("Problem occured while fetching last registerd users.");
+            }
+        }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                await userManager.DeleteAsync(user);
+                return Ok(new { success = true });
+            }
+            return BadRequest("A problem occured while removing the user.");
         }
     }
 }

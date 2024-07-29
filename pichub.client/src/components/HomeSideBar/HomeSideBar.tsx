@@ -7,7 +7,7 @@ import { User } from "../../entities/User";
 const HomeSideBar = () => {
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>();
   useEffect(() => {
-    axios.get(`/api/account/getAll`).then((res) => setSuggestedUsers(res.data));
+    axios.get(`/api/auth/getAll`).then((res) => setSuggestedUsers(res.data));
   }, []);
 
   return (

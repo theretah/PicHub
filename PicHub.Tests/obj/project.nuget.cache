@@ -1,9 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "2sZM0ytz20CZVfYO8rSqxPmtu6JEO5lsQfeUjc4/BvmZi2nUOimBLH5/eAQSwUuVtqQ7pc2GfeUGcNlT+FTYpg==",
+  "dgSpecHash": "IWnYHCAeuKaUcXVth92fuA5U/fNzQ0n0bLbYxndTbu5Gq2qnDk54JQfDT5bM9WuXXZUbWcjeFNmMCdf9gAcFFA==",
   "success": true,
   "projectFilePath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Tests\\PicHub.Tests.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\taher\\.nuget\\packages\\asp.versioning.abstractions\\8.1.0\\asp.versioning.abstractions.8.1.0.nupkg.sha512",
+    "C:\\Users\\taher\\.nuget\\packages\\asp.versioning.http\\8.1.0\\asp.versioning.http.8.1.0.nupkg.sha512",
+    "C:\\Users\\taher\\.nuget\\packages\\asp.versioning.mvc\\8.1.0\\asp.versioning.mvc.8.1.0.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\automapper\\13.0.1\\automapper.13.0.1.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

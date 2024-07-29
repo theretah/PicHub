@@ -7,7 +7,7 @@ const Account = () => {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   function deleteAccount() {
-    axios.delete(`/api/account/delete?id=${user?.id}`);
+    axios.delete(`/api/auth/delete?id=${user?.id}`);
     logout();
     navigate("/login");
   }
