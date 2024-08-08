@@ -18,9 +18,9 @@ export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
   const userIsOwner = post.authorId == user?.id;
   //const {} = url;
 
-  const deletePostMutation = useDeletePost({ postId: post.id });
+  const deletePostMutation = useDeletePost();
   function deletePost() {
-    deletePostMutation.mutate();
+    deletePostMutation.mutate({ postId: post.id });
   }
 
   if (deletePostMutation.isSuccess) {

@@ -10,9 +10,9 @@ namespace PicHub.Server.ViewModels
         [MaxLength(50, ErrorMessage = "Full name must be 50 characters maximum.")]
         public string? FullName { get; set; }
 
-        [Required(ErrorMessage = "Username is required")]
+        [Required(ErrorMessage = "UserName is required")]
         [UserNameRegexValidation]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [MaxLength(250, ErrorMessage = "Bio must be 250 characters maximum.")]
         public string? Bio { get; set; }

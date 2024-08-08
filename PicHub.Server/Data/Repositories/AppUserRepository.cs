@@ -17,7 +17,7 @@ namespace CMSReactDotNet.Server.Data.Repositories
             this.userManager = userManager;
         }
 
-        public async Task<(IEnumerable<AppUser>, PaginationMetadata)> Search(string searchQuery, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<AppUser>, PaginationMetadata)> Search(string? searchQuery, int pageNumber, int pageSize)
         {
             var usersCollection = userManager.Users;
             if (!string.IsNullOrWhiteSpace(searchQuery))

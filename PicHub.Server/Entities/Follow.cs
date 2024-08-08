@@ -2,10 +2,12 @@ namespace PicHub.Server.Entities
 {
     public class Follow
     {
-        public string FollowerId { get; set; }
-        public AppUser Follower { get; set; }
+        public required string FollowerId { get; set; }
+        public AppUser? Follower { get; set; }
 
-        public string FollowingId { get; set; }
-        public AppUser Following { get; set; }
+        public required string FollowingId { get; set; }
+        public AppUser? Following { get; set; }
+
+        public DateTime DateTime { get; set; }
     }
 }

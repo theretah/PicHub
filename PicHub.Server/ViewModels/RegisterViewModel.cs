@@ -7,15 +7,15 @@ namespace PicHub.Server.ViewModels
     {
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
-        public string Email { get; set; }
+        public required string Email { get; set; }
 
         [Required(ErrorMessage = "Username is required")]
         [UserNameRegexValidation]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is required")]
         [PasswordRegexValidation]
-        public string Password { get; set; }
+        public required string Password { get; set; }
 
         [MaxLength(50)]
         public string? FullName { get; set; }

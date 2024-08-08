@@ -11,11 +11,12 @@ const HomePostsColumn = () => {
 
   return (
     <div className="row mx-auto mt-3" style={{ maxWidth: 475 }}>
-      {data?.map((post) => (
-        <div key={post.id} className="p-0 mb-4">
-          <PostDetails key={post.id} post={post} onlyVertical={true} />
-        </div>
-      ))}
+      {data &&
+        data.map((post) => (
+          <div key={post.id} className="p-0 mb-4">
+            <PostDetails key={post.id} post={post} onlyVertical={true} />
+          </div>
+        ))}
     </div>
   );
 };

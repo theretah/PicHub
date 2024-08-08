@@ -1,25 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SettingsLayout from "../../components/Settings/SettingsLayout";
-
-interface EditProfileFormProps {
-  FullName: string;
-  UserName: string;
-  Bio: string;
-  ProfileImageFile: File | string | null;
-  Gender: string;
-}
+import { EditProfileFormProps } from "../../entities/EditProfileFormProps";
+import useUpdateProfile from "../../react-query/hooks/userHooks/useUpdateProfile";
 
 const EditProfile = () => {
   const { user } = useAuthStore();
-
-  const navigate = useNavigate();
 
   const [modalOpen, setModalOpen] = useState(false);
   const [avatar, setAvatar] = useState<string>("");
@@ -35,7 +25,12 @@ const EditProfile = () => {
     user?.profileImageUrl || null
   );
 
-  const { register, handleSubmit, setValue } = useForm<EditProfileFormProps>();
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<EditProfileFormProps>();
 
   const handleDeleteFileButton = () => {
     setCurrentPictureSrc("");
@@ -44,6 +39,7 @@ const EditProfile = () => {
     setValue("ProfileImageFile", "");
   };
 
+  const { mutateAsync, isSuccess } = useUpdateProfile();
   const onSubmit: SubmitHandler<EditProfileFormProps> = async (data) => {
     if (avatar) {
       const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
@@ -51,35 +47,19 @@ const EditProfile = () => {
       const file = new File([blob], "avatar.png", { type: mimeType });
       data.ProfileImageFile = file;
     }
-    await editProfile.mutate(data);
+    const formData = new FormData();
+    formData.append("UserName", data.UserName);
+    formData.append("FullName", data.FullName || "");
+    formData.append("Bio", data.Bio || "");
+    formData.append("ProfileImageFile", data.ProfileImageFile || "");
+    formData.append("Gender", data.Gender.toString() || "0");
+    for (const pair of formData.entries()) {
+      console.log("EditProfile.tsx: " + pair[0], pair[1]);
+    }
+    await mutateAsync(formData);
   };
 
-  const editProfile = useMutation({
-    mutationFn: async (model: EditProfileFormProps) => {
-      const formData = new FormData();
-
-      formData.append(
-        "ProfileImageFile",
-        model.ProfileImageFile ? model.ProfileImageFile : ""
-      );
-      formData.append("FullName", model.FullName);
-      formData.append("UserName", model.UserName);
-      formData.append("Bio", model.Bio);
-      formData.append("Gender", model.Gender);
-      axios
-        .put(`/api/user/update`, formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then(() => {
-          navigate("/");
-        })
-        .catch((error) => {
-          throw new Error(error);
-        });
-    },
-  });
+  if (isSuccess) return <Navigate to={"/"} />;
   return (
     <SettingsLayout>
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -170,8 +150,8 @@ const EditProfile = () => {
             Full name
           </label>
           <input
-            {...register("FullName")}
             type="text"
+            {...register("FullName")}
             className="form-control bg-gray border-0 text-light"
             id="fullNameInput"
             placeholder="John Smith"
@@ -181,16 +161,19 @@ const EditProfile = () => {
 
         <div className="mb-3">
           <label htmlFor="userNameInput" className="form-label h6">
-            Username
+            User name
           </label>
           <input
-            {...register("UserName")}
             type="text"
+            {...register("UserName", { required: "UserName is required." })}
             className="form-control bg-gray border-0 text-light"
             id="userNameInput"
             placeholder="johnsmith"
             defaultValue={user?.userName}
           />
+          {errors.UserName && (
+            <p className="text-danger">{errors.UserName.message}</p>
+          )}
         </div>
 
         <div className="mb-3">

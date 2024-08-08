@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import useUserById from "../../react-query/hooks/accountHooks/useUserById";
+import useUserById from "../../react-query/hooks/userHooks/useUserById";
 import ProfileImage from "../ProfileImage/ProfileImage";
 
 interface Props {

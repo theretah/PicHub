@@ -41,12 +41,10 @@ const DirectChatMessage = ({ message, senderId }: Props) => {
     };
   }, [divRef]);
 
-  const unSendMessage = useUnSendMessage({
-    messageId: message.id,
-  });
+  const unSendMessage = useUnSendMessage();
 
   function unSend() {
-    unSendMessage.mutate();
+    unSendMessage.mutate({ messageId: message.id });
     setIsDeleted(true);
   }
 

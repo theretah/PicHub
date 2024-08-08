@@ -15,16 +15,16 @@ const Posts = () => {
     userName: userName,
   });
 
-  if (isLoading) return <LoadingIndicator />;
   if (error) return <p className="text-light">{error.message}</p>;
 
   const squareSize = 75;
 
   return (
     <Profile userName={userName || ""} activeTab="posts">
+      {isLoading && <LoadingIndicator />}
       {data?.length != 0 ? (
         data?.map((post) => (
-          <div className="col-4" style={{ padding: 0.65 }} key={post.id}>
+          <div className="col-4 p-1" style={{ padding: 0.65 }} key={post.id}>
             <Link to={`/post/${post.id}`}>
               <img
                 src={`data:image/png;base64,${post.photoContent}`}

@@ -3,9 +3,10 @@ import messageService from "../../services/messageService";
 interface Props {
   messageId: number;
 }
-const useUnSendMessage = ({ messageId }: Props) => {
+const useUnSendMessage = () => {
   return useMutation({
-    mutationFn: () => messageService.unSendMessage(messageId),
+    mutationFn: ({ messageId }: Props) =>
+      messageService.unSendMessage(messageId),
   });
 };
 

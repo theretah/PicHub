@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { User } from "../../../entities/User";
-import accountService from "../../services/accountService";
+import userService from "../../services/userService";
 
 interface Props {
   userName: string;
@@ -8,7 +8,7 @@ interface Props {
 const useUserByUserName = ({ userName }: Props) => {
   return useQuery<User, Error>({
     queryKey: ["userByUserName", userName],
-    queryFn: () => accountService.getByUserNameAsync(userName),
+    queryFn: () => userService.getByUserNameAsync(userName),
   });
 };
 export default useUserByUserName;

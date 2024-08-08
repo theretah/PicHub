@@ -4,9 +4,9 @@ import postService from "../../services/postService";
 interface Props {
   postId: number;
 }
-const useSave = ({ postId }: Props) => {
+const useSave = () => {
   return useMutation({
-    mutationFn: () => postService.save(postId),
+    mutationFn: ({ postId }: Props) => postService.save(postId),
   });
 };
 

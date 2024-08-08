@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import userService from "../../services/userService";
+import followService from "../../services/followService";
 interface Props {
   userId: string;
   enabled: boolean;
@@ -7,7 +7,7 @@ interface Props {
 const useFollowersCount = ({ userId, enabled }: Props) => {
   return useQuery<number, Error>({
     queryKey: ["followersCount", userId],
-    queryFn: () => userService.followersCount(userId),
+    queryFn: () => followService.followersCount(userId),
     enabled: enabled,
   });
 };

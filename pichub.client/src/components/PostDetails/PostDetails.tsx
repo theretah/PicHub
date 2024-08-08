@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import useUserById from "../../react-query/hooks/accountHooks/useUserById";
+import useUserById from "../../react-query/hooks/userHooks/useUserById";
 import useIsLiked from "../../react-query/hooks/postHooks/useIsLiked";
 import useIsSaved from "../../react-query/hooks/postHooks/useIsSaved";
-import useIsFollowing from "../../react-query/hooks/userHooks/useIsFollowing";
+import useIsFollowing from "../../react-query/hooks/followHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { Post } from "../../entities/Post";
@@ -10,6 +10,9 @@ import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/authStore";
 import useLike from "../../react-query/hooks/postHooks/useLike";
 import useSave from "../../react-query/hooks/postHooks/useSave";
+import useDisLike from "../../react-query/hooks/postHooks/useDisLike";
+import useUnSave from "../../react-query/hooks/postHooks/useUnSave";
+import useLikesCount from "../../react-query/hooks/postHooks/useLikesCount";
 
 interface Props {
   post: Post;
@@ -50,30 +53,40 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const { data: isSaved } = useIsSaved({ postId: post.id, enabled: enabled });
   const [isSavedState, setIsSavedState] = useState<boolean>(isSaved || false);
 
-  const [likesCount, setLikesCount] = useState<number>(post.likesCount);
+  const { data: likesCount } = useLikesCount({ postId: post.id });
+  const [likesCountState, setLikesCountState] = useState<number>(likesCount);
+
   useEffect(() => {
-    setLikesCount(post.likesCount);
-  }, [post.likesCount]);
+    setLikesCountState(likesCount);
+  }, [likesCount]);
 
   useEffect(() => {
     if (isLiked != undefined) setIsLikedState(isLiked);
     if (isSaved != undefined) setIsSavedState(isSaved);
   }, [isLiked, isSaved]);
 
-  const likeMutation = useLike({ postId: post.id });
+  const likeMutation = useLike();
+  const disLikeMutation = useDisLike();
   function handleLikeButton() {
-    likeMutation.mutate();
     setIsLikedState(!isLikedState);
     if (isLikedState == true) {
-      setLikesCount(likesCount - 1);
+      disLikeMutation.mutate({ postId: post.id });
+      setLikesCountState(likesCountState - 1);
     } else {
-      setLikesCount(likesCount + 1);
+      likeMutation.mutate({ postId: post.id });
+      setLikesCountState(likesCountState + 1);
     }
   }
-  const saveMutation = useSave({ postId: post.id });
+
+  const saveMutation = useSave();
+  const unSaveMutation = useUnSave();
   function handleSaveButton() {
-    saveMutation.mutate();
     setIsSavedState(!isSavedState);
+    if (isSavedState == true) {
+      unSaveMutation.mutate({ postId: post.id });
+    } else {
+      saveMutation.mutate({ postId: post.id });
+    }
   }
 
   if (!isAuthenticated && author) {
@@ -88,7 +101,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={() => console.log("Unauthorized")}
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
-            likesCount={post.likesCount}
+            likesCount={likesCountState}
           />
         ) : (
           <PostDetailsHorizontal
@@ -99,7 +112,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             handleSaveButton={() => console.log("Unauthorized")}
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
-            likesCount={post.likesCount}
+            likesCount={likesCountState}
           />
         )}
       </div>
@@ -126,7 +139,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
           handleSaveButton={handleSaveButton}
           isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
-          likesCount={likesCount}
+          likesCount={likesCountState}
         />
       ) : (
         <PostDetailsHorizontal
@@ -137,7 +150,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
           handleSaveButton={handleSaveButton}
           isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
-          likesCount={likesCount}
+          likesCount={likesCountState}
         />
       )}
     </div>

@@ -293,16 +293,14 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             )}
           </LeftSideBarButton>
 
-          {isAuthenticated && (
-            <LeftSideBarButton
-              activePage={currentPage}
-              buttonText="Profile"
-              showFullButton={showFullButton && currentPage != "Messages"}
-              to={user ? `/${user.userName}` : "/login"}
-            >
-              <ProfileImage user={user} widthHeight={26} />
-            </LeftSideBarButton>
-          )}
+          <LeftSideBarButton
+            activePage={currentPage}
+            buttonText="Profile"
+            showFullButton={showFullButton && currentPage != "Messages"}
+            to={user ? `/${user.userName}` : "/login"}
+          >
+            <ProfileImage user={user} widthHeight={26} />
+          </LeftSideBarButton>
         </div>
       </ul>
       <div className="mt-auto">

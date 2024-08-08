@@ -4,9 +4,9 @@ import postService from "../../services/postService";
 interface Props {
   postId: number;
 }
-const useDeletePost = ({ postId }: Props) => {
+const useDeletePost = () => {
   return useMutation({
-    mutationFn: () => postService.delete(postId),
+    mutationFn: ({ postId }: Props) => postService.delete(postId),
   });
 };
 

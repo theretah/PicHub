@@ -10,10 +10,10 @@ const Saved = () => {
 
   const { data, error, isLoading } = useSavedPosts({ userId: user.id });
   if (error) return <p className="text-light">{error.message}</p>;
-  if (isLoading) return <LoadingIndicator />;
 
   return (
     <Profile userName={user.userName} activeTab="saved">
+      {isLoading && <LoadingIndicator />}
       {data?.map((post) => (
         <div className="col-4 p-1" key={post.id}>
           <Link to={`/post/${post.id}`}>

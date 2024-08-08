@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import MessagesLayout from "../../components/Messages/MessagesLayout";
 import DirectChatMessage from "../../components/Messages/DirectChatMessage";
-import useUserByUserName from "../../react-query/hooks/accountHooks/useUserByUserName";
+import useUserByUserName from "../../react-query/hooks/userHooks/useUserByUserName";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import useChatExists from "../../react-query/hooks/messageHooks/useChatExists";
 import useAuthStore from "../../auth/authStore";
@@ -51,14 +51,9 @@ const Direct = () => {
     setNewMessages(messages);
   }, [messages]);
 
-  const startChat = useStartChat({
-    recieverId: targetUser?.id || "",
-  });
+  const startChat = useStartChat();
 
-  const sendMessage = useSendMessage({
-    chatId: chat?.id || 0,
-    content: messageText,
-  });
+  const sendMessage = useSendMessage();
 
   // const deleteChat = useDeleteChat({
   //   chatId: chat?.id || 0,
@@ -70,10 +65,25 @@ const Direct = () => {
     );
   }
   function handleSendButton() {
-    if (chatExists == false) {
-      startChat.mutate();
-      if (startChat.isSuccess) {
-        sendMessage.mutate();
+    if (chat) {
+      if (chatExists == false && targetUser) {
+        startChat.mutate({ recieverId: targetUser.id });
+        if (startChat.isSuccess) {
+          sendMessage.mutate({ chatId: chat?.id, content: messageText });
+          if (sendMessage.isSuccess && user) {
+            let m: MessageDto = {
+              authorId: user.id,
+              chatId: 1,
+              content: messageText,
+              date: new Date(Date.now()),
+              id: 1,
+            };
+            addMessage(m);
+            setMessageText("");
+          }
+        }
+      } else {
+        sendMessage.mutate({ chatId: chat?.id, content: messageText });
         if (sendMessage.isSuccess && user) {
           let m: MessageDto = {
             authorId: user.id,
@@ -85,19 +95,6 @@ const Direct = () => {
           addMessage(m);
           setMessageText("");
         }
-      }
-    } else {
-      sendMessage.mutate();
-      if (sendMessage.isSuccess && user) {
-        let m: MessageDto = {
-          authorId: user.id,
-          chatId: 1,
-          content: messageText,
-          date: new Date(Date.now()),
-          id: 1,
-        };
-        addMessage(m);
-        setMessageText("");
       }
     }
   }
@@ -183,39 +180,35 @@ const Direct = () => {
           className=" overflow-y-auto"
           style={{ height: isSmallScreen ? "78vh" : "83vh" }}
         >
-          {
-            // newMessages && user && targetUser && newMessages?.length > 0 ? (
-            //   newMessages.map((message) => (
-            messages && user && targetUser && messages?.length > 0 ? (
-              messages.map((message) => (
-                <DirectChatMessage
-                  key={message.id}
-                  message={message}
-                  senderId={
-                    message.authorId == user?.id ? user.id : targetUser.id
-                  }
-                />
-              ))
-            ) : (
-              <div className="col d-flex justify-content-center mt-4">
-                <div className="text-center">
-                  <ProfileImage user={targetUser} widthHeight={100} />
-                  <h4 className="mb-0 text-light mt-2">
-                    {targetUser?.userName}
-                  </h4>
-                  <span className="text-gray d-block" style={{ fontSize: 14 }}>
-                    {targetUser?.userName} · PicHub
-                  </span>
-                  <Link
-                    to={`/${targetUser?.userName}`}
-                    className="btn btn-secondary mt-3"
-                  >
-                    View profile
-                  </Link>
-                </div>
+          {newMessages && user && targetUser && newMessages?.length > 0 ? (
+            newMessages.map((message) => (
+              // messages && user && targetUser && messages?.length > 0 ? (
+              //   messages.map((message) => (
+              <DirectChatMessage
+                key={message.id}
+                message={message}
+                senderId={
+                  message.authorId == user?.id ? user.id : targetUser.id
+                }
+              />
+            ))
+          ) : (
+            <div className="col d-flex justify-content-center mt-4">
+              <div className="text-center">
+                <ProfileImage user={targetUser} widthHeight={100} />
+                <h4 className="mb-0 text-light mt-2">{targetUser?.userName}</h4>
+                <span className="text-gray d-block" style={{ fontSize: 14 }}>
+                  {targetUser?.userName} · PicHub
+                </span>
+                <Link
+                  to={`/${targetUser?.userName}`}
+                  className="btn btn-secondary mt-3"
+                >
+                  View profile
+                </Link>
               </div>
-            )
-          }
+            </div>
+          )}
         </div>
         <div className="row p-2 ">
           <div className="input-group border border-gray rounded-pill">

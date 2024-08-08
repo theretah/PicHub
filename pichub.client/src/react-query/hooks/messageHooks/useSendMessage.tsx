@@ -4,9 +4,10 @@ interface Props {
   content: string;
   chatId: number;
 }
-const useSendMessage = ({ chatId, content }: Props) => {
+const useSendMessage = () => {
   return useMutation({
-    mutationFn: () => messageService.sendMessage(chatId, content),
+    mutationFn: ({ chatId, content }: Props) =>
+      messageService.sendMessage(chatId, content),
   });
 };
 

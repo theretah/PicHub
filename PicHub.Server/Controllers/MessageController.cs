@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +11,10 @@ namespace PicHub.Server.Controllers
     public class MessageController : ControllerBase
     {
         private readonly IUnitOfWork unit;
-        private readonly UserManager<AppUser> userManager;
 
-        public MessageController(IUnitOfWork unit, UserManager<AppUser> userManager)
+        public MessageController(IUnitOfWork unit)
         {
             this.unit = unit;
-            this.userManager = userManager;
         }
 
         [HttpPost("createChat")]
@@ -41,9 +35,11 @@ namespace PicHub.Server.Controllers
                 });
                 await unit.CompleteAsync();
 
-                return Ok(unit.Chats.GetByPredicateAsync(c =>
+                var chat = await unit.Chats.GetByPredicateAsync(c =>
                     (c.SenderId == senderId && c.RecieverId == recieverId) ||
-                    (c.SenderId == recieverId && c.RecieverId == senderId)).Id);
+                    (c.SenderId == recieverId && c.RecieverId == senderId));
+
+                return Ok(chat.Id);
             }
             catch (Exception)
             {
@@ -67,7 +63,7 @@ namespace PicHub.Server.Controllers
                     AuthorId = senderId,
                     ChatId = chatId,
                     Content = content,
-                    Date = DateTime.Now,
+                    DateTime = DateTime.Now,
                 });
                 await unit.CompleteAsync();
                 return Created();
@@ -138,7 +134,7 @@ namespace PicHub.Server.Controllers
             if (UserId == null)
                 return Unauthorized();
 
-            var chats = await unit.Chats.FindByPredicateAsync(c => c.SenderId == UserId || c.RecieverId == UserId);
+            var chats = await unit.Chats.GetAllByPredicateAsync(c => c.SenderId == UserId || c.RecieverId == UserId);
             if (chats == null)
                 return NotFound();
 
@@ -148,7 +144,7 @@ namespace PicHub.Server.Controllers
         [HttpGet("getMessages")]
         public async Task<IActionResult> GetMessages(int chatId)
         {
-            var messages = await unit.Messages.FindByPredicateAsync(m => m.ChatId == chatId);
+            var messages = await unit.Messages.GetAllByPredicateAsync(m => m.ChatId == chatId);
             if (messages == null)
                 return NotFound();
 

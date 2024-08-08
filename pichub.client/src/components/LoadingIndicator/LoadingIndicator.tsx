@@ -1,6 +1,6 @@
 const LoadingIndicator = () => {
   return (
-    <div className="text-center min-vh-100 ">
+    <div className="text-center min-vh-100 m-5">
       <div
         className="spinner-border text-light"
         role="status"

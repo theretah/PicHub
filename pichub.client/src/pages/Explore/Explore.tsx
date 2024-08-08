@@ -34,9 +34,8 @@ function ExplorePostsPanel() {
 
   return (
     <div className="row p-1">
-      {data?.map((post) => (
-        <ExplorePostItem key={post.id} post={post} />
-      ))}
+      {data &&
+        data.map((post) => <ExplorePostItem key={post.id} post={post} />)}
     </div>
   );
 }

@@ -14,13 +14,11 @@ namespace PicHub.Server.Entities
 
         [MaxLength(250, ErrorMessage = "Bio cannot have more than 250 characters")]
         public string? Bio { get; set; }
-        public int FollowersCount { get; set; }
-        public int FollowingsCount { get; set; }
 
-        public IEnumerable<Post> CreatedPosts { get; set; }
-        public IEnumerable<Save> SavedPosts { get; set; }
-        public IEnumerable<Like> LikedPosts { get; set; }
-        public IEnumerable<Follow> Follows { get; set; }
-        public IEnumerable<Chat> Chats { get; set; }
+        public IEnumerable<Post>? CreatedPosts { get; set; }
+        public IEnumerable<Save>? SavedPosts { get; set; }
+        public IEnumerable<Like>? LikedPosts { get; set; }
+        public IEnumerable<Follow>? Follows { get; set; }
+        public IEnumerable<Chat>? Chats { get; set; }
     }
 }

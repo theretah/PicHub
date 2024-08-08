@@ -40,11 +40,30 @@ class PostService {
       .then((res) => res.data);
   };
 
+  disLike = (postId: number) => {
+    return axiosInstance
+      .delete(`disLike?postId=${postId}`, {
+        headers: {
+          Authorization: `bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
+  };
+
   isLiked = (postId: number) => {
     return axiosInstance
       .get<boolean>(`isLiked?postId=${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
+      .then((res) => res.data);
+  };
+
+  likesCount = (postId: number) => {
+    return axiosInstance
+      .get(`getLikesCount?postId=${postId}`)
       .then((res) => res.data);
   };
 
@@ -60,6 +79,19 @@ class PostService {
         }
       )
       .then((res) => res.data);
+  };
+
+  unSave = (postId: number) => {
+    return axiosInstance
+      .delete(`unSave?postId=${postId}`, {
+        headers: {
+          Authorization: `bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
   };
 
   isSaved = (postId: number) => {

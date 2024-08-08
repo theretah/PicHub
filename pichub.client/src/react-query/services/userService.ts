@@ -24,10 +24,32 @@ class UserService {
       .then((res) => res.data);
   };
 
+  getAll = async () => {
+    return await axiosInstance.get<User[]>(`getAll`).then((res) => res.data);
+  };
+
   getByUserNameAsync = async (userName: string) => {
     return await axiosInstance
       .get<User>(`getByUserName?userName=${userName}`)
       .then((res) => res.data);
+  };
+
+  updateAsync = async (data: FormData) => {
+    for (const pair of data.entries()) {
+      console.log("userService.ts: " + pair[0], pair[1]);
+    }
+    return await axiosInstance
+      .put(`update`, data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => {
+        return res.data;
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   };
 }
 

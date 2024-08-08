@@ -19,31 +19,31 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getFollowersCount")]
-        public async Task<IActionResult> GetFollowersCount(string userId)
+        public async Task<ActionResult<int>> GetFollowersCount(string userId)
         {
             return Ok(await FollowersCount(userId));
         }
 
         [HttpGet("getFollowingsCount")]
-        public async Task<IActionResult> GetFollowingsCount(string userId)
+        public async Task<ActionResult<int>> GetFollowingsCount(string userId)
         {
             return Ok(await FollowingsCount(userId));
         }
 
         private async Task<int> FollowersCount(string userId)
         {
-            var follows = await unit.Follows.FindByPredicateAsync(f => f.FollowingId == userId);
+            var follows = await unit.Follows.GetAllByPredicateAsync(f => f.FollowingId == userId);
             return follows.Count();
         }
 
         private async Task<int> FollowingsCount(string userId)
         {
-            var follows = await unit.Follows.FindByPredicateAsync(f => f.FollowerId == userId);
+            var follows = await unit.Follows.GetAllByPredicateAsync(f => f.FollowerId == userId);
             return follows.Count();
         }
 
         [HttpGet("getIsFollowing")]
-        public async Task<IActionResult> GetIsFollowing(string followingId)
+        public async Task<ActionResult<bool>> GetIsFollowing(string followingId)
         {
             var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (followerId == null) return Unauthorized();
@@ -70,23 +70,11 @@ namespace PicHub.Server.Controllers
                 await unit.Follows.AddAsync(new Follow
                 {
                     FollowerId = loggedInUserId,
-                    FollowingId = followingId
+                    FollowingId = followingId,
+                    DateTime = DateTime.Now
                 });
                 await unit.CompleteAsync();
-
-                follower.FollowingsCount = await FollowingsCount(follower.Id);
-                follower.FollowersCount = await FollowersCount(follower.Id);
-                following.FollowingsCount = await FollowingsCount(following.Id);
-                following.FollowersCount = await FollowersCount(following.Id);
-                var followerUpdatedResult = await userManager.UpdateAsync(follower);
-                var followingUpdatedResult = await userManager.UpdateAsync(following);
-
-                if (followerUpdatedResult.Succeeded && followingUpdatedResult.Succeeded)
-                {
-                    return Created();
-                }
-
-                return BadRequest("Could not follow.");
+                return Created();
             }
             catch (Exception ex)
             {
@@ -112,19 +100,7 @@ namespace PicHub.Server.Controllers
                 unit.Follows.Remove(follow);
                 await unit.CompleteAsync();
 
-                follower.FollowingsCount = await FollowingsCount(follower.Id);
-                follower.FollowersCount = await FollowersCount(follower.Id);
-                following.FollowingsCount = await FollowingsCount(following.Id);
-                following.FollowersCount = await FollowersCount(following.Id);
-                var followerUpdatedResult = await userManager.UpdateAsync(follower);
-                var followingUpdatedResult = await userManager.UpdateAsync(following);
-
-                if (followerUpdatedResult.Succeeded && followingUpdatedResult.Succeeded)
-                {
-                    return NoContent();
-                }
-
-                return BadRequest("Could not unfollow.");
+                return NoContent();
             }
             catch (Exception ex)
             {

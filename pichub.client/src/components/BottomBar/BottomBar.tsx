@@ -149,15 +149,13 @@ const BottomBar = ({ currentPage }: Props) => {
                 </svg>
               )}
             </BottomBarButton>
-            {isAuthenticated && (
-              <BottomBarButton
-                activePage={currentPage}
-                buttonText="Profile"
-                to={user ? `/${user.userName}` : "/login"}
-              >
-                <ProfileImage user={user} widthHeight={26} />
-              </BottomBarButton>
-            )}
+            <BottomBarButton
+              activePage={currentPage}
+              buttonText="Profile"
+              to={user ? `/${user.userName}` : "/login"}
+            >
+              <ProfileImage user={user} widthHeight={26} />
+            </BottomBarButton>
           </ul>
         </div>
         <div className="col-0"></div>

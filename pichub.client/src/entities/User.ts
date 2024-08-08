@@ -6,7 +6,5 @@ export interface User {
   bio: string;
   gender: string;
   profileImageUrl: string;
-  followersCount: number;
-  followingsCount: number;
   registrationDate: Date;
 }

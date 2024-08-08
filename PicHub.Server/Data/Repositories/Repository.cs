@@ -31,19 +31,30 @@ namespace CMSReactDotNet.Server.Data.Repositories
             return await set.FindAsync(id) != null;
         }
 
-        public async Task<IEnumerable<T>> FindByPredicateAsync(Expression<Func<T, bool>> predicate)
+        public async Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate)
+        {
+            var entity = await set.Where(predicate).SingleOrDefaultAsync();
+            return entity != null;
+        }
+
+        public async Task<IEnumerable<T>> GetAllByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
             return await set.Where(predicate).ToListAsync();
         }
 
         public async Task<T> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
-            return await set.Where(predicate).SingleOrDefaultAsync();
+            return await set.Where(predicate).SingleAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)
         {
-            return await set.FindAsync(id);
+            var entity = await set.FindAsync(id);
+            if (entity == null)
+            {
+                throw new NullReferenceException("Entity with this identifier was not found.");
+            }
+            return entity;
         }
 
         public async Task<IEnumerable<T>> GetAllAsync()
@@ -65,12 +76,6 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public void RemoveRange(IEnumerable<T> entities)
         {
             set.RemoveRange(entities);
-        }
-
-        public async Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate)
-        {
-            var entity = await set.Where(predicate).SingleOrDefaultAsync();
-            return entity != null;
         }
     }
 }

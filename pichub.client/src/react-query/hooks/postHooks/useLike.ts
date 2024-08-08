@@ -4,9 +4,9 @@ import postService from "../../services/postService";
 interface Props {
   postId: number;
 }
-const useLike = ({ postId }: Props) => {
+const useLike = () => {
   return useMutation({
-    mutationFn: () => postService.like(postId),
+    mutationFn: ({ postId }: Props) => postService.like(postId),
   });
 };
 

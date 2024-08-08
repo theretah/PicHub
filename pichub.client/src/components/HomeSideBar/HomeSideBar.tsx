@@ -1,14 +1,8 @@
-import { useEffect, useState } from "react";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
-
-import axios from "axios";
-import { User } from "../../entities/User";
+import useUsers from "../../react-query/hooks/userHooks/useUsers";
 
 const HomeSideBar = () => {
-  const [suggestedUsers, setSuggestedUsers] = useState<User[]>();
-  useEffect(() => {
-    axios.get(`/api/auth/getAll`).then((res) => setSuggestedUsers(res.data));
-  }, []);
+  const { data } = useUsers();
 
   return (
     <ul className="p-0" style={{ width: 280 }}>
@@ -22,7 +16,7 @@ const HomeSideBar = () => {
           <button className="btn btn-dark fw-bold p-1">See all</button>
         </div>
       </div>
-      {suggestedUsers?.map((user) => (
+      {data?.map((user) => (
         <HomeSuggestDetails key={user.id} user={user} />
       ))}
     </ul>

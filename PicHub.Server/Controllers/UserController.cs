@@ -38,22 +38,24 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateProfile(EditProfileViewModel model)
+        public async Task<IActionResult> UpdateProfile([FromForm] EditProfileViewModel model)
         {
-            var existingUser = await userManager.FindByNameAsync(model.UserName);
-            if (existingUser != null)
-                return BadRequest("User with this username already exists. Try another username.");
-
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
             {
                 return Unauthorized();
             }
+
             var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
             {
                 return Unauthorized();
             }
+
+            var existingUser = await userManager.FindByNameAsync(model.UserName);
+            if (existingUser != null && existingUser != user)
+                return BadRequest("User with this username already exists. Try another username.");
+
             if (model.ProfileImageFile != null)
             {
                 var imageFile = ImageUtilities.CompressImage(model.ProfileImageFile, 150);
@@ -88,7 +90,7 @@ namespace PicHub.Server.Controllers
         {
             var user = await userManager.FindByIdAsync(userId);
             if (user == null) return NotFound();
-            var posts = await unit.Posts.FindByPredicateAsync(p => p.AuthorId == user.Id);
+            var posts = await unit.Posts.GetAllByPredicateAsync(p => p.AuthorId == user.Id);
             return Ok(posts.Count());
         }
 

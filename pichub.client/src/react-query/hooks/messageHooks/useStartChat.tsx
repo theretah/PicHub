@@ -3,9 +3,9 @@ import messageService from "../../services/messageService";
 interface Props {
   recieverId: string;
 }
-const useStartChat = ({ recieverId }: Props) => {
+const useStartChat = () => {
   return useMutation({
-    mutationFn: () => messageService.startChat(recieverId),
+    mutationFn: ({ recieverId }: Props) => messageService.startChat(recieverId),
   });
 };
 
