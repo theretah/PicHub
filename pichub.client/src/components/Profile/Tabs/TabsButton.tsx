@@ -25,7 +25,7 @@ const TabsButton = ({
         }`}
         style={{ fontSize: fontSize }}
       >
-        <span style={{ fontSize: 15 }}>
+        <span className="d-flex align-items-center " style={{ fontSize: 14 }}>
           {icon}
           {!isSmallScreen && <>&nbsp;&nbsp;{text}</>}
         </span>

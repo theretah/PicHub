@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { User } from "../../../entities/User";
 import TabsButton from "./TabsButton";
 
@@ -16,11 +17,15 @@ const TabsRow = ({
   windowWidth,
 }: TabsRowProps) => {
   const isExtraSmallScreen = windowWidth < 575;
+  const [tabIconDimension, setTabIconDimension] = useState<number>();
+  useEffect(() => {
+    setTabIconDimension(windowWidth < 575 ? 24 : 14);
+  }, [windowWidth]);
   return (
-    <div className="border-bottom border-top border-gray w-100">
+    <div className="border-bottom border-gray w-100">
       <ul
         className="nav nav-underline d-flex justify-content-evenly mx-auto"
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: isExtraSmallScreen ? 600 : 400 }}
       >
         <TabsButton
           isSmallScreen={isExtraSmallScreen}
@@ -31,8 +36,8 @@ const TabsRow = ({
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
+              width={tabIconDimension}
+              height={tabIconDimension}
               fill="currentColor"
               className="bi bi-grid-3x3"
               viewBox="0 0 16 16"
@@ -50,8 +55,8 @@ const TabsRow = ({
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
+              width={tabIconDimension}
+              height={tabIconDimension}
               fill="currentColor"
               className="bi bi-film"
               viewBox="0 0 16 16"
@@ -69,8 +74,8 @@ const TabsRow = ({
           icon={
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
+              width={tabIconDimension}
+              height={tabIconDimension}
               fill="currentColor"
               className="bi bi-person-badge"
               viewBox="0 0 16 16"
@@ -90,8 +95,8 @@ const TabsRow = ({
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
+                width={tabIconDimension}
+                height={tabIconDimension}
                 fill="currentColor"
                 className="bi bi-save"
                 viewBox="0 0 16 16"

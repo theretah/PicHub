@@ -104,7 +104,7 @@ namespace PicHub.Server.Controllers
             return BadRequest("User with this username does not exist.");
         }
 
-        private string? GenerateToken(string userId)
+        private string GenerateToken(string userId)
         {
             var jwtConfigSection = configuration.GetSection("JwtConfig");
             var secret = jwtConfigSection["Secret"];

@@ -24,11 +24,11 @@ const Posts = () => {
       {isLoading && <LoadingIndicator />}
       {data?.length != 0 ? (
         data?.map((post) => (
-          <div className="col-4 p-1" style={{ padding: 0.65 }} key={post.id}>
+          <div className="col-4" style={{ padding: 0.65 }} key={post.id}>
             <Link to={`/post/${post.id}`}>
               <img
                 src={`data:image/png;base64,${post.photoContent}`}
-                className="img-fluid mx-auto w-100 h-100 object-fit-cover"
+                className="img-fluid mx-auto object-fit-cover"
                 alt="..."
                 style={{ aspectRatio: 1 }}
               />

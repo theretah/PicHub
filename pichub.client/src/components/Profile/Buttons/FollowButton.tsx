@@ -2,10 +2,21 @@ interface FollowButtonProps {
   isFollowing: boolean;
   follow: () => void;
   unFollow: () => void;
+  isBiggerThanMedium: boolean;
 }
-const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
+const FollowButton = ({
+  follow,
+  unFollow,
+  isFollowing,
+  isBiggerThanMedium,
+}: FollowButtonProps) => {
   return isFollowing ? (
-    <button className="btn btn-secondary me-1 py-1" onClick={unFollow}>
+    <button
+      className={`btn btn-secondary py-1 ${
+        isBiggerThanMedium ? "mx-2" : "me-2"
+      }`}
+      onClick={unFollow}
+    >
       Following&nbsp;
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -22,7 +33,10 @@ const FollowButton = ({ follow, unFollow, isFollowing }: FollowButtonProps) => {
       </svg>
     </button>
   ) : (
-    <button className="btn btn-primary me-1 py-1" onClick={follow}>
+    <button
+      className={`btn btn-primary py-1 ${isBiggerThanMedium ? "mx-2" : "me-2"}`}
+      onClick={follow}
+    >
       Follow
     </button>
   );

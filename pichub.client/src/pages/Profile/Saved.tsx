@@ -15,7 +15,7 @@ const Saved = () => {
     <Profile userName={user.userName} activeTab="saved">
       {isLoading && <LoadingIndicator />}
       {data?.map((post) => (
-        <div className="col-4 p-1" key={post.id}>
+        <div className="col-4" key={post.id} style={{ padding: 0.65 }}>
           <Link to={`/post/${post.id}`}>
             <img
               src={`data:image/png;base64,${post.photoContent}`}

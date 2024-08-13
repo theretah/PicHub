@@ -17,10 +17,7 @@ const StatsRow = ({
   return (
     <>
       {windowWidth < 768 ? (
-        <div
-          className="w-100 d-flex justify-content-evenly mt-3 border-bottom border-top border-gray"
-          style={{ width: 200 }}
-        >
+        <div className="d-flex justify-content-evenly mt-3 border-bottom border-top border-gray py-2">
           <StatsButton
             text="posts"
             value={postsCount}

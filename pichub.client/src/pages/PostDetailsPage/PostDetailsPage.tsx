@@ -13,7 +13,12 @@ const PostDetailsPage = () => {
     id: parseInt(id ? id : ""),
   });
 
-  if (isLoading) return <LoadingIndicator />;
+  if (isLoading)
+    return (
+      <Layout currentPage="post">
+        <LoadingIndicator />
+      </Layout>
+    );
 
   if (error) return <p className="text-light">{error.message}</p>;
 

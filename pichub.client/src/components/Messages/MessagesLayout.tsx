@@ -37,11 +37,11 @@ const MessagesLayout = ({ children }: Props) => {
   }, [windowWidth]);
 
   if (!isAuthenticated) {
-    return <Navigate to={"/login"} />;
+    return <Navigate to="/login" />;
   }
 
   return (
-    <Layout currentPage={"Messages"}>
+    <Layout currentPage="Messages">
       <div className="container-fluid">
         <div
           className="row"

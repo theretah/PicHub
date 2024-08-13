@@ -6,7 +6,12 @@ import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator
 const ExploreReel = () => {
   const { data, isLoading } = usePosts();
 
-  if (isLoading) return <LoadingIndicator />;
+  if (isLoading)
+    return (
+      <Layout currentPage="explore">
+        <LoadingIndicator />
+      </Layout>
+    );
 
   return (
     <Layout currentPage="Explore">

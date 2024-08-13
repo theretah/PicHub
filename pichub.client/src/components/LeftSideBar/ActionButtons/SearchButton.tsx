@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import SearchPanel from "../SearchPanel/SearchPanel";
+import SearchPanel from "../../SearchPanel/SearchPanel";
 import { Props } from "./Props";
 
 const SearchButton = ({

@@ -1,9 +1,13 @@
 import { Link } from "react-router-dom";
-
-const EditProfileButton = () => {
+interface Props {
+  isBiggerThanMedium: boolean;
+}
+const EditProfileButton = ({ isBiggerThanMedium }: Props) => {
   return (
     <Link
-      className="btn btn-secondary me-1 py-1 ms-auto"
+      className={`btn btn-secondary py-1 ${
+        isBiggerThanMedium ? "mx-2" : "me-2"
+      }`}
       to={"/settings/editprofile"}
     >
       Edit Profile

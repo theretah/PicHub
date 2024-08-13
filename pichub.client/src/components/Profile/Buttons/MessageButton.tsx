@@ -6,7 +6,7 @@ const MessageButton = ({ userName }: Props) => {
   return (
     <Link
       to={`/messages/direct/${userName}`}
-      className="btn btn-secondary me-1 py-1"
+      className="btn btn-secondary py-1"
     >
       Message
     </Link>
