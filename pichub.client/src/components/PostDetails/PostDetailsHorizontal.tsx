@@ -18,6 +18,7 @@ const PostDetailsHorizontal = ({
   handleLikeButton,
   handleSaveButton,
   likesCount,
+  handleFollowButton,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [modalOpen, setModalOpen] = useState(false);
@@ -31,7 +32,7 @@ const PostDetailsHorizontal = ({
     <div className="mt-2">
       <div
         className="mx-auto mt-3 shadow-lg border border-secondary"
-        style={{ width: 802, height: 502 }}
+        style={{ width: 852, height: 502 }}
       >
         <div className="row g-0 mx-auto">
           <div
@@ -44,33 +45,52 @@ const PostDetailsHorizontal = ({
               alt="..."
             />
           </div>
-          <div className="" style={{ width: 300, height: 500 }}>
+          <div className="" style={{ width: 350, height: 500 }}>
             <div className="card-body bg-dark text-light border-0">
-              <div className="d-flex justify-content-start p-2">
+              <div className="d-flex justify-content-start px-2 py-1 align-items-center">
                 <ProfileImage user={author} widthHeight={35} />
-                &nbsp;
-                <Link
-                  to={`/${author?.userName}`}
-                  className="fw-bold align-self-center text-decoration-none text-light"
-                >
-                  {author?.userName}
-                </Link>
-                {author?.id != user?.id &&
-                  (isFollowing ? (
-                    <>
-                      &nbsp; &nbsp;
-                      <button className="p-0 btn text-decoration-none align-self-center">
-                        <span className="text-gray">Following</span>
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      &nbsp; &nbsp;
-                      <button className="p-0 btn text-primary fw-bold align-self-center">
-                        Follow
-                      </button>
-                    </>
-                  ))}
+                <div className="ms-2 d-flex flex-column">
+                  <div className="d-flex align-items-center">
+                    <Link
+                      to={`/${author?.userName}`}
+                      className="m-0 text-decoration-none text-light fw-bold"
+                      style={{ fontSize: 14 }}
+                    >
+                      {author?.userName}
+                    </Link>
+                    {author?.id != user?.id &&
+                      (isFollowing ? (
+                        <>
+                          <span>&nbsp;•&nbsp;</span>
+                          <div
+                            className="p-0 text-decoration-none"
+                            style={{ fontSize: 14 }}
+                          >
+                            <span className="text-gray">Following</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <span>&nbsp;•&nbsp;</span>
+                          <button
+                            className="p-0 btn text-primary fw-bold"
+                            style={{ fontSize: 14 }}
+                            onClick={handleFollowButton}
+                          >
+                            Follow
+                          </button>
+                        </>
+                      ))}
+                  </div>
+                  <Link
+                    className="text-light text-decoration-none"
+                    to={"https://www.google.com"}
+                    style={{ fontSize: 12 }}
+                  >
+                    www.google.com
+                  </Link>
+                </div>
+
                 <button
                   className="btn text-light p-0 ms-auto"
                   onClick={toggleOpen}
@@ -93,6 +113,7 @@ const PostDetailsHorizontal = ({
                 />
               </div>
               <hr className="my-0 mx-0" />
+              {/* Caption */}
               <div
                 className="overflow-y-auto p-2"
                 style={{ height: post.commentsAllowed ? 275 : 315 }}
@@ -100,6 +121,7 @@ const PostDetailsHorizontal = ({
                 <p>{post?.caption}</p>
               </div>
               <hr className="my-0" />
+              {/* Buttons */}
               <div className="p-2">
                 <div className="row">
                   <div className="col-5 d-flex">

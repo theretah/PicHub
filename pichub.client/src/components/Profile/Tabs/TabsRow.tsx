@@ -22,7 +22,11 @@ const TabsRow = ({
     setTabIconDimension(windowWidth < 575 ? 24 : 14);
   }, [windowWidth]);
   return (
-    <div className="border-bottom border-gray w-100">
+    <div
+      className={`border-bottom border-gray w-100 ${
+        windowWidth >= 768 ? "mt-3" : ""
+      }`}
+    >
       <ul
         className="nav nav-underline d-flex justify-content-evenly mx-auto"
         style={{ maxWidth: isExtraSmallScreen ? 600 : 400 }}

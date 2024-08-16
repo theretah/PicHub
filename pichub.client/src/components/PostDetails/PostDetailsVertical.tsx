@@ -18,9 +18,11 @@ const PostDetailsVertical = ({
   handleLikeButton,
   handleSaveButton,
   likesCount,
+  handleFollowButton,
 }: PostDetailsProps) => {
   const { user } = useAuthStore();
   const [isCaptionExpanded, setIsCaptionExpanded] = useState(false);
+  const captionLength = post.caption != null ? post.caption.length : 0;
 
   const [modalOpen, setModalOpen] = useState(false);
   const toggleOpen = () => {
@@ -36,31 +38,48 @@ const PostDetailsVertical = ({
               <ProfileImage user={author} widthHeight={40} />
             </Link>
 
-            <div className="card-body p-0 align-self-center">
+            <div className="ms-2 d-flex flex-column">
+              <div className="d-flex align-items-center">
+                <Link
+                  to={`/${author?.userName}`}
+                  className="m-0 text-decoration-none text-light fw-bold"
+                  style={{ fontSize: 15 }}
+                >
+                  {author?.userName}
+                </Link>
+                {author?.id != user?.id &&
+                  (isFollowing ? (
+                    <>
+                      <span>&nbsp;•&nbsp;</span>
+                      <div
+                        className="p-0 text-decoration-none"
+                        style={{ fontSize: 14 }}
+                      >
+                        <span className="text-gray">Following</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span>&nbsp;•&nbsp;</span>
+                      <button
+                        className="p-0 btn text-primary fw-bold"
+                        style={{ fontSize: 14 }}
+                        onClick={handleFollowButton}
+                      >
+                        Follow
+                      </button>
+                    </>
+                  ))}
+              </div>
               <Link
-                className="card-title ms-2 my-0 fw-bold align-self-center text-decoration-none"
-                to={`/${author?.userName}`}
+                className="text-light text-decoration-none"
+                to={"https://www.google.com"}
+                style={{ fontSize: 13 }}
               >
-                {author?.userName}
+                www.google.com
               </Link>
-              {author?.id != user?.id &&
-                (isFollowing ? (
-                  <>
-                    &nbsp; &nbsp;
-                    <button className="p-0 btn text-decoration-none align-self-center">
-                      <span className="text-gray">Following</span>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    &nbsp; &nbsp;
-                    <button className="p-0 btn text-primary fw-bold align-self-center">
-                      Follow
-                    </button>
-                  </>
-                ))}
             </div>
-            <button className="btn text-light d-flex" onClick={toggleOpen}>
+            <button className="btn text-light ms-auto" onClick={toggleOpen}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="26"
@@ -120,20 +139,24 @@ const PostDetailsVertical = ({
         >
           {author.userName}{" "}
         </Link>
-        {isCaptionExpanded
-          ? post.caption
-          : post.caption && (
-              <a
-                href="#"
-                onClick={(event) => {
-                  event.preventDefault();
-                  setIsCaptionExpanded(true);
-                }}
-                className="text-gray text-decoration-none py-0"
-              >
-                ...more
-              </a>
-            )}
+        {isCaptionExpanded == true ? (
+          post.caption
+        ) : post.caption &&
+          captionLength >= 40 &&
+          isCaptionExpanded == false ? (
+          <a
+            href="#"
+            onClick={(event) => {
+              event.preventDefault();
+              setIsCaptionExpanded(true);
+            }}
+            className="text-gray text-decoration-none py-0"
+          >
+            ...more
+          </a>
+        ) : (
+          captionLength < 40 && post.caption
+        )}
 
         <p className="card-title">
           <a href="" className="text-decoration-none text-gray">

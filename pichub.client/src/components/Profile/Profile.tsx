@@ -72,19 +72,19 @@ const Profile = ({ userName, children, activeTab }: Props) => {
 
   const follow = useFollow();
   async function followUser() {
-    if (pageUser && followersCount) {
+    if (pageUser && followersCount != undefined) {
       follow.mutateAsync({ followingId: pageUser.id });
       setIsFollowingState(true);
-      setFollowersCountState(followersCount + 1);
+      setFollowersCountState(followersCountState + 1);
     }
   }
 
   const unFollow = useUnfollow();
   async function unFollowUser() {
-    if (pageUser && followersCount) {
+    if (pageUser && followersCount != undefined) {
       unFollow.mutateAsync({ followingId: pageUser.id });
       setIsFollowingState(false);
-      setFollowersCountState(followersCount - 1);
+      setFollowersCountState(followersCountState - 1);
     }
   }
 
@@ -184,14 +184,8 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                     <>
                       <FollowButton
                         isBiggerThanMedium={!isSmallerThanMedium}
-                        follow={() => {
-                          setIsFollowingState(true);
-                          followUser();
-                        }}
-                        unFollow={() => {
-                          setIsFollowingState(false);
-                          unFollowUser();
-                        }}
+                        follow={followUser}
+                        unFollow={unFollowUser}
                         isFollowing={isFollowingState}
                       />
                       <MessageButton userName={pageUser?.userName || ""} />
@@ -215,19 +209,23 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                     <span className="text-gray">following</span>
                   </p>
                 </div>
-                <div className="d-block my-2">
-                  <p
-                    className="text-light fw-bold m-0"
-                    style={{ fontSize: 15 }}
-                  >
-                    {pageUser?.fullName}
-                  </p>
-                </div>
-                <div className="d-block my-2">
-                  <p className="text-light m-0" style={{ fontSize: 15 }}>
-                    {pageUser?.bio}
-                  </p>
-                </div>
+                {pageUser?.fullName && (
+                  <div className="d-block m-0">
+                    <p
+                      className="text-light fw-bold m-0"
+                      style={{ fontSize: 15 }}
+                    >
+                      {pageUser.fullName}
+                    </p>
+                  </div>
+                )}
+                {pageUser?.bio && (
+                  <div className="d-block m-0">
+                    <p className="text-light m-0" style={{ fontSize: 15 }}>
+                      {pageUser.bio}
+                    </p>
+                  </div>
+                )}
                 {!userIsPageOwner && (
                   <div className="d-block my-2">
                     <p className="card-text m-0" style={{ fontSize: 13 }}>
@@ -247,7 +245,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
             {isSmallerThanMedium && (
               <div>
                 <div className="d-flex align-items-center">
-                  <div className="my-2 me-2 d-inline">
+                  <div className="my-2 d-inline">
                     <span className="h5 text-light">{pageUser?.userName}</span>
                   </div>
                   {userIsPageOwner ? (
@@ -267,14 +265,8 @@ const Profile = ({ userName, children, activeTab }: Props) => {
                     <>
                       <FollowButton
                         isBiggerThanMedium={!isSmallerThanMedium}
-                        follow={() => {
-                          setIsFollowingState(true);
-                          followUser();
-                        }}
-                        unFollow={() => {
-                          setIsFollowingState(false);
-                          unFollowUser();
-                        }}
+                        follow={followUser}
+                        unFollow={unFollowUser}
                         isFollowing={isFollowingState}
                       />
                       <MessageButton userName={pageUser?.userName || ""} />
@@ -286,16 +278,23 @@ const Profile = ({ userName, children, activeTab }: Props) => {
           </div>
           {isSmallerThanMedium && (
             <div className="mt-4">
-              <div className="d-block">
-                <p className="text-light fw-bold m-0" style={{ fontSize: 14 }}>
-                  {pageUser?.fullName}
-                </p>
-              </div>
-              <div className="d-block">
-                <p className="text-light m-0" style={{ fontSize: 13 }}>
-                  {pageUser?.bio}
-                </p>
-              </div>
+              {pageUser?.fullName && (
+                <div className="d-block">
+                  <p
+                    className="text-light fw-bold m-0"
+                    style={{ fontSize: 14 }}
+                  >
+                    {pageUser.fullName}
+                  </p>
+                </div>
+              )}
+              {pageUser?.bio && (
+                <div className="d-block">
+                  <p className="text-light m-0" style={{ fontSize: 13 }}>
+                    {pageUser.bio}
+                  </p>
+                </div>
+              )}
               {!userIsPageOwner && (
                 <div className="d-block my-2">
                   <p className="card-text m-0" style={{ fontSize: 12 }}>
@@ -312,14 +311,12 @@ const Profile = ({ userName, children, activeTab }: Props) => {
             </div>
           )}
         </div>
-        {!isSmallerThanMedium && (
-          <StatsRow
-            followersCount={followersCountState}
-            followingsCount={followingsCountState}
-            postsCount={postsCount || 0}
-            windowWidth={windowWidth}
-          />
-        )}
+        <StatsRow
+          followersCount={followersCountState}
+          followingsCount={followingsCountState}
+          postsCount={postsCount || 0}
+          windowWidth={windowWidth}
+        />
         <TabsRow
           windowWidth={windowWidth}
           activeTab={activeTab}

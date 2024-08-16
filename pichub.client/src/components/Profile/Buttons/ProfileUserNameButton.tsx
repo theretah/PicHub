@@ -6,7 +6,7 @@ interface ProfileUserNameButtonProps {
 }
 const ProfileUserNameButton = ({ user }: ProfileUserNameButtonProps) => {
   return (
-    <Link to={"/login"} className="btn btn-dark text-light">
+    <Link to={"/login"} className="btn btn-dark text-light fw-bold">
       {user?.userName} &nbsp;
       <svg
         xmlns="http://www.w3.org/2000/svg"

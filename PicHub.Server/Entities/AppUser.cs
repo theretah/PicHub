@@ -15,6 +15,9 @@ namespace PicHub.Server.Entities
         [MaxLength(250, ErrorMessage = "Bio cannot have more than 250 characters")]
         public string? Bio { get; set; }
 
+        [MaxLength(80, ErrorMessage = "website cannot have more than 80 characters")]
+        public string? Website { get; set; }
+
         public IEnumerable<Post>? CreatedPosts { get; set; }
         public IEnumerable<Save>? SavedPosts { get; set; }
         public IEnumerable<Like>? LikedPosts { get; set; }

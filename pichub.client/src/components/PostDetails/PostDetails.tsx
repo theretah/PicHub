@@ -13,6 +13,8 @@ import useSave from "../../react-query/hooks/postHooks/useSave";
 import useDisLike from "../../react-query/hooks/postHooks/useDisLike";
 import useUnSave from "../../react-query/hooks/postHooks/useUnSave";
 import useLikesCount from "../../react-query/hooks/postHooks/useLikesCount";
+import useFollow from "../../react-query/hooks/followHooks/useFollow";
+import useUnfollow from "../../react-query/hooks/followHooks/useUnfollow";
 
 interface Props {
   post: Post;
@@ -25,7 +27,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth <= 935);
+      setIsSmallScreen(window.innerWidth <= 985);
     };
 
     handleResize();
@@ -42,10 +44,6 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   });
 
   const enabled = author != null && isAuthenticated;
-  const { data: isFollowing } = useIsFollowing({
-    followingId: post.authorId,
-    enabled: enabled,
-  });
 
   const { data: isLiked } = useIsLiked({ postId: post.id, enabled: enabled });
   const [isLikedState, setIsLikedState] = useState<boolean>(isLiked || false);
@@ -77,6 +75,25 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
       setLikesCountState(likesCountState + 1);
     }
   }
+  const { data: isFollowing } = useIsFollowing({
+    followingId: post.authorId,
+    enabled: enabled,
+  });
+
+  const [isFollowingState, setIsFollowingState] = useState<boolean>(false);
+  useEffect(() => {
+    if (isFollowing != undefined) {
+      setIsFollowingState(isFollowing);
+    }
+  }, [isFollowing]);
+
+  const followMutation = useFollow();
+  function followUser() {
+    if (isFollowingState == false) {
+      followMutation.mutate({ followingId: post.authorId });
+      setIsFollowingState(true);
+    }
+  }
 
   const saveMutation = useSave();
   const unSaveMutation = useUnSave();
@@ -102,6 +119,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
             likesCount={likesCountState}
+            handleFollowButton={() => console.log("Unauthorized")}
           />
         ) : (
           <PostDetailsHorizontal
@@ -113,6 +131,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
             isLiked={false}
             handleLikeButton={() => console.log("Unauthorized")}
             likesCount={likesCountState}
+            handleFollowButton={() => console.log("Unauthorized")}
           />
         )}
       </div>
@@ -134,23 +153,25 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
         <PostDetailsVertical
           author={author}
           post={post}
-          isFollowing={isFollowing}
+          isFollowing={isFollowingState}
           isSaved={isSavedState}
           handleSaveButton={handleSaveButton}
           isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
           likesCount={likesCountState}
+          handleFollowButton={followUser}
         />
       ) : (
         <PostDetailsHorizontal
           author={author}
           post={post}
-          isFollowing={isFollowing}
+          isFollowing={isFollowingState}
           isSaved={isSavedState}
           handleSaveButton={handleSaveButton}
           isLiked={isLikedState}
           handleLikeButton={handleLikeButton}
           likesCount={likesCountState}
+          handleFollowButton={followUser}
         />
       )}
     </div>
