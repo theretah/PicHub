@@ -74,7 +74,7 @@ namespace PicHub.Tests
                     mockConfiguration.Object["JwtConfig:ValidIssuer"],
                     mockConfiguration.Object["JwtConfig:ValidAudiences"],
                     UserId));
-            Assert.Equal("Jwt config is not set in the configuration.", exception.Message);
+            Assert.Equal("Jwt config is not set.", exception.Message);
         }
     }
 }

@@ -193,3 +193,6 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\PicHub.Tests.
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\obj\Debug\net8.0\ref\PicHub.Tests.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Castle.Core.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Moq.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Asp.Versioning.Abstractions.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Asp.Versioning.Http.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.Tests\bin\Debug\net8.0\Asp.Versioning.Mvc.dll

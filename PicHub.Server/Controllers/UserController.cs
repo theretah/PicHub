@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Pichub.Server.Utilities;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
+using Pichub.Server.Utilities;
 using PicHub.Server.ViewModels;
 
 namespace PicHub.Server.Controllers
@@ -23,11 +23,13 @@ namespace PicHub.Server.Controllers
         private readonly IMapper mapper;
         private readonly IAppUserRepository userRepository;
 
-        public UserController(UserManager<AppUser> userManager,
+        public UserController(
+            UserManager<AppUser> userManager,
             IAppUserRepository userRepository,
             IUnitOfWork unit,
             ILogger<UserController> logger,
-            IMapper mapper)
+            IMapper mapper
+        )
         {
             this.userRepository = userRepository;
             this.logger = logger;
@@ -73,7 +75,9 @@ namespace PicHub.Server.Controllers
             {
                 var result = await userManager.UpdateAsync(user);
                 if (result.Succeeded)
-                { return Ok(); }
+                {
+                    return Ok();
+                }
                 else
                 {
                     return BadRequest(result.Errors);
@@ -89,7 +93,8 @@ namespace PicHub.Server.Controllers
         public async Task<IActionResult> GetPostsCount(string userId)
         {
             var user = await userManager.FindByIdAsync(userId);
-            if (user == null) return NotFound();
+            if (user == null)
+                return NotFound();
             var posts = await unit.Posts.GetAllByPredicateAsync(p => p.AuthorId == user.Id);
             return Ok(posts.Count());
         }
@@ -97,17 +102,26 @@ namespace PicHub.Server.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search(string? query, int pageNumber = 1, int pageSize = 5)
         {
-            var (users, paginationMetadata) = await userRepository
-                .Search(query, pageNumber, pageSize);
+            var (users, paginationMetadata) = await userRepository.Search(
+                query,
+                pageNumber,
+                pageSize
+            );
 
             Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
             return Ok(users);
         }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllUsers()
+        public ActionResult<IEnumerable<UserDto>> GetAllUsers()
         {
-            return Ok(mapper.Map<IEnumerable<UserDto>>(await userManager.Users.ToListAsync()));
+            var users = userManager.Users.ToList();
+            if (users == null || users.Count() == 0)
+            {
+                return NoContent();
+            }
+            var mapped = mapper.Map<IEnumerable<UserDto>>(users);
+            return Ok(mapped);
         }
 
         [HttpGet("getUsersCount")]
@@ -154,7 +168,9 @@ namespace PicHub.Server.Controllers
         {
             try
             {
-                var lastRegisteredUsers = await userManager.Users.OrderByDescending(u => u.RegistrationDate).ToListAsync();
+                var lastRegisteredUsers = await userManager
+                    .Users.OrderByDescending(u => u.RegistrationDate)
+                    .ToListAsync();
                 return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
             }
             catch (Exception)

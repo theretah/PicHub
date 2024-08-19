@@ -17,16 +17,16 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public async Task<(IEnumerable<AppUser>, PaginationMetadata)> Search(string? searchQuery, int pageNumber, int pageSize)
         {
-            var usersCollection = userManager.Users;
+            var users = userManager.Users;
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
                 searchQuery = searchQuery.Trim();
-                usersCollection = usersCollection.Where(u => u.UserName.Contains(searchQuery.ToLower()));
+                users = users.Where(u => u.UserName.Contains(searchQuery.ToLower()));
             }
 
-            var totalItemCount = await usersCollection.CountAsync();
+            var totalItemCount = await users.CountAsync();
             var paginationMetaData = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
-            var collectionToReturn = await usersCollection
+            var collectionToReturn = await users
             .OrderBy(u => u.UserName)
             .Skip(pageSize * (pageNumber - 1))
             .Take(pageSize)
