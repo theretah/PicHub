@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {}
+    "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {}
   },
   "projects": {
-    "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
+    "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+        "projectUniqueName": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
         "projectName": "PicHub.Server",
-        "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+        "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
         "packagesPath": "C:\\Users\\taher\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
+        "outputPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\taher\\AppData\\Roaming\\NuGet\\NuGet.Config",
