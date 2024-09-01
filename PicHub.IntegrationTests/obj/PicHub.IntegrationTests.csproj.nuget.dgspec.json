@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj": {}
+    "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj": {}
   },
   "projects": {
-    "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj": {
+    "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
+        "projectUniqueName": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
         "projectName": "PicHub.IntegrationTests",
-        "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
+        "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
         "packagesPath": "C:\\Users\\taher\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\obj\\",
+        "outputPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\taher\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
-                "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj"
+              "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
+                "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj"
               }
             }
           }
@@ -90,14 +90,14 @@
         }
       }
     },
-    "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
+    "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+        "projectUniqueName": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
         "projectName": "PicHub.Server",
-        "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+        "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
         "packagesPath": "C:\\Users\\taher\\.nuget\\packages\\",
-        "outputPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
+        "outputPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\taher\\AppData\\Roaming\\NuGet\\NuGet.Config",

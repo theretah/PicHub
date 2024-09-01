@@ -8,7 +8,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
     {
         private readonly PicHubContext context;
 
-        public FollowRepository(PicHubContext context) : base(context)
+        public FollowRepository(PicHubContext context)
+            : base(context)
         {
             this.context = context;
         }

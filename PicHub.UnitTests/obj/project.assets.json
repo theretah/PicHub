@@ -10798,11 +10798,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\PicHub.UnitTests.csproj",
+      "projectUniqueName": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\PicHub.UnitTests.csproj",
       "projectName": "PicHub.UnitTests",
-      "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\PicHub.UnitTests.csproj",
+      "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\PicHub.UnitTests.csproj",
       "packagesPath": "C:\\Users\\taher\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\obj\\",
+      "outputPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\taher\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -10819,8 +10819,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
-              "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj"
+            "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj": {
+              "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj"
             }
           }
         }

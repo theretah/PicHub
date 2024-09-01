@@ -12,9 +12,28 @@ namespace PicHub.Server.DbContextConfigurations
     {
         public void Configure(EntityTypeBuilder<AppUser> builder)
         {
-            builder.HasMany(u => u.CreatedPosts)
+            builder
+                .HasMany(u => u.CreatedPosts)
                 .WithOne(p => p.Author)
                 .HasForeignKey(p => p.AuthorId)
+                .IsRequired();
+
+            builder
+                .HasOne(u => u.Gender)
+                .WithMany(g => g.Users)
+                .HasForeignKey(u => u.GenderId)
+                .IsRequired();
+
+            builder
+                .HasOne(u => u.ProfessionalCategory)
+                .WithMany(g => g.Users)
+                .HasForeignKey(u => u.ProfessionalCategoryId)
+                .IsRequired(false);
+
+            builder
+                .HasOne(u => u.AccountCategory)
+                .WithMany(g => g.Users)
+                .HasForeignKey(u => u.AccountCategoryId)
                 .IsRequired();
         }
     }

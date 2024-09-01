@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "F7mqGe12BoHW8gfNbdn8Jy5X22aWYJc7FBcR5mJIAKEahAyS69iiWLJgZEh5mCgi7OttkbKn8A6JLQL9WZ+h+Q==",
+  "dgSpecHash": "HbVyV3ZydzRyxZOdIt86qOpnU21frQgt6OynLaN+3H3ioNvyE84cHkSESHN8FL7hVy9JWCU+DVfuGEHbtw9S/Q==",
   "success": true,
-  "projectFilePath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
+  "projectFilePath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\taher\\.nuget\\packages\\asp.versioning.abstractions\\8.1.0\\asp.versioning.abstractions.8.1.0.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\asp.versioning.http\\8.1.0\\asp.versioning.http.8.1.0.nupkg.sha512",

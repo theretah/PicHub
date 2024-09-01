@@ -6,7 +6,7 @@ namespace PicHub.IntegrationTests
         : IClassFixture<WebApplicationFactory<Program>>
     {
         [Fact]
-        public async Task GetAll_ReturnsSuccessAndCorrectCotnentType()
+        public async Task GetAll_ReturnsSuccessAndCorrectContentType()
         {
             // Arrange
             var client = factory.CreateClient();

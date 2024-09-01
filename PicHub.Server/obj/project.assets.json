@@ -5419,11 +5419,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+      "projectUniqueName": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
       "projectName": "PicHub.Server",
-      "projectPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
+      "projectPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
       "packagesPath": "C:\\Users\\taher\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
+      "outputPath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\taher\\AppData\\Roaming\\NuGet\\NuGet.Config",

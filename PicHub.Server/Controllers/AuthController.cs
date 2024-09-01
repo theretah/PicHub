@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
@@ -21,7 +22,11 @@ namespace PicHub.Server.Controllers
         private readonly UserManager<AppUser> userManager;
         private readonly IMapper mapper;
 
-        public AuthController(IMapper mapper, IConfiguration configuration, UserManager<AppUser> userManager)
+        public AuthController(
+            IMapper mapper,
+            IConfiguration configuration,
+            UserManager<AppUser> userManager
+        )
         {
             this.mapper = mapper;
             this.configuration = configuration;
@@ -60,24 +65,32 @@ namespace PicHub.Server.Controllers
                 return BadRequest("User with this username already exists.");
             }
 
-            var user = new AppUser
-            {
-                UserName = model.UserName,
-                FullName = model.FullName,
-                Email = model.Email,
-                EmailConfirmed = true,
-                RegistrationDate = DateTime.Now,
-            };
+            var user = new AppUser(
+                userName: model.UserName,
+                fullName: model.FullName,
+                email: model.Email,
+                phoneNumber: string.Empty,
+                genderId: 0,
+                isPrivate: false,
+                accountCategoryId: 0
+            );
 
             var result = await userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
                 var createdUser = await userManager.FindByNameAsync(model.UserName);
-                if (createdUser != null && await userManager.CheckPasswordAsync(createdUser, model.Password))
+                if (
+                    createdUser != null
+                    && await userManager.CheckPasswordAsync(createdUser, model.Password)
+                )
                 {
                     var jwtConfigSection = configuration.GetSection("JwtConfig");
                     var token = GenerateToken(user.Id);
-                    var response = new { UserName = createdUser.UserName, Password = model.Password };
+                    var response = new
+                    {
+                        UserName = createdUser.UserName,
+                        Password = model.Password,
+                    };
                     return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
                 }
                 return BadRequest("Unable to login as registered user.");
@@ -123,7 +136,10 @@ namespace PicHub.Server.Controllers
                 Expires = DateTime.UtcNow.AddDays(1),
                 Issuer = issuer,
                 Audience = audience,
-                SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256)
+                SigningCredentials = new SigningCredentials(
+                    signingKey,
+                    SecurityAlgorithms.HmacSha256
+                ),
             };
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
 

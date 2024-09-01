@@ -197,7 +197,7 @@ const EditProfile = () => {
           <select
             className="form-select bg-gray border-0 text-light"
             {...register("Gender")}
-            defaultValue={user?.gender}
+            defaultValue={user?.genderId}
           >
             <option value={0}>Prefer not to say</option>
             <option value={1}>Male</option>

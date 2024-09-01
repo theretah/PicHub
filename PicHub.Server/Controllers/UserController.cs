@@ -69,7 +69,7 @@ namespace PicHub.Server.Controllers
             }
             user.FullName = model.FullName;
             user.UserName = model.UserName;
-            user.Gender = model.Gender;
+            user.GenderId = model.GenderId;
             user.Bio = model.Bio;
             try
             {

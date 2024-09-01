@@ -12,8 +12,8 @@ using PicHub.Server.Data;
 namespace PicHub.Server.Migrations
 {
     [DbContext(typeof(PicHubContext))]
-    [Migration("20240801135024_AddDateTimeToFollowAndLikeAndSaveTables")]
-    partial class AddDateTimeToFollowAndLikeAndSaveTables
+    [Migration("20240901183100_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -232,6 +232,20 @@ namespace PicHub.Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.AccountCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AccountCategories");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -273,6 +287,20 @@ namespace PicHub.Server.Migrations
                     b.HasIndex("FollowingId");
 
                     b.ToTable("Follows");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Gender", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genders");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
@@ -335,16 +363,14 @@ namespace PicHub.Server.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Caption")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<bool>("CommentsAllowed")
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("LikesCount")
-                        .HasColumnType("int");
 
                     b.Property<byte[]>("PhotoContent")
                         .IsRequired()
@@ -355,6 +381,20 @@ namespace PicHub.Server.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.ProfessionalCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProfessionalCategories");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
@@ -379,21 +419,24 @@ namespace PicHub.Server.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
 
+                    b.Property<int>("AccountCategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Bio")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<int>("FollowersCount")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FollowingsCount")
-                        .HasColumnType("int");
 
                     b.Property<string>("FullName")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Gender")
+                    b.Property<int>("GenderId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ProfessionalCategoryId")
                         .HasColumnType("int");
 
                     b.Property<byte[]>("ProfileImageUrl")
@@ -401,6 +444,16 @@ namespace PicHub.Server.Migrations
 
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(80)
+                        .HasColumnType("nvarchar(80)");
+
+                    b.HasIndex("AccountCategoryId");
+
+                    b.HasIndex("GenderId");
+
+                    b.HasIndex("ProfessionalCategoryId");
 
                     b.HasDiscriminator().HasValue("AppUser");
                 });
@@ -554,9 +607,44 @@ namespace PicHub.Server.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.AccountCategory", "AccountCategory")
+                        .WithMany("Users")
+                        .HasForeignKey("AccountCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.Gender", "Gender")
+                        .WithMany("Users")
+                        .HasForeignKey("GenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.ProfessionalCategory", "ProfessionalCategory")
+                        .WithMany("Users")
+                        .HasForeignKey("ProfessionalCategoryId");
+
+                    b.Navigation("AccountCategory");
+
+                    b.Navigation("Gender");
+
+                    b.Navigation("ProfessionalCategory");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.AccountCategory", b =>
+                {
+                    b.Navigation("Users");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Chat", b =>
                 {
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Gender", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
@@ -564,6 +652,11 @@ namespace PicHub.Server.Migrations
                     b.Navigation("UsersLiked");
 
                     b.Navigation("UsersSaved");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.ProfessionalCategory", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>

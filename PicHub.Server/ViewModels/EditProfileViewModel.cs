@@ -17,6 +17,6 @@ namespace PicHub.Server.ViewModels
         [MaxLength(250, ErrorMessage = "Bio must be 250 characters maximum.")]
         public string? Bio { get; set; }
 
-        public int Gender { get; set; }
+        public int GenderId { get; set; }
     }
 }
