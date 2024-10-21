@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PicHub.Server.ViewModels
+namespace PicHub.Server.DTOs
 {
-    public class CreatePostViewModel
+    public class CreatePostDto
     {
         [MaxLength(250, ErrorMessage = "Caption must be 250 characters maximum.")]
         public string? Caption { get; set; }

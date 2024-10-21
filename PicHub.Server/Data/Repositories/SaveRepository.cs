@@ -9,7 +9,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
     {
         private readonly PicHubContext context;
 
-        public SaveRepository(PicHubContext context) : base(context)
+        public SaveRepository(PicHubContext context)
+            : base(context)
         {
             this.context = context;
         }
@@ -18,7 +19,6 @@ namespace CMSReactDotNet.Server.Data.Repositories
         {
             context.Saves.Update(save);
         }
-
 
         public async Task<IEnumerable<Save>> GetSavesByUserId(string userId)
         {

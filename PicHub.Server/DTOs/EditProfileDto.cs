@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using PicHub.Server.ValidationAttributes;
 
-namespace PicHub.Server.ViewModels
+namespace PicHub.Server.DTOs
 {
-    public class EditProfileViewModel
+    public class EditProfileDto
     {
         public IFormFile? ProfileImageFile { get; set; }
 

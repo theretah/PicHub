@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using PicHub.Server.ValidationAttributes;
 
-namespace PicHub.Server.ViewModels
+namespace PicHub.Server.DTOs
 {
-    public class LoginViewModel
+    public class LoginDto
     {
         [Required(ErrorMessage = "Username is required")]
         [UserNameRegexValidation]

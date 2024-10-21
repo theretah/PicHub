@@ -5,7 +5,8 @@ using PicHub.Server.Entities;
 
 namespace PicHub.Server.Data
 {
-    public class PicHubContext(DbContextOptions<PicHubContext> options) : IdentityDbContext(options)
+    public sealed class PicHubContext(DbContextOptions<PicHubContext> options)
+        : IdentityDbContext(options)
     {
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -9,14 +9,18 @@ namespace CMSReactDotNet.Server.Data.Repositories
     {
         private readonly PicHubContext context;
 
-        public PostRepository(PicHubContext context) : base(context)
+        public PostRepository(PicHubContext context)
+            : base(context)
         {
             this.context = context;
         }
 
         public async Task<IEnumerable<Post>> GetAllByAuthorIdAsync(string authorId)
         {
-            return await context.Posts.Where(p => p.AuthorId == authorId).OrderByDescending(p => p.CreateDate).ToListAsync();
+            return await context
+                .Posts.Where(p => p.AuthorId == authorId)
+                .OrderByDescending(p => p.CreateDate)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Post>> GetAllPostsDescendingAsync()

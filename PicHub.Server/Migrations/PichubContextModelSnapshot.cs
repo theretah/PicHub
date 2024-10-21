@@ -536,7 +536,7 @@ namespace PicHub.Server.Migrations
                     b.HasOne("PicHub.Server.Entities.AppUser", "Following")
                         .WithMany()
                         .HasForeignKey("FollowingId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Follower");

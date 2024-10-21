@@ -8,12 +8,11 @@ namespace CMSReactDotNet.Server.Data.Repositories
     {
         private readonly PicHubContext context;
 
-        public MessageRepository(PicHubContext context) : base(context)
+        public MessageRepository(PicHubContext context)
+            : base(context)
         {
             this.context = context;
         }
-
-
 
         public void Update(Message message)
         {

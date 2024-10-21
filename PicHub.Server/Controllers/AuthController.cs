@@ -5,12 +5,10 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using PicHub.Server.ViewModels;
+using PicHub.Server.Enums;
 
 namespace PicHub.Server.Controllers
 {
@@ -53,26 +51,23 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterDto model)
         {
             if (await userManager.FindByEmailAsync(model.Email) != null)
-            {
                 return BadRequest("User with this email address already exists.");
-            }
 
             if (await userManager.FindByNameAsync(model.UserName) != null)
-            {
                 return BadRequest("User with this username already exists.");
-            }
 
             var user = new AppUser(
                 userName: model.UserName,
                 fullName: model.FullName,
                 email: model.Email,
-                phoneNumber: string.Empty,
-                genderId: 0,
+                phoneNumber: null,
                 isPrivate: false,
-                accountCategoryId: 0
+                genderId: model.GenderId,
+                accountCategoryId: model.AccountCategoryId,
+                professionalCategoryId: model.ProfessionalCategoryId
             );
 
             var result = await userManager.CreateAsync(user, model.Password);
@@ -86,7 +81,7 @@ namespace PicHub.Server.Controllers
                 {
                     var jwtConfigSection = configuration.GetSection("JwtConfig");
                     var token = GenerateToken(user.Id);
-                    var response = new
+                    var response = new LoginDto
                     {
                         UserName = createdUser.UserName,
                         Password = model.Password,
@@ -102,7 +97,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginDto model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
             if (user != null)

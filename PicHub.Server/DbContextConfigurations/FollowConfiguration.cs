@@ -8,20 +8,19 @@ namespace PicHub.Server.DbContextConfigurations
     {
         public void Configure(EntityTypeBuilder<Follow> builder)
         {
-            builder
-             .HasKey(f => new { f.FollowerId, f.FollowingId });
+            builder.HasKey(f => new { f.FollowerId, f.FollowingId });
 
             builder
-            .HasOne(f => f.Follower)
+                .HasOne(f => f.Follower)
                 .WithMany(follower => follower.Follows)
                 .HasForeignKey(f => f.FollowerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
-            .HasOne(f => f.Following)
+                .HasOne(f => f.Following)
                 .WithMany()
                 .HasForeignKey(f => f.FollowingId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

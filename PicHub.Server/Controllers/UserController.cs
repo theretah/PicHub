@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using Pichub.Server.Utilities;
-using PicHub.Server.ViewModels;
 
 namespace PicHub.Server.Controllers
 {
@@ -40,7 +39,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateProfile([FromForm] EditProfileViewModel model)
+        public async Task<IActionResult> UpdateProfile([FromForm] EditProfileDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

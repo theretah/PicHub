@@ -10,26 +10,27 @@ namespace PicHub.Server.Entities
             string fullName,
             string email,
             string phoneNumber,
-            int genderId,
             bool isPrivate,
+            int genderId,
+            int? professionalCategoryId,
             int accountCategoryId
         )
             : base(userName)
         {
             FullName = fullName;
             Email = email;
-            GenderId = genderId;
-            IsPrivate = isPrivate;
-            RegistrationDate = DateTime.Now;
             PhoneNumber = phoneNumber;
+            IsPrivate = isPrivate;
+            GenderId = genderId;
             AccountCategoryId = accountCategoryId;
+            ProfessionalCategoryId = professionalCategoryId;
         }
 
         [MaxLength(50, ErrorMessage = "Full name cannot have more than 50 characters")]
         public string? FullName { get; set; }
 
         public byte[]? ProfileImageUrl { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTime RegistrationDate { get; set; } = DateTime.Now;
         public bool IsPrivate { get; set; }
 
         [MaxLength(250, ErrorMessage = "Bio cannot have more than 250 characters")]

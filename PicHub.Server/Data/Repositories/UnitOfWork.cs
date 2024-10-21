@@ -21,15 +21,10 @@ namespace CMSReactDotNet.Server.Data.Repositories
         }
 
         public IPostRepository Posts { get; private set; }
-
         public ISaveRepository Saves { get; private set; }
-
         public ILikeRepository Likes { get; private set; }
-
         public IFollowRepository Follows { get; private set; }
-
         public IChatRepository Chats { get; private set; }
-
         public IMessageRepository Messages { get; private set; }
 
         public async Task<int> CompleteAsync()

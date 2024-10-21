@@ -11,6 +11,9 @@ interface RegisterData {
   fullName: string | null;
   userName: string;
   password: string;
+  accountCategoryId: number;
+  professionalCategoryId: number | null;
+  genderId: number;
 }
 
 const Register = () => {
@@ -38,6 +41,10 @@ const Register = () => {
   });
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
+    console.log(data);
+    data.accountCategoryId = 1;
+    data.professionalCategoryId = null;
+    data.genderId = 1;
     await registerUser.mutate(data);
   };
 

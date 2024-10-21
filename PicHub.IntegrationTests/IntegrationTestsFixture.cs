@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PicHub.Server.Data;
 
@@ -27,8 +28,15 @@ namespace PicHub.IntegrationTests
                 {
                     options.UseSqlServer(ConnectionString);
                 });
+
+                var sp = services.BuildServiceProvider();
+                using (var scope = sp.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<PicHubContext>();
+                    dbContext.Database.EnsureCreated();
+                    Utilities.InitializeDatabase(dbContext);
+                }
             });
-            builder.UseEnvironment("IntegrationTest");
         }
     }
 }

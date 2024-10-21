@@ -3,8 +3,10 @@ export interface User {
   userName: string;
   fullName: string;
   email: string;
-  bio: string;
-  genderId: string;
-  profileImageUrl: string;
+  bio: string | null;
+  profileImageUrl: string | null;
   registrationDate: Date;
+  genderId: string;
+  professionalCategoryId: string | null;
+  accountCategoryId: string;
 }

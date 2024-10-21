@@ -4,7 +4,6 @@ using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -13,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using PicHub.Server.Data;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
+using PicHub.Server.Options;
 using PicHub.Server.Validation;
 
 public partial class Program
@@ -75,8 +75,16 @@ public partial class Program
         });
         builder.Services.AddSingleton(mappingConfig.CreateMapper());
 
-        builder.Services.AddDbContext<PicHubContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"))
+        builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
+        builder.Services.AddDbContext<PicHubContext>(
+            (optionsBuilder) =>
+            {
+                optionsBuilder.UseSqlServer(
+                    builder.Configuration.GetConnectionString("SqlServerConnection")
+                );
+
+                optionsBuilder.LogTo(Console.WriteLine);
+            }
         );
 
         builder
@@ -97,10 +105,13 @@ public partial class Program
             })
             .AddJwtBearer(options =>
             {
-                var jwtConfigSection = builder.Configuration.GetSection("JwtConfig");
-                var secret = jwtConfigSection["Secret"];
-                var issuer = jwtConfigSection["ValidIssuer"];
-                var audience = jwtConfigSection["ValidAudiences"];
+                var jwtConfigOptions = new JwtConfigurationOptions();
+                builder
+                    .Configuration.GetSection(JwtConfigurationOptions.Position)
+                    .Bind(jwtConfigOptions);
+                var secret = jwtConfigOptions.Secret;
+                var issuer = jwtConfigOptions.ValidIssuer;
+                var audience = jwtConfigOptions.ValidAudiences;
                 if (secret is null || issuer is null || audience is null)
                 {
                     throw new ApplicationException("Jwt config is not set in the configuration.");

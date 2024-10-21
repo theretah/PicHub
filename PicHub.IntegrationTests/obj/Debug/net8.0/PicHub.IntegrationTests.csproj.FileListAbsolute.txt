@@ -493,3 +493,4 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\re
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\PicHub.IntegrationTests.pdb
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\PicHub.IntegrationTests.genruntimeconfig.cache
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\ref\PicHub.IntegrationTests.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\bin\Debug\net8.0\FluentAssertions.dll

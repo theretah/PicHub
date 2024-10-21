@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using PicHub.Server.ValidationAttributes;
 
-namespace PicHub.Server.ViewModels
+namespace PicHub.Server.DTOs
 {
-    public class RegisterViewModel
+    public class RegisterDto
     {
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]
@@ -18,6 +18,10 @@ namespace PicHub.Server.ViewModels
         public required string Password { get; set; }
 
         [MaxLength(50)]
-        public string? FullName { get; set; }
+        public required string? FullName { get; set; }
+
+        public required int AccountCategoryId { get; set; }
+        public required int? ProfessionalCategoryId { get; set; }
+        public required int GenderId { get; set; }
     }
 }

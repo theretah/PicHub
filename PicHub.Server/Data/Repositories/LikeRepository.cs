@@ -9,14 +9,16 @@ namespace CMSReactDotNet.Server.Data.Repositories
     {
         private readonly PicHubContext context;
 
-        public LikeRepository(PicHubContext context) : base(context)
+        public LikeRepository(PicHubContext context)
+            : base(context)
         {
             this.context = context;
         }
 
         public async Task<IEnumerable<Like>> GetLikesByUserId(string userId)
         {
-            return await context.Likes.Where(l => l.UserId == userId).ToListAsync(); ;
+            return await context.Likes.Where(l => l.UserId == userId).ToListAsync();
+            ;
         }
 
         public void Update(Like like)

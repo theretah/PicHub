@@ -3,10 +3,9 @@ using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using Pichub.Server.Utilities;
-using PicHub.Server.ViewModels;
 
 namespace PicHub.Server.Controllers
 {
@@ -109,7 +108,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> Create(CreatePostViewModel model)
+        public async Task<IActionResult> Create(CreatePostDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

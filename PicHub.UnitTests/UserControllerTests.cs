@@ -37,35 +37,41 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_ShouldReturnAllUsers()
+        public void GetAllUsers_ReturnsAllUsers()
         {
             // Arrange
             var users = new List<AppUser>
             {
-                new AppUser
-                {
-                    UserName = "username1",
-                    FullName = "Full Name 1",
-                    Email = "user1@gmail.com",
-                    EmailConfirmed = true,
-                    RegistrationDate = DateTime.Now,
-                },
-                new AppUser
-                {
-                    UserName = "username2",
-                    FullName = "Full Name 2",
-                    Email = "user2@gmail.com",
-                    EmailConfirmed = true,
-                    RegistrationDate = DateTime.Now,
-                },
-                new AppUser
-                {
-                    UserName = "username3",
-                    FullName = "Full Name 3",
-                    Email = "user3@gmail.com",
-                    EmailConfirmed = true,
-                    RegistrationDate = DateTime.Now,
-                },
+                new AppUser(
+                    userName: "username1",
+                    fullName: "Full name 1",
+                    email: "user1@gmail.com",
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new AppUser(
+                    userName: "username2",
+                    fullName: "Full name 2",
+                    email: "user2@gmail.com",
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new AppUser(
+                    userName: "username3",
+                    fullName: "Full name 3",
+                    email: "user3@gmail.com",
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
             }.AsQueryable();
             userManagerMock.Setup(um => um.Users).Returns(() => users);
 
@@ -84,7 +90,7 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_UsersEmpty_ShouldReturnNoContentResult()
+        public void GetAllUsers_UsersEmpty_ReturnsNoContentResult()
         {
             // Arrange
             userManagerMock.Setup(um => um.Users).Returns(() => new List<AppUser>().AsQueryable());
