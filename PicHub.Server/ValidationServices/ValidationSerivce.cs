@@ -38,14 +38,19 @@ namespace PicHub.Server.Validation
                 );
 
             // Password to only contain characters (uppercase letters(A-Z), lowercase letters(a-z), special signs(!@#$%^&*), digits(0-9))
-            if (!Regex.IsMatch(password, "^[A-Za-z0-9!@#$%^&*]+$"))
+            if (!Regex.IsMatch(password, @"^[A-Za-z0-9!@#$%^&*(){}\[\];:'"",.+=\-`~?\/\\_|]+$"))
                 yield return new ValidationResult(
                     passwordRegexErrorMessagesOptions.ContainsIllegalCharacter,
                     [nameof(password)]
                 );
 
-            // Password cannot start with digits or special characters.
-            if (!Regex.IsMatch(password, "^(?![0-9!@#$%^&*])[A-Za-z0-9!@#$%^&*]*$"))
+            // Password can only be started with lowecase or uppercase English characters
+            if (
+                !Regex.IsMatch(
+                    password,
+                    @"^[A-Za-z][A-Za-z0-9!@#$%^&*(){}\[\];:'"",.+=\-`~?\/\\_|]*$"
+                )
+            )
                 yield return new ValidationResult(
                     passwordRegexErrorMessagesOptions.IllegalOrderOfCharacters,
                     [nameof(password)]
@@ -72,8 +77,8 @@ namespace PicHub.Server.Validation
                     [nameof(password)]
                 );
 
-            // Password must contain at least 1 special character(!@#$%^&*).
-            if (!Regex.IsMatch(password, "^(?=.*[!@#$%^&*]).*$"))
+            // Password must contain at least 1 special character such as: !@#$%^&*(){}[];:'",.+=-~?/\_|.
+            if (!Regex.IsMatch(password, @"^(?=.*[!@#$%^&*(){}\[\];:'"",.+=\-`~?\/\\_|]).+$"))
                 yield return new ValidationResult(
                     passwordRegexErrorMessagesOptions.LacksSpecialCharacter,
                     [nameof(password)]

@@ -1,17 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using PicHub.Server.Validation;
 
-namespace PicHub.UnitTests
+namespace PicHub.UnitTests.Validation
 {
     public class UserNameValidationTests
     {
-        private const string LengthError =
-            "Username is too long or too short. Must not be more than 20 or less than 8 characters.";
-        private const string ContainsIllegalCharacterError =
-            "Lowercase characters(a-z), digits(0-9), dot(.), and underscore(_) are the only characters allowed.";
-        private const string IllegalOrderOfCharactersError =
-            "Username cannot start with digits, dot or underscore. Also cannot end with  dot or underscore.";
-
         private readonly IConfiguration Configuration;
         private readonly IValidationService validationService;
 
@@ -19,14 +12,17 @@ namespace PicHub.UnitTests
         {
             var inMemorySettings = new Dictionary<string, string>
             {
-                { "RegexErrorMessages:UserName:LengthError", LengthError },
+                {
+                    "RegexErrorMessages:UserName:LengthError",
+                    ValidationFixture.UserName_LengthError
+                },
                 {
                     "RegexErrorMessages:UserName:ContainsIllegalCharacter",
-                    ContainsIllegalCharacterError
+                    ValidationFixture.UserName_ContainsIllegalCharacterError
                 },
                 {
                     "RegexErrorMessages:UserName:IllegalOrderOfCharacters",
-                    IllegalOrderOfCharactersError
+                    ValidationFixture.UserName_IllegalOrderOfCharactersError
                 },
             };
 
@@ -47,7 +43,7 @@ namespace PicHub.UnitTests
                 .First()
                 .ErrorMessage;
 
-            Assert.Equal(LengthError, validationErrorMessage);
+            Assert.Equal(ValidationFixture.UserName_LengthError, validationErrorMessage);
         }
 
         [Theory]
@@ -70,16 +66,22 @@ namespace PicHub.UnitTests
         [InlineData("+")]
         [InlineData("=")]
         [InlineData("/")]
+        [InlineData(" ")]
         public void ContainsIllegalCharacter_ReturnsContainsIllegalCharacterError(
-            string specialCharacter
+            string illegalCharacter
         )
         {
+            var userName = "user" + illegalCharacter + "name";
+
             var validationErrorMessage = validationService
-                .ValidateUserName("user" + specialCharacter + "name")
+                .ValidateUserName(userName)
                 .First()
                 .ErrorMessage;
 
-            Assert.Equal(ContainsIllegalCharacterError, validationErrorMessage);
+            Assert.Equal(
+                ValidationFixture.UserName_ContainsIllegalCharacterError,
+                validationErrorMessage
+            );
         }
 
         [Theory]
@@ -95,7 +97,10 @@ namespace PicHub.UnitTests
                 .First()
                 .ErrorMessage;
 
-            Assert.Equal(IllegalOrderOfCharactersError, validationErrorMessage);
+            Assert.Equal(
+                ValidationFixture.UserName_IllegalOrderOfCharactersError,
+                validationErrorMessage
+            );
         }
 
         [Theory]
