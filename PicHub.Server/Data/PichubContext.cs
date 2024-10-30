@@ -24,9 +24,14 @@ namespace PicHub.Server.Data
         public DbSet<Save> Saves => Set<Save>();
         public DbSet<Like> Likes => Set<Like>();
 
+        public DbSet<Block> Blocks => Set<Block>();
+        public DbSet<Seen> Seens => Set<Seen>();
         public DbSet<Follow> Follows => Set<Follow>();
 
-        public DbSet<Chat> Chats => Set<Chat>();
-        public DbSet<Message> Messages => Set<Message>();
+        public DbSet<ChatLine> ChatLines => Set<ChatLine>();
+        public DbSet<PrivateChat> PrivateChats => Set<PrivateChat>();
+        public DbSet<GroupChat> GroupChats => Set<GroupChat>();
+
+        public DbSet<GroupChatUser> GroupChatUsers => Set<GroupChatUser>();
     }
 }

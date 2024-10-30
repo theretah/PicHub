@@ -243,7 +243,22 @@ namespace PicHub.Server.Migrations
                     b.ToTable("AccountCategories");
                 });
 
-            modelBuilder.Entity("PicHub.Server.Entities.Chat", b =>
+            modelBuilder.Entity("PicHub.Server.Entities.Block", b =>
+                {
+                    b.Property<string>("BlockedId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("BlockerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("BlockedId", "BlockerId");
+
+                    b.HasIndex("BlockerId");
+
+                    b.ToTable("Blocks");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.ChatLine", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -251,8 +266,23 @@ namespace PicHub.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("RecieverId")
+                    b.Property<string>("Content")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("GroupChatId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("PrivateChatId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ReplyingToId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("SenderId")
@@ -261,11 +291,15 @@ namespace PicHub.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecieverId");
+                    b.HasIndex("GroupChatId");
+
+                    b.HasIndex("PrivateChatId");
+
+                    b.HasIndex("ReplyingToId");
 
                     b.HasIndex("SenderId");
 
-                    b.ToTable("Chats");
+                    b.ToTable("ChatLines");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Follow", b =>
@@ -300,6 +334,56 @@ namespace PicHub.Server.Migrations
                     b.ToTable("Genders");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.GroupChat", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsChannel")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDisabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GroupChats");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.GroupChatUser", b =>
+                {
+                    b.Property<string>("GroupChatId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("GroupChatId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GroupChatUsers");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
                 {
                     b.Property<int>("PostId")
@@ -316,35 +400,6 @@ namespace PicHub.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Likes");
-                });
-
-            modelBuilder.Entity("PicHub.Server.Entities.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AuthorId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ChatId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ChatId");
-
-                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
@@ -380,6 +435,31 @@ namespace PicHub.Server.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.PrivateChat", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("User1Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("User2Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("User1Id");
+
+                    b.HasIndex("User2Id");
+
+                    b.ToTable("PrivateChats");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.ProfessionalCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -410,6 +490,24 @@ namespace PicHub.Server.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Saves");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Seen", b =>
+                {
+                    b.Property<int>("ChatLineId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SeenerId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ChatLineId", "SeenerId");
+
+                    b.HasIndex("SeenerId");
+
+                    b.ToTable("Seens");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
@@ -506,21 +604,50 @@ namespace PicHub.Server.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PicHub.Server.Entities.Chat", b =>
+            modelBuilder.Entity("PicHub.Server.Entities.Block", b =>
                 {
-                    b.HasOne("PicHub.Server.Entities.AppUser", "Reciever")
-                        .WithMany()
-                        .HasForeignKey("RecieverId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("PicHub.Server.Entities.AppUser", "Blocked")
+                        .WithMany("BlockedUsers")
+                        .HasForeignKey("BlockedId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "Blocker")
+                        .WithMany()
+                        .HasForeignKey("BlockerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Blocked");
+
+                    b.Navigation("Blocker");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.ChatLine", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.GroupChat", "GroupChat")
+                        .WithMany("ChatLines")
+                        .HasForeignKey("GroupChatId");
+
+                    b.HasOne("PicHub.Server.Entities.PrivateChat", "PrivateChat")
+                        .WithMany("ChatLines")
+                        .HasForeignKey("PrivateChatId");
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "ReplyingTo")
+                        .WithMany()
+                        .HasForeignKey("ReplyingToId");
 
                     b.HasOne("PicHub.Server.Entities.AppUser", "Sender")
-                        .WithMany("Chats")
+                        .WithMany()
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Reciever");
+                    b.Navigation("GroupChat");
+
+                    b.Navigation("PrivateChat");
+
+                    b.Navigation("ReplyingTo");
 
                     b.Navigation("Sender");
                 });
@@ -528,13 +655,13 @@ namespace PicHub.Server.Migrations
             modelBuilder.Entity("PicHub.Server.Entities.Follow", b =>
                 {
                     b.HasOne("PicHub.Server.Entities.AppUser", "Follower")
-                        .WithMany("Follows")
+                        .WithMany("Followings")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PicHub.Server.Entities.AppUser", "Following")
-                        .WithMany()
+                        .WithMany("Followers")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -544,12 +671,31 @@ namespace PicHub.Server.Migrations
                     b.Navigation("Following");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.GroupChatUser", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.GroupChat", "GroupChat")
+                        .WithMany("Members")
+                        .HasForeignKey("GroupChatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "AppUser")
+                        .WithMany("GroupChats")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("GroupChat");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Like", b =>
                 {
                     b.HasOne("PicHub.Server.Entities.Post", "Post")
                         .WithMany("UsersLiked")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PicHub.Server.Entities.AppUser", "User")
@@ -563,17 +709,6 @@ namespace PicHub.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PicHub.Server.Entities.Message", b =>
-                {
-                    b.HasOne("PicHub.Server.Entities.Chat", "Chat")
-                        .WithMany("Messages")
-                        .HasForeignKey("ChatId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Chat");
-                });
-
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
                 {
                     b.HasOne("PicHub.Server.Entities.AppUser", "Author")
@@ -585,12 +720,31 @@ namespace PicHub.Server.Migrations
                     b.Navigation("Author");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.PrivateChat", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.AppUser", "User1")
+                        .WithMany("PrivateChats")
+                        .HasForeignKey("User1Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "User2")
+                        .WithMany()
+                        .HasForeignKey("User2Id")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User1");
+
+                    b.Navigation("User2");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
                 {
                     b.HasOne("PicHub.Server.Entities.Post", "Post")
                         .WithMany("UsersSaved")
                         .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PicHub.Server.Entities.AppUser", "User")
@@ -602,6 +756,25 @@ namespace PicHub.Server.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.Seen", b =>
+                {
+                    b.HasOne("PicHub.Server.Entities.ChatLine", "ChatLine")
+                        .WithMany("UsersSeens")
+                        .HasForeignKey("ChatLineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PicHub.Server.Entities.AppUser", "Seener")
+                        .WithMany("SeenChatLines")
+                        .HasForeignKey("SeenerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("ChatLine");
+
+                    b.Navigation("Seener");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
@@ -634,14 +807,21 @@ namespace PicHub.Server.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("PicHub.Server.Entities.Chat", b =>
+            modelBuilder.Entity("PicHub.Server.Entities.ChatLine", b =>
                 {
-                    b.Navigation("Messages");
+                    b.Navigation("UsersSeens");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Gender", b =>
                 {
                     b.Navigation("Users");
+                });
+
+            modelBuilder.Entity("PicHub.Server.Entities.GroupChat", b =>
+                {
+                    b.Navigation("ChatLines");
+
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Post", b =>
@@ -651,6 +831,11 @@ namespace PicHub.Server.Migrations
                     b.Navigation("UsersSaved");
                 });
 
+            modelBuilder.Entity("PicHub.Server.Entities.PrivateChat", b =>
+                {
+                    b.Navigation("ChatLines");
+                });
+
             modelBuilder.Entity("PicHub.Server.Entities.ProfessionalCategory", b =>
                 {
                     b.Navigation("Users");
@@ -658,15 +843,23 @@ namespace PicHub.Server.Migrations
 
             modelBuilder.Entity("PicHub.Server.Entities.AppUser", b =>
                 {
-                    b.Navigation("Chats");
+                    b.Navigation("BlockedUsers");
 
                     b.Navigation("CreatedPosts");
 
-                    b.Navigation("Follows");
+                    b.Navigation("Followers");
+
+                    b.Navigation("Followings");
+
+                    b.Navigation("GroupChats");
 
                     b.Navigation("LikedPosts");
 
+                    b.Navigation("PrivateChats");
+
                     b.Navigation("SavedPosts");
+
+                    b.Navigation("SeenChatLines");
                 });
 #pragma warning restore 612, 618
         }

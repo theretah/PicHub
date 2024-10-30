@@ -1,33 +1,35 @@
 import axios from "axios";
-import { Post } from "../../entities/Post";
+import { PostDTO } from "../../entities/PostDTO";
 
 const axiosInstance = axios.create({
   baseURL: `/api/post/`,
 });
 
 class PostService {
-  getById = (id: number) => {
-    return axiosInstance.get<Post>(`get?id=${id}`).then((res) => res.data);
-  };
-
-  getAll = () => {
-    return axiosInstance.get<Post[]>(`getAll`).then((res) => res.data);
-  };
-
-  getAllByAuthorUserName = (userName: string) => {
-    return axiosInstance
-      .get<Post[]>(`getAllByAuthorUserName?userName=${userName}`)
+  getById = async (id: number) => {
+    return await axiosInstance
+      .get<PostDTO>(`get?id=${id}`)
       .then((res) => res.data);
   };
 
-  getAllByAuthorId = (authorId: string) => {
-    return axiosInstance
-      .get<Post[]>(`getAllByAuthorId?authorId=${authorId}`)
+  getAll = async () => {
+    return await axiosInstance.get<PostDTO[]>(`getAll`).then((res) => res.data);
+  };
+
+  getAllByAuthorUserName = async (userName: string) => {
+    return await axiosInstance
+      .get<PostDTO[]>(`getAllByAuthorUserName?userName=${userName}`)
       .then((res) => res.data);
   };
 
-  like = (postId: number) => {
-    return axiosInstance
+  getAllByAuthorId = async (authorId: string) => {
+    return await axiosInstance
+      .get<PostDTO[]>(`getAllByAuthorId?authorId=${authorId}`)
+      .then((res) => res.data);
+  };
+
+  like = async (postId: number) => {
+    return await axiosInstance
       .post(
         `like?postId=${postId}`,
         {},
@@ -40,8 +42,8 @@ class PostService {
       .then((res) => res.data);
   };
 
-  disLike = (postId: number) => {
-    return axiosInstance
+  disLike = async (postId: number) => {
+    return await axiosInstance
       .delete(`disLike?postId=${postId}`, {
         headers: {
           Authorization: `bearer ${localStorage.getItem("token")}`,
@@ -53,22 +55,22 @@ class PostService {
       });
   };
 
-  isLiked = (postId: number) => {
-    return axiosInstance
+  isLiked = async (postId: number) => {
+    return await axiosInstance
       .get<boolean>(`isLiked?postId=${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => res.data);
   };
 
-  likesCount = (postId: number) => {
-    return axiosInstance
+  likesCount = async (postId: number) => {
+    return await axiosInstance
       .get(`getLikesCount?postId=${postId}`)
       .then((res) => res.data);
   };
 
-  save = (postId: number) => {
-    return axiosInstance
+  save = async (postId: number) => {
+    return await axiosInstance
       .post(
         `save?postId=${postId}`,
         {},
@@ -81,8 +83,8 @@ class PostService {
       .then((res) => res.data);
   };
 
-  unSave = (postId: number) => {
-    return axiosInstance
+  unSave = async (postId: number) => {
+    return await axiosInstance
       .delete(`unSave?postId=${postId}`, {
         headers: {
           Authorization: `bearer ${localStorage.getItem("token")}`,
@@ -94,21 +96,23 @@ class PostService {
       });
   };
 
-  isSaved = (postId: number) => {
-    return axiosInstance
+  isSaved = async (postId: number) => {
+    return await axiosInstance
       .get<boolean>(`isSaved?postId=${postId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => res.data);
   };
 
-  delete = (postId: number) => {
-    return axiosInstance.delete(`delete?id=${postId}`).then((res) => res.data);
+  delete = async (postId: number) => {
+    return await axiosInstance
+      .delete(`delete?id=${postId}`)
+      .then((res) => res.data);
   };
 
-  getSaveds = () => {
-    return axiosInstance
-      .get<Post[]>(`getSavedPosts`, {
+  getSavedPosts = async () => {
+    return await axiosInstance
+      .get<PostDTO[]>(`getSavedPosts`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })
       .then((res) => res.data);

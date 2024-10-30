@@ -6,7 +6,6 @@ using PicHub.Server.Controllers;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 using PicHub.Server.Enums;
-using PicHub.Server.Validation;
 
 namespace PicHub.UnitTests
 {
@@ -15,8 +14,11 @@ namespace PicHub.UnitTests
         private readonly AuthController controller;
         private readonly Mock<IUserStore<AppUser>> userStoreMock;
         private readonly Mock<UserManager<AppUser>> userManagerMock;
-        private readonly AppUser user =
-            new(
+        private readonly AppUser user;
+
+        public AuthControllerTests()
+        {
+            user = new(
                 userName: "username1",
                 fullName: "Full name 1",
                 email: "user1@gmail.com",
@@ -26,9 +28,6 @@ namespace PicHub.UnitTests
                 accountCategoryId: (int)AccountCategories.Personal,
                 professionalCategoryId: null
             );
-
-        public AuthControllerTests()
-        {
             userStoreMock = new Mock<IUserStore<AppUser>>();
             userManagerMock = new Mock<UserManager<AppUser>>(
                 userStoreMock.Object,
@@ -53,20 +52,20 @@ namespace PicHub.UnitTests
         public async Task Register_UserWithThisEmailExists_ReturnsBadRequest()
         {
             // Arrange
-            var email = "user1@gmail.com";
+            var email = "existingEmail@gmail.com";
             userManagerMock.Setup(u => u.FindByEmailAsync(email)).ReturnsAsync(() => user);
 
             // Act
-            var actionResult = await controller.Register(
+            var actionResult = await controller.RegisterAsync(
                 new RegisterDto
                 {
                     UserName = "",
-                    Email = "user1@gmail.com",
+                    Email = email,
                     Password = "",
                     AccountCategoryId = 1,
                     GenderId = 1,
                     ProfessionalCategoryId = null,
-                    FullName = ""
+                    FullName = "",
                 }
             );
 
@@ -80,20 +79,20 @@ namespace PicHub.UnitTests
         public async Task Register_UserWithThisUserNameExists_ReturnsBadRequest()
         {
             // Arrange
-            var userName = "username1";
+            var userName = "existingUserName";
             userManagerMock.Setup(u => u.FindByNameAsync(userName)).ReturnsAsync(() => user);
 
             // Act
-            var actionResult = await controller.Register(
+            var actionResult = await controller.RegisterAsync(
                 new RegisterDto
                 {
-                    UserName = "username1",
+                    UserName = userName,
                     Email = "",
                     Password = "",
                     AccountCategoryId = 1,
                     GenderId = 1,
                     ProfessionalCategoryId = null,
-                    FullName = ""
+                    FullName = "",
                 }
             );
 
@@ -102,7 +101,5 @@ namespace PicHub.UnitTests
             Assert.NotNull(result);
             Assert.Equal("User with this username already exists.", result.Value);
         }
-
-
     }
 }

@@ -1,13 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import postService from "../../services/postService";
+import PostService from "../../services/PostService";
 
-interface Props {
-  postId: number;
-}
-const useLikesCount = ({ postId }: Props) => {
+const useLikesCount = (postId: number) => {
   return useQuery({
     queryKey: ["likesCount", postId],
-    queryFn: () => postService.likesCount(postId),
+    queryFn: () => PostService.likesCount(postId),
   });
 };
 

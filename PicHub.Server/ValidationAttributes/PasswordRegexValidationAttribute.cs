@@ -5,9 +5,13 @@ namespace PicHub.Server.ValidationAttributes
 {
     public class PasswordRegexValidationAttribute : ValidationAttribute
     {
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(
+            object? value,
+            ValidationContext validationContext
+        )
         {
-            var validationService = (IValidationService)validationContext.GetService(typeof(IValidationService));
+            var validationService =
+                validationContext.GetService(typeof(IValidationService)) as IValidationService;
             var password = value as string;
 
             if (validationService != null && password != null)

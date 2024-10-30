@@ -49,9 +49,16 @@ namespace PicHub.Server.Entities
         public ProfessionalCategory? ProfessionalCategory { get; set; }
 
         public IEnumerable<Post>? CreatedPosts { get; set; }
+
         public IEnumerable<Save>? SavedPosts { get; set; }
         public IEnumerable<Like>? LikedPosts { get; set; }
-        public IEnumerable<Follow>? Follows { get; set; }
-        public IEnumerable<Chat>? Chats { get; set; }
+        public IEnumerable<Seen>? SeenChatLines { get; set; }
+
+        public IEnumerable<Follow>? Followers { get; set; }
+        public IEnumerable<Follow>? Followings { get; set; }
+        public IEnumerable<Block>? BlockedUsers { get; set; }
+
+        public IEnumerable<PrivateChat>? PrivateChats { get; set; }
+        public IEnumerable<GroupChatUser>? GroupChats { get; set; }
     }
 }

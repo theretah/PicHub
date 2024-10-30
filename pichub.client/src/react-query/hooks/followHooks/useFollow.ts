@@ -1,11 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import followService from "../../services/followService";
-interface Props {
-  followingId: string;
-}
+import FollowService from "../../services/FollowService";
+
 const useFollow = () => {
   return useMutation({
-    mutationFn: ({ followingId }: Props) => followService.follow(followingId),
+    mutationFn: async (followingId: string) =>
+      await FollowService.follow(followingId),
   });
 };
 

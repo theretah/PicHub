@@ -1,9 +1,9 @@
 import BottomBarButton from "../BottomBarButton";
 import ProfileImage from "../../ProfileImage/ProfileImage";
-import { User } from "../../../entities/User";
+import { UserDTO } from "../../../entities/UserDTO";
 interface Props {
   currentPage: string;
-  user: User | null;
+  user: UserDTO | null;
   dimension: number;
 }
 const ProfileButton = ({ currentPage, user, dimension }: Props) => {

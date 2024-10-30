@@ -1,43 +1,40 @@
 import axios from "axios";
-import { User } from "../../entities/User";
+import { UserDTO } from "../../entities/UserDTO";
 
 const axiosInstance = axios.create({
   baseURL: `/api/user/`,
 });
 
 class UserService {
-  postsCount = (userId: string) => {
-    return axiosInstance
+  postsCount = async (userId: string) => {
+    return await axiosInstance
       .get<number>(`getPostsCount?userId=${userId}`)
       .then((res) => res.data);
   };
 
-  search = (searchQuery: string) => {
-    return axiosInstance
-      .get<User[]>(`search?query=${searchQuery}`)
+  search = async (searchQuery: string) => {
+    return await axiosInstance
+      .get<UserDTO[]>(`search?query=${searchQuery}`)
       .then((res) => res.data);
   };
 
-  getByIdAsync = async (id: string) => {
+  getById = async (id: string) => {
     return await axiosInstance
-      .get<User>(`getById?id=${id}`)
+      .get<UserDTO>(`getById?id=${id}`)
       .then((res) => res.data);
   };
 
   getAll = async () => {
-    return await axiosInstance.get<User[]>(`getAll`).then((res) => res.data);
+    return await axiosInstance.get<UserDTO[]>(`getAll`).then((res) => res.data);
   };
 
-  getByUserNameAsync = async (userName: string) => {
+  getByUserName = async (userName: string) => {
     return await axiosInstance
-      .get<User>(`getByUserName?userName=${userName}`)
+      .get<UserDTO>(`getByUserName?userName=${userName}`)
       .then((res) => res.data);
   };
 
-  updateAsync = async (data: FormData) => {
-    for (const pair of data.entries()) {
-      console.log("userService.ts: " + pair[0], pair[1]);
-    }
+  update = async (data: FormData) => {
     return await axiosInstance
       .put(`update`, data, {
         headers: {
@@ -50,6 +47,34 @@ class UserService {
       .catch((e) => {
         console.error(e);
       });
+  };
+
+  block = async (userId: string) => {
+    return await axiosInstance
+      .post(
+        `block?userId=${userId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      )
+      .then((res) => res.data);
+  };
+
+  unBlock = async (userId: string) => {
+    return await axiosInstance
+      .delete(`unBlock?userId=${userId}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => res.data);
+  };
+
+  getBlockedUsers = async () => {
+    return await axiosInstance
+      .get("getBlockedUsers", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      })
+      .then((res) => res.data);
   };
 }
 

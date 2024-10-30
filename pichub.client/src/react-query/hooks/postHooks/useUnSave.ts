@@ -1,12 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
-import postService from "../../services/postService";
+import PostService from "../../services/PostService";
 
-interface Props {
-  postId: number;
-}
 const useUnSave = () => {
   return useMutation({
-    mutationFn: ({ postId }: Props) => postService.unSave(postId),
+    mutationFn: (postId: number) => PostService.unSave(postId),
   });
 };
 

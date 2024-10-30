@@ -3,8 +3,8 @@ import axios from "axios";
 const axiosInstance = axios.create({ baseURL: "/api/follow/" });
 
 class FollowService {
-  follow = (followingId: string) => {
-    return axiosInstance.post(
+  follow = async (followingId: string) => {
+    return await axiosInstance.post(
       `follow?followingId=${followingId}`,
       {},
       {
@@ -15,28 +15,28 @@ class FollowService {
     );
   };
 
-  unFollow = (followingId: string) => {
-    return axiosInstance.delete(`unFollow?followingId=${followingId}`, {
+  unFollow = async (followingId: string) => {
+    return await axiosInstance.delete(`unFollow?followingId=${followingId}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
   };
 
-  followersCount = (userId: string) => {
-    return axiosInstance
+  followersCount = async (userId: string) => {
+    return await axiosInstance
       .get<number>(`getFollowersCount?userId=${userId}`)
       .then((res) => res.data);
   };
 
-  followingsCount = (userId: string) => {
-    return axiosInstance
+  followingsCount = async (userId: string) => {
+    return await axiosInstance
       .get<number>(`getFollowingsCount?userId=${userId}`)
       .then((res) => res.data);
   };
 
-  isFollowing = (followingId: string) => {
-    return axiosInstance
+  isFollowing = async (followingId: string) => {
+    return await axiosInstance
       .get<boolean>(`getIsFollowing?followingId=${followingId}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       })

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
-import { User } from "../../entities/User";
+import { User } from "../../entities/UserDTO";
 
 interface Props {
   isOpen: boolean;

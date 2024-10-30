@@ -1,11 +1,11 @@
-import { Post } from "../../../entities/Post";
+import { PostDTO } from "../../../entities/PostDTO";
 import { useQuery } from "@tanstack/react-query";
-import postService from "../../services/postService";
+import PostService from "../../services/PostService";
 
 const usePosts = () => {
-  return useQuery<Post[], Error>({
+  return useQuery<PostDTO[], Error>({
     queryKey: ["allPosts"],
-    queryFn: () => postService.getAll(),
+    queryFn: () => PostService.getAll(),
   });
 };
 

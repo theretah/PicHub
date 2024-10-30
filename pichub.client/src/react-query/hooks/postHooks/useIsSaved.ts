@@ -1,14 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import postService from "../../services/postService";
+import PostService from "../../services/PostService";
 
-interface Props {
-  postId: number;
-  enabled: boolean;
-}
-const useIsSaved = ({ postId, enabled }: Props) => {
+const useIsSaved = (postId: number, enabled: boolean) => {
   return useQuery<boolean, Error>({
     queryKey: ["isSaved", postId],
-    queryFn: () => postService.isSaved(postId),
+    queryFn: () => PostService.isSaved(postId),
     enabled: enabled,
   });
 };

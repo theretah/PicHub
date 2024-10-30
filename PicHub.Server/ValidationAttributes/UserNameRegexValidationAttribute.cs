@@ -5,9 +5,13 @@ namespace PicHub.Server.ValidationAttributes
 {
     public class UserNameRegexValidationAttribute : ValidationAttribute
     {
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult? IsValid(
+            object? value,
+            ValidationContext validationContext
+        )
         {
-            var validationService = (IValidationService)validationContext.GetService(typeof(IValidationService));
+            var validationService =
+                validationContext.GetService(typeof(IValidationService)) as IValidationService;
             var userName = value as string;
 
             if (validationService != null && userName != null)

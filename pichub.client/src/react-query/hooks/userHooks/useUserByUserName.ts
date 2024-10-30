@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../../entities/User";
-import userService from "../../services/userService";
+import { UserDTO } from "../../../entities/UserDTO";
+import UserService from "../../services/UserService";
 
-interface Props {
-  userName: string;
-}
-const useUserByUserName = ({ userName }: Props) => {
-  return useQuery<User, Error>({
+const useUserByUserName = (userName: string) => {
+  return useQuery<UserDTO, Error>({
     queryKey: ["userByUserName", userName],
-    queryFn: () => userService.getByUserNameAsync(userName),
+    queryFn: async () => await UserService.getByUserName(userName),
   });
 };
 export default useUserByUserName;

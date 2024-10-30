@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "uaYwA9HpX+XuxK73Xjh3/ZgfHBMAQOEbbnHRB/iGLeQPNxulD9aM+didNMnHrtnkFqjw+iv5U0vzTdR3zXzAKQ==",
+  "dgSpecHash": "pRtHyB8GDzzMeR/XwKnJueRkpYQqsm+LMr7wNJzXxI13hT5uQAmx28ZnYwgmKEaT6pDY0WH/q20RQqadNihIdQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.UnitTests\\PicHub.UnitTests.csproj",
   "expectedPackageFiles": [
@@ -107,7 +107,7 @@
     "C:\\Users\\taher\\.nuget\\packages\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.14.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.04-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl\\4.3.0\\runtime.ubuntu.16.10-x64.runtime.native.system.security.cryptography.openssl.4.3.0.nupkg.sha512",
-    "C:\\Users\\taher\\.nuget\\packages\\sixlabors.imagesharp\\3.1.4\\sixlabors.imagesharp.3.1.4.nupkg.sha512",
+    "C:\\Users\\taher\\.nuget\\packages\\sixlabors.imagesharp\\3.1.5\\sixlabors.imagesharp.3.1.5.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\sqlitepclraw.bundle_e_sqlite3\\2.1.6\\sqlitepclraw.bundle_e_sqlite3.2.1.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\sqlitepclraw.core\\2.1.6\\sqlitepclraw.core.2.1.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\sqlitepclraw.lib.e_sqlite3\\2.1.6\\sqlitepclraw.lib.e_sqlite3.2.1.6.nupkg.sha512",

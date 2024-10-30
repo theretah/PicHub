@@ -1,12 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import userService from "../../services/userService";
-interface Props {
-  searchQuery: string;
-}
-const useSearch = ({ searchQuery }: Props) => {
+import UserService from "../../services/UserService";
+
+const useSearch = (searchQuery: string) => {
   return useQuery({
     queryKey: ["search", searchQuery],
-    queryFn: () => userService.search(searchQuery),
+    queryFn: async () => await UserService.search(searchQuery),
   });
 };
 

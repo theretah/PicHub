@@ -1,17 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PicHub.Server.Entities
 {
-    public class Chat
+    public abstract class Chat
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public required string Id { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
-        public required string SenderId { get; set; }
-        public AppUser? Sender { get; set; }
-
-        public required string RecieverId { get; set; }
-        public AppUser? Reciever { get; set; }
-
-        public IEnumerable<Message>? Messages { get; set; }
+        public abstract IEnumerable<ChatLine>? ChatLines { get; set; }
     }
 }

@@ -4,14 +4,14 @@ import MessagesLayout from "../../components/Messages/MessagesLayout";
 import DirectChatMessage from "../../components/Messages/DirectChatMessage";
 import useUserByUserName from "../../react-query/hooks/userHooks/useUserByUserName";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
-import useChatExists from "../../react-query/hooks/messageHooks/useChatExists";
+import useChatExists from "../../react-query/hooks/privateChatHooks/useChatExists";
 import useAuthStore from "../../auth/authStore";
-import useSendMessage from "../../react-query/hooks/messageHooks/useSendMessage";
-import useStartChat from "../../react-query/hooks/messageHooks/useStartChat";
+import useSendMessage from "../../react-query/hooks/privateChatHooks/useSendMessage";
+import useStartChat from "../../react-query/hooks/privateChatHooks/useStartChat";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import useGetChat from "../../react-query/hooks/messageHooks/useGetChat";
-import useGetMessages from "../../react-query/hooks/messageHooks/useGetMessages";
-import { MessageDto } from "../../entities/Message";
+import useGetChat from "../../react-query/hooks/privateChatHooks/useGetChat";
+import useGetMessages from "../../react-query/hooks/privateChatHooks/useGetMessages";
+import { ChatLineDTO } from "../../entities/ChatLineDTO";
 
 const Direct = () => {
   const { user, isAuthenticated } = useAuthStore();
@@ -44,7 +44,7 @@ const Direct = () => {
     chatId: chat?.id || 0,
   });
 
-  const [newMessages, setNewMessages] = useState<MessageDto[] | undefined>([]);
+  const [newMessages, setNewMessages] = useState<ChatLineDTO[] | undefined>([]);
 
   useEffect(() => {
     console.log(messages);
@@ -59,7 +59,7 @@ const Direct = () => {
   //   chatId: chat?.id || 0,
   // });
 
-  function addMessage(message: MessageDto) {
+  function addMessage(message: ChatLineDTO) {
     setNewMessages(
       (prevMessages) => prevMessages && [...prevMessages, message]
     );
@@ -71,7 +71,7 @@ const Direct = () => {
         if (startChat.isSuccess) {
           sendMessage.mutate({ chatId: chat?.id, content: messageText });
           if (sendMessage.isSuccess && user) {
-            let m: MessageDto = {
+            let m: ChatLineDTO = {
               authorId: user.id,
               chatId: 1,
               content: messageText,
@@ -85,7 +85,7 @@ const Direct = () => {
       } else {
         sendMessage.mutate({ chatId: chat?.id, content: messageText });
         if (sendMessage.isSuccess && user) {
-          let m: MessageDto = {
+          let m: ChatLineDTO = {
             authorId: user.id,
             chatId: 1,
             content: messageText,
@@ -186,7 +186,7 @@ const Direct = () => {
               //   messages.map((message) => (
               <DirectChatMessage
                 key={message.id}
-                message={message}
+                chatLine={message}
                 senderId={
                   message.authorId == user?.id ? user.id : targetUser.id
                 }

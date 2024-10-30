@@ -20,8 +20,6 @@ public partial class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
         builder
             .Services.AddControllers()
             .AddNewtonsoftJson(o =>
@@ -30,8 +28,6 @@ public partial class Program
                     .ReferenceLoopHandling
                     .Ignore
             );
-
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
@@ -63,19 +59,15 @@ public partial class Program
                 }
             );
         });
-
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
         builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
         builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
         builder.Services.AddSingleton<IValidationService, ValidationService>();
-
         var mappingConfig = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<AppUser, UserDto>();
         });
         builder.Services.AddSingleton(mappingConfig.CreateMapper());
-
-        builder.Services.ConfigureOptions<DatabaseOptionsSetup>();
         builder.Services.AddDbContext<PicHubContext>(
             (optionsBuilder) =>
             {
@@ -86,7 +78,6 @@ public partial class Program
                 optionsBuilder.LogTo(Console.WriteLine);
             }
         );
-
         builder
             .Services.AddIdentityCore<AppUser>(options =>
             {
@@ -95,7 +86,6 @@ public partial class Program
             })
             .AddEntityFrameworkStores<PicHubContext>()
             .AddDefaultTokenProviders();
-
         builder
             .Services.AddAuthentication(options =>
             {
@@ -105,13 +95,10 @@ public partial class Program
             })
             .AddJwtBearer(options =>
             {
-                var jwtConfigOptions = new JwtConfigurationOptions();
-                builder
-                    .Configuration.GetSection(JwtConfigurationOptions.Position)
-                    .Bind(jwtConfigOptions);
-                var secret = jwtConfigOptions.Secret;
-                var issuer = jwtConfigOptions.ValidIssuer;
-                var audience = jwtConfigOptions.ValidAudiences;
+                var jwtConfig = new JwtConfigurationOptions(builder.Configuration);
+                var secret = jwtConfig.Secret;
+                var issuer = jwtConfig.ValidIssuer;
+                var audience = jwtConfig.ValidAudiences;
                 if (secret is null || issuer is null || audience is null)
                 {
                     throw new ApplicationException("Jwt config is not set in the configuration.");
@@ -128,9 +115,7 @@ public partial class Program
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
                 };
             });
-
         builder.Services.AddAuthorization();
-
         builder
             .Services.AddApiVersioning(setupAction =>
             {
@@ -138,7 +123,6 @@ public partial class Program
                 setupAction.AssumeDefaultVersionWhenUnspecified = true;
             })
             .AddMvc();
-
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.

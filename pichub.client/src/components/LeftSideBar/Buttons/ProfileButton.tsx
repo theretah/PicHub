@@ -1,9 +1,9 @@
 import ProfileImage from "../../ProfileImage/ProfileImage";
-import { User } from "../../../entities/User";
+import { UserDTO } from "../../../entities/UserDTO";
 import LeftSideBarButton from "../LeftSideBarButton";
 interface Props {
   currentPage: string;
-  user: User | null;
+  user: UserDTO | null;
   showFullButton: boolean;
   dimension: number;
 }

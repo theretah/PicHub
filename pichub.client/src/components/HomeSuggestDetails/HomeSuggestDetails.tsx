@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../entities/User";
+import { UserDTO } from "../../entities/UserDTO";
 
 interface Props {
-  user: User;
+  user: UserDTO;
 }
 const HomeSuggestDetails = ({ user }: Props) => {
   return (

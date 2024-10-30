@@ -5,7 +5,7 @@ import useIsSaved from "../../react-query/hooks/postHooks/useIsSaved";
 import useIsFollowing from "../../react-query/hooks/followHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
-import { Post } from "../../entities/Post";
+import { Post } from "../../entities/PostDTO";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/authStore";
 import useLike from "../../react-query/hooks/postHooks/useLike";

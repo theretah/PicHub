@@ -23,37 +23,37 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllAsync()
         {
             try
             {
                 var posts = await unit.Posts.GetAllAsync();
-                if (posts.Count() == 0 || posts == null)
+                if (!posts.Any() || posts == null)
                     return NoContent();
                 return Ok(posts.OrderByDescending(p => p.CreateDate).ToList());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("A problem occured while getting posts.");
+                return BadRequest("A problem occured while getting posts. " + ex.Message);
             }
         }
 
         [HttpGet("getAllByAuthorId")]
-        public async Task<IActionResult> GetAllByAuthorId(string authorId)
+        public async Task<IActionResult> GetAllByAuthorIdAsync(string authorId)
         {
             try
             {
                 var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
                 return Ok(posts);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Could not find posts created by this user.");
+                return BadRequest("Could not find posts created by this user. " + ex.Message);
             }
         }
 
         [HttpGet("getAllByAuthorUserName")]
-        public async Task<IActionResult> GetAllByAuthorUserName(string userName)
+        public async Task<IActionResult> GetAllByAuthorUserNameAsync(string userName)
         {
             try
             {
@@ -64,14 +64,14 @@ namespace PicHub.Server.Controllers
                 }
                 return Ok(await unit.Posts.GetAllByAuthorIdAsync(user.Id));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Could not find posts created by this user.");
+                return BadRequest("Could not find posts created by this user. " + ex.Message);
             }
         }
 
         [HttpGet("get")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
@@ -85,14 +85,14 @@ namespace PicHub.Server.Controllers
                     return NotFound();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             try
             {
@@ -100,15 +100,15 @@ namespace PicHub.Server.Controllers
                 await unit.CompleteAsync();
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
         [Authorize]
         [HttpPost("create")]
-        public async Task<IActionResult> Create(CreatePostDto model)
+        public async Task<IActionResult> CreateAsync(CreatePostDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -132,14 +132,14 @@ namespace PicHub.Server.Controllers
                 await unit.CompleteAsync();
                 return Ok();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Failed to add the post.");
+                return BadRequest("Failed to add the post. " + ex.Message);
             }
         }
 
         [HttpDelete("unSave")]
-        public async Task<IActionResult> UnSave(int postId)
+        public async Task<IActionResult> UnSaveAsync(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -161,7 +161,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("save")]
-        public async Task<IActionResult> Save(int postId)
+        public async Task<IActionResult> SaveAsync(int postId)
         {
             try
             {
@@ -175,14 +175,14 @@ namespace PicHub.Server.Controllers
                 await unit.CompleteAsync();
                 return Created();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("A problem occured while saving the post.");
+                return BadRequest("A problem occured while saving the post. " + ex.Message);
             }
         }
 
         [HttpGet("isSaved")]
-        public async Task<IActionResult> IsSaved(int postId)
+        public async Task<IActionResult> IsSavedAsync(int postId)
         {
             try
             {
@@ -192,14 +192,14 @@ namespace PicHub.Server.Controllers
                 );
                 return Ok(isSaved);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Could not get data.");
+                return BadRequest("Could not get data. " + ex.Message);
             }
         }
 
         [HttpGet("isLiked")]
-        public async Task<IActionResult> IsLiked(int postId)
+        public async Task<IActionResult> IsLikedAsync(int postId)
         {
             try
             {
@@ -209,14 +209,14 @@ namespace PicHub.Server.Controllers
                 );
                 return Ok(isLiked);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Could not get data.");
+                return BadRequest("Could not get data. " + ex.Message);
             }
         }
 
         [HttpDelete("disLike")]
-        public async Task<IActionResult> DisLike(int postId)
+        public async Task<IActionResult> DisLikeAsync(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -237,7 +237,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("like")]
-        public async Task<IActionResult> Like(int postId)
+        public async Task<IActionResult> LikeAsync(int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -249,14 +249,14 @@ namespace PicHub.Server.Controllers
 
                 return Created();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("A problem occured while liking the post.");
+                return BadRequest("A problem occured while liking the post. " + ex.Message);
             }
         }
 
         [HttpGet("getSavedPosts")]
-        public async Task<ActionResult> GetSaveds()
+        public async Task<ActionResult> GetSavedsAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -285,14 +285,14 @@ namespace PicHub.Server.Controllers
 
                 return Ok(savedPosts);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpGet("getLikedPosts")]
-        public async IAsyncEnumerable<Post> GetLikeds(string userId)
+        public async IAsyncEnumerable<Post> GetLikedsAsync(string userId)
         {
             foreach (var like in await unit.Likes.GetLikesByUserId(userId))
             {
@@ -301,7 +301,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getLikesCount")]
-        public async Task<ActionResult<int>> GetLikesCount(int postId)
+        public async Task<ActionResult<int>> GetLikesCountAsync(int postId)
         {
             var post = await unit.Posts.GetByIdAsync(postId);
             var likes = await unit.Likes.GetAllByPredicateAsync(l => l.PostId == postId);

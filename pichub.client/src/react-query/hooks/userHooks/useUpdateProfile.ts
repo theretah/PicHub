@@ -1,11 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import userService from "../../services/userService";
+import UserService from "../../services/UserService";
 
 const useUpdateProfile = () => {
   return useMutation({
-    mutationFn: async (formData: FormData) => {
-      return await userService.updateAsync(formData);
-    },
+    mutationFn: async (formData: FormData) =>
+      await UserService.update(formData),
   });
 };
 

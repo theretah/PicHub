@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import DirectChatMessageButton from "./DirectChatMessageButton";
-import { MessageDto } from "../../entities/Message";
+import { ChatLineDTO } from "../../entities/ChatLineDTO";
 import useAuthStore from "../../auth/authStore";
-import useUnSendMessage from "../../react-query/hooks/messageHooks/useUnSendMessage";
+import useUnSendMessage from "../../react-query/hooks/privateChatHooks/useUnSendMessage";
 
 interface Props {
-  message: MessageDto;
+  chatLine: ChatLineDTO;
   senderId: string;
 }
 
-const DirectChatMessage = ({ message, senderId }: Props) => {
+const DirectChatMessage = ({ chatLine, senderId }: Props) => {
   const { user } = useAuthStore();
   const sentByUser = senderId == user?.id;
   const [buttonVisible, setButtonVisible] = useState(false);
@@ -44,7 +44,7 @@ const DirectChatMessage = ({ message, senderId }: Props) => {
   const unSendMessage = useUnSendMessage();
 
   function unSend() {
-    unSendMessage.mutate({ messageId: message.id });
+    unSendMessage.mutate({ chatLineId: chatLine.id });
     setIsDeleted(true);
   }
 
@@ -92,7 +92,7 @@ const DirectChatMessage = ({ message, senderId }: Props) => {
               }
             >
               <div className="card-body p-0">
-                <span style={{ fontSize: 17 }}>{message.content}</span>
+                <span style={{ fontSize: 17 }}>{chatLine.content}</span>
               </div>
             </div>
           </div>

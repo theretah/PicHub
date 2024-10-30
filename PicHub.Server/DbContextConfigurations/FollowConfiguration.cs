@@ -12,13 +12,13 @@ namespace PicHub.Server.DbContextConfigurations
 
             builder
                 .HasOne(f => f.Follower)
-                .WithMany(follower => follower.Follows)
+                .WithMany(follower => follower.Followings)
                 .HasForeignKey(f => f.FollowerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder
                 .HasOne(f => f.Following)
-                .WithMany()
+                .WithMany(following => following.Followers)
                 .HasForeignKey(f => f.FollowingId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

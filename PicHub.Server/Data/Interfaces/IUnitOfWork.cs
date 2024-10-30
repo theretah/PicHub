@@ -2,12 +2,20 @@
 {
     public interface IUnitOfWork : IDisposable
     {
-        IChatRepository Chats { get; }
-        IMessageRepository Messages { get; }
         IPostRepository Posts { get; }
         ISaveRepository Saves { get; }
         ILikeRepository Likes { get; }
+
         IFollowRepository Follows { get; }
+        IBlockRepository Blocks { get; }
+
+        IChatLineRepository ChatLines { get; }
+        IPrivateChatRepository PrivateChats { get; }
+        IGroupChatRepository GroupChats { get; }
+        IGroupChatUserRepository GroupChatUsers { get; }
+
+        ISeenRepository Seens { get; }
+
         Task<int> CompleteAsync();
     }
 }

@@ -5,7 +5,7 @@ import useAuthStore from "../../auth/authStore";
 import SelectProfilePictureModal from "../../components/SelectPictureModals/SelectProfilePictureModal";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SettingsLayout from "../../components/Settings/SettingsLayout";
-import { EditProfileFormProps } from "../../entities/EditProfileFormProps";
+import { EditProfileDTO } from "../../entities/EditProfileDTO";
 import useUpdateProfile from "../../react-query/hooks/userHooks/useUpdateProfile";
 
 const EditProfile = () => {
@@ -30,7 +30,7 @@ const EditProfile = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<EditProfileFormProps>();
+  } = useForm<EditProfileDTO>();
 
   const handleDeleteFileButton = () => {
     setCurrentPictureSrc("");
@@ -40,7 +40,7 @@ const EditProfile = () => {
   };
 
   const { mutateAsync, isSuccess } = useUpdateProfile();
-  const onSubmit: SubmitHandler<EditProfileFormProps> = async (data) => {
+  const onSubmit: SubmitHandler<EditProfileDTO> = async (data) => {
     if (avatar) {
       const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
       const blob = base64ToBlob(avatar, mimeType);

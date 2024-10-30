@@ -39,7 +39,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPut("update")]
-        public async Task<IActionResult> UpdateProfile([FromForm] EditProfileDto model)
+        public async Task<IActionResult> UpdateProfileAsync([FromForm] EditProfileDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -66,6 +66,7 @@ namespace PicHub.Server.Controllers
             {
                 user.ProfileImageUrl = null;
             }
+
             user.FullName = model.FullName;
             user.UserName = model.UserName;
             user.GenderId = model.GenderId;
@@ -82,14 +83,14 @@ namespace PicHub.Server.Controllers
                     return BadRequest(result.Errors);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return BadRequest("Profile could not be updated.");
+                return BadRequest(e.Message);
             }
         }
 
         [HttpGet("getPostsCount")]
-        public async Task<IActionResult> GetPostsCount(string userId)
+        public async Task<IActionResult> GetPostsCountAsync(string userId)
         {
             var user = await userManager.FindByIdAsync(userId);
             if (user == null)
@@ -99,23 +100,16 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(string? query, int pageNumber = 1, int pageSize = 5)
+        public async Task<IActionResult> SearchAsync(string? query)
         {
-            var (users, paginationMetadata) = await userRepository.Search(
-                query,
-                pageNumber,
-                pageSize
-            );
-
-            Response.Headers.Append("X-Pagination", JsonSerializer.Serialize(paginationMetadata));
-            return Ok(users);
+            return Ok(await userRepository.Search(query));
         }
 
         [HttpGet("getAll")]
-        public ActionResult<IEnumerable<UserDto>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsersAsync()
         {
-            var users = userManager.Users.ToList();
-            if (users == null || users.Count() == 0)
+            var users = await userManager.Users.ToListAsync();
+            if (users == null || users.Count == 0)
             {
                 return NoContent();
             }
@@ -130,7 +124,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getByEmail")]
-        public async Task<IActionResult> GetUserByEmail(string email)
+        public async Task<IActionResult> GetUserByEmailAsync(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
@@ -141,7 +135,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getById")]
-        public async Task<IActionResult> GetUserById(string id)
+        public async Task<IActionResult> GetUserByIdAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -152,7 +146,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("getByUserName")]
-        public async Task<IActionResult> GetUserByUsername(string userName)
+        public async Task<IActionResult> GetUserByUserNameAsync(string userName)
         {
             var user = await userManager.FindByNameAsync(userName);
             if (user == null)
@@ -163,7 +157,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("lastRegistered")]
-        public async Task<IActionResult> GetLastRegisteredUsers()
+        public async Task<IActionResult> GetLastRegisteredUsersAsync()
         {
             try
             {
@@ -172,14 +166,16 @@ namespace PicHub.Server.Controllers
                     .ToListAsync();
                 return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return BadRequest("Problem occured while fetching last registerd users.");
+                return BadRequest(
+                    "Problem occured while fetching last registerd users. " + ex.Message
+                );
             }
         }
 
         [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteUser(string id)
+        public async Task<IActionResult> DeleteUserAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -188,6 +184,53 @@ namespace PicHub.Server.Controllers
                 return Ok(new { success = true });
             }
             return BadRequest("A problem occured while removing the user.");
+        }
+
+        [HttpPost("block")]
+        public async Task<IActionResult> BlockUserAsync(string userId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            await unit.Blocks.AddAsync(
+                new Block { BlockerId = loggedInUserId, BlockedId = userId }
+            );
+            await unit.CompleteAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete("unBlock")]
+        public async Task<IActionResult> UnBlockUserAsync(string userId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var block = await unit.Blocks.GetByPredicateAsync(b =>
+                b.BlockedId == userId && b.BlockerId == loggedInUserId
+            );
+            unit.Blocks.Remove(block);
+            await unit.CompleteAsync();
+
+            return NoContent();
+        }
+
+        [HttpGet("getBlockedUsers")]
+        public async Task<IActionResult> GetBlockedUsersAsync()
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+            var blockedUsers = await unit.Blocks.GetAllByPredicateAsync(b =>
+                b.BlockerId == loggedInUserId
+            );
+
+            if (blockedUsers.Count() != 0)
+                return Ok(blockedUsers);
+            else
+                return NoContent();
         }
     }
 }

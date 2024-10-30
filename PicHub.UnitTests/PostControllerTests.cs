@@ -74,7 +74,7 @@ namespace PicHub.UnitTests
             unitOfWorkMock.Setup(unit => unit.Posts.GetAllAsync()).ReturnsAsync(() => posts);
 
             // Act
-            var actionResult = await controller.GetAll();
+            var actionResult = await controller.GetAllAsync();
 
             // Assert
             var result = actionResult as OkObjectResult;
@@ -90,7 +90,7 @@ namespace PicHub.UnitTests
             unitOfWorkMock.Setup(unit => unit.Posts.GetAllAsync()).ReturnsAsync(() => posts);
 
             // Act
-            var actionResult = await controller.GetAll();
+            var actionResult = await controller.GetAllAsync();
 
             // Assert
             var result = actionResult as NoContentResult;

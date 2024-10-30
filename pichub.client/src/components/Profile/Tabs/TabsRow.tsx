@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { User } from "../../../entities/User";
+import { User } from "../../../entities/UserDTO";
 import TabsButton from "./TabsButton";
 
 interface TabsRowProps {

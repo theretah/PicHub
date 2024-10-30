@@ -1,5 +1,5 @@
-import { Post } from "../../entities/Post";
-import { User } from "../../entities/User";
+import { Post } from "../../entities/PostDTO";
+import { User } from "../../entities/UserDTO";
 
 export interface PostDetailsProps {
   post: Post;

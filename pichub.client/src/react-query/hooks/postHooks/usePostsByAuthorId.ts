@@ -1,13 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "../../../entities/Post";
-import postService from "../../services/postService";
-interface Props {
-  authorId: string;
-}
-const usePostsByAuthorId = ({ authorId }: Props) => {
-  return useQuery<Post[], Error>({
+import { PostDTO } from "../../../entities/PostDTO";
+import PostService from "../../services/PostService";
+
+const usePostsByAuthorId = (authorId: string) => {
+  return useQuery<PostDTO[], Error>({
     queryKey: ["postsByAuthorId", authorId],
-    queryFn: () => postService.getAllByAuthorId(authorId),
+    queryFn: () => PostService.getAllByAuthorId(authorId),
   });
 };
 

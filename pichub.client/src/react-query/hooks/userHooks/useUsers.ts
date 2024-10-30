@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../../entities/User";
+import { UserDTO } from "../../../entities/UserDTO";
 import { AxiosError } from "axios";
-import userService from "../../services/userService";
+import UserService from "../../services/UserService";
 
 const useUsers = () => {
-  return useQuery<User[], AxiosError>({
+  return useQuery<UserDTO[], AxiosError>({
     queryKey: ["users"],
-    queryFn: () => userService.getAll(),
+    queryFn: async () => await UserService.getAll(),
   });
 };
 export default useUsers;

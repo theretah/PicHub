@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import usePosts from "../../react-query/hooks/postHooks/usePosts";
-import { Post } from "../../entities/Post";
+import { PostDTO } from "../../entities/PostDTO";
 import useSearch from "../../react-query/hooks/userHooks/useSearch";
 interface PostItemProps {
-  post: Post;
+  post: PostDTO;
 }
 function ExplorePostItem({ post }: PostItemProps) {
   return (

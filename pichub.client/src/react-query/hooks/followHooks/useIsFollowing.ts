@@ -1,15 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import followService from "../../services/followService";
+import FollowService from "../../services/FollowService";
 
-interface Props {
-  followingId: string;
-  enabled: boolean;
-}
-
-const useIsFollowing = ({ followingId, enabled }: Props) => {
+const useIsFollowing = (followingId: string, enabled: boolean) => {
   return useQuery<boolean, Error>({
     queryKey: ["isFollowing", followingId],
-    queryFn: () => followService.isFollowing(followingId),
+    queryFn: async () => await FollowService.isFollowing(followingId),
     enabled: enabled,
   });
 };

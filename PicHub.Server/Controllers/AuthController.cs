@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using PicHub.Server.Enums;
+using PicHub.Server.Options;
 
 namespace PicHub.Server.Controllers
 {
@@ -33,7 +33,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpGet("getLoggedInUser")]
-        public async Task<IActionResult> GetLoggedInUser()
+        public async Task<IActionResult> GetLoggedInUserAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -51,7 +51,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDto model)
+        public async Task<IActionResult> RegisterAsync(RegisterDto model)
         {
             if (await userManager.FindByEmailAsync(model.Email) != null)
                 return BadRequest("User with this email address already exists.");
@@ -61,9 +61,9 @@ namespace PicHub.Server.Controllers
 
             var user = new AppUser(
                 userName: model.UserName,
-                fullName: model.FullName,
+                fullName: model.FullName ?? string.Empty,
                 email: model.Email,
-                phoneNumber: null,
+                phoneNumber: string.Empty,
                 isPrivate: false,
                 genderId: model.GenderId,
                 accountCategoryId: model.AccountCategoryId,
@@ -83,10 +83,14 @@ namespace PicHub.Server.Controllers
                     var token = GenerateToken(user.Id);
                     var response = new LoginDto
                     {
-                        UserName = createdUser.UserName,
+                        UserName = model.UserName,
                         Password = model.Password,
                     };
-                    return CreatedAtAction(nameof(Login), new { id = createdUser.Id }, response);
+                    return CreatedAtAction(
+                        nameof(LoginAsync),
+                        new { id = createdUser.Id },
+                        response
+                    );
                 }
                 return BadRequest("Unable to login as registered user.");
             }
@@ -97,7 +101,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto model)
+        public async Task<IActionResult> LoginAsync(LoginDto model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
             if (user != null)
@@ -114,10 +118,10 @@ namespace PicHub.Server.Controllers
 
         private string GenerateToken(string userId)
         {
-            var jwtConfigSection = configuration.GetSection("JwtConfig");
-            var secret = jwtConfigSection["Secret"];
-            var issuer = jwtConfigSection["ValidIssuer"];
-            var audience = jwtConfigSection["ValidAudiences"];
+            var jwtConfig = new JwtConfigurationOptions(configuration);
+            var secret = jwtConfig.Secret;
+            var issuer = jwtConfig.ValidIssuer;
+            var audience = jwtConfig.ValidAudiences;
             if (secret is null || issuer is null || audience is null)
             {
                 throw new ApplicationException("Jwt config is not set in the configuration.");

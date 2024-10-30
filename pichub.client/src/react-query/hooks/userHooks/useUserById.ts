@@ -1,16 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../../../entities/User";
+import { UserDTO } from "../../../entities/UserDTO";
 import { AxiosError } from "axios";
-import userService from "../../services/userService";
+import UserService from "../../services/UserService";
 
-interface Props {
-  userId: string;
-}
-
-const useUserById = ({ userId }: Props) => {
-  return useQuery<User, AxiosError>({
+const useUserById = (userId: string) => {
+  return useQuery<UserDTO, AxiosError>({
     queryKey: ["userById", userId],
-    queryFn: () => userService.getByIdAsync(userId),
+    queryFn: async () => await UserService.getById(userId),
   });
 };
 export default useUserById;

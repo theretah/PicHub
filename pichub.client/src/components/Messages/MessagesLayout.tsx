@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import Layout from "../Layout/Layout";
 import { Link, Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import useGetChats from "../../react-query/hooks/messageHooks/useGetChats";
+import useGetChats from "../../react-query/hooks/privateChatHooks/useGetChats";
 import ChatRecord from "./ChatRecord";
 interface Props {
   children: ReactNode;

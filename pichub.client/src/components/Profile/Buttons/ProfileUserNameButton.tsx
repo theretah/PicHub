@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { User } from "../../../entities/User";
+import { User } from "../../../entities/UserDTO";
 
 interface ProfileUserNameButtonProps {
   user: User;

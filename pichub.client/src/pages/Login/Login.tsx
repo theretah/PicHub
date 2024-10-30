@@ -3,17 +3,17 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import useAuthStore from "../../auth/authStore";
-import { LoginData } from "../../entities/LoginData";
+import { LoginDTO } from "../../entities/LoginDTO";
 
 const Login = () => {
-  const { handleSubmit, register } = useForm<LoginData>();
+  const { handleSubmit, register } = useForm<LoginDTO>();
   const navigate = useNavigate();
   const { login } = useAuthStore();
 
   const [error, setError] = useState<string>();
 
   const loginUser = useMutation({
-    mutationFn: async (loginData: LoginData) => {
+    mutationFn: async (loginData: LoginDTO) => {
       const response = await login(loginData);
       if (response == "Login successful.") {
         navigate("/");
@@ -29,7 +29,7 @@ const Login = () => {
         <div style={{ width: 400 }}>
           <form
             className="border py-2 px-5 mb-3 mt-5 text-bg-white"
-            onSubmit={handleSubmit(async (data: LoginData) => {
+            onSubmit={handleSubmit(async (data: LoginDTO) => {
               await loginUser.mutate(data);
             })}
           >

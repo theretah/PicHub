@@ -4,19 +4,19 @@ using PicHub.Server.Entities;
 
 namespace CMSReactDotNet.Server.Data.Repositories
 {
-    public class MessageRepository : Repository<Message>, IMessageRepository
+    public class ChatLineRepository : Repository<ChatLine>, IChatLineRepository
     {
         private readonly PicHubContext context;
 
-        public MessageRepository(PicHubContext context)
+        public ChatLineRepository(PicHubContext context)
             : base(context)
         {
             this.context = context;
         }
 
-        public void Update(Message message)
+        public void Update(ChatLine chatLine)
         {
-            context.Messages.Update(message);
+            context.ChatLines.Update(chatLine);
         }
     }
 }

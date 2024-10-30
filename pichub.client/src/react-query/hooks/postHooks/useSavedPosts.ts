@@ -1,14 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { Post } from "../../../entities/Post";
-import postService from "../../services/postService";
+import { PostDTO } from "../../../entities/PostDTO";
+import PostService from "../../services/PostService";
 
-interface Props {
-  userId: string;
-}
-const useSavedPosts = ({ userId }: Props) => {
-  return useQuery<Post[], Error>({
+const useSavedPosts = (userId: string) => {
+  return useQuery<PostDTO[], Error>({
     queryKey: ["savedPosts", userId],
-    queryFn: () => postService.getSaveds(),
+    queryFn: () => PostService.getSavedPosts(),
   });
 };
 

@@ -5,7 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CMSReactDotNet.Server.Data.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T>
+        where T : class
     {
         protected readonly IdentityDbContext Context;
         private readonly DbSet<T> set;
@@ -37,7 +38,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
             return entity != null;
         }
 
-        public async Task<IEnumerable<T>> GetAllByPredicateAsync(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetAllByPredicateAsync(
+            Expression<Func<T, bool>> predicate
+        )
         {
             return await set.Where(predicate).ToListAsync();
         }
@@ -49,11 +52,17 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public async Task<T> GetByIdAsync(int id)
         {
-            var entity = await set.FindAsync(id);
-            if (entity == null)
-            {
-                throw new NullReferenceException("Entity with this identifier was not found.");
-            }
+            var entity =
+                await set.FindAsync(id)
+                ?? throw new NullReferenceException("Entity with this identifier was not found.");
+            return entity;
+        }
+
+        public async Task<T> GetByIdAsync(string id)
+        {
+            var entity =
+                await set.FindAsync(id)
+                ?? throw new NullReferenceException("Entity with this identifier was not found.");
             return entity;
         }
 
@@ -76,6 +85,17 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public void RemoveRange(IEnumerable<T> entities)
         {
             set.RemoveRange(entities);
+        }
+
+        public async Task<bool> ExistsAsync(string id)
+        {
+            return await set.FindAsync(id) != null;
+        }
+
+        public async Task RemoveByIdAsync(string id)
+        {
+            var entity = await GetByIdAsync(id);
+            set.Remove(entity);
         }
     }
 }

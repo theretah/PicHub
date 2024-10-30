@@ -1,38 +1,43 @@
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PicHub.Server.Data;
 using PicHub.Server.Entities;
-using PicHub.Server.Metadata;
 
 namespace CMSReactDotNet.Server.Data.Repositories
 {
     public class AppUserRepository : IAppUserRepository
     {
-        private readonly UserManager<AppUser> userManager;
+        private readonly PicHubContext context;
 
-        public AppUserRepository(UserManager<AppUser> userManager)
+        public AppUserRepository(PicHubContext context)
         {
-            this.userManager = userManager;
+            this.context = context;
         }
 
-        public async Task<(IEnumerable<AppUser>, PaginationMetadata)> Search(string? searchQuery, int pageNumber, int pageSize)
+        public async Task<IEnumerable<AppUser>> Search(string? searchQuery)
         {
-            var users = userManager.Users;
+            var users = await context.AppUsers.ToListAsync();
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                searchQuery = searchQuery.Trim();
-                users = users.Where(u => u.UserName.Contains(searchQuery.ToLower()));
+                try
+                {
+                    users = users
+                        .Where(u =>
+                            u.UserName.Contains(
+                                searchQuery.Trim(),
+                                StringComparison.OrdinalIgnoreCase
+                            )
+                        )
+                        .ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(ex.Message);
+                }
             }
 
-            var totalItemCount = await users.CountAsync();
-            var paginationMetaData = new PaginationMetadata(totalItemCount, pageSize, pageNumber);
-            var collectionToReturn = await users
-            .OrderBy(u => u.UserName)
-            .Skip(pageSize * (pageNumber - 1))
-            .Take(pageSize)
-            .ToListAsync();
-
-            return (collectionToReturn, paginationMetaData);
+            return users.OrderBy(u => u.UserName).ToList();
         }
     }
 }

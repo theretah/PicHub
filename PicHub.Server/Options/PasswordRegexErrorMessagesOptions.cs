@@ -1,8 +1,11 @@
 namespace PicHub.Server.Options
 {
-    public class PasswordRegexErrorMessagesOptions
+    public class PasswordRegexErrorMessagesOptions : ConfigOptionsBase
     {
-        public const string Position = "RegexErrorMessages:Password";
+        public PasswordRegexErrorMessagesOptions(IConfiguration configuration)
+            : base(configuration) { }
+
+        public override string SectionName { get; init; } = "RegexErrorMessages:Password";
 
         public string LengthError { get; set; } = string.Empty;
         public string ContainsIllegalCharacter { get; set; } = string.Empty;

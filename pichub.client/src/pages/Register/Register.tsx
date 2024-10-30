@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import { useState } from "react";
-import { LoginData } from "../../entities/LoginData";
+import { LoginDTO } from "../../entities/LoginDTO";
 
 interface RegisterData {
   email: string;
@@ -27,7 +27,7 @@ const Register = () => {
       axios
         .post("/api/auth/register", registerData)
         .then(() => {
-          const loginData: LoginData = {
+          const loginData: LoginDTO = {
             userName: registerData.userName,
             password: registerData.password,
           };

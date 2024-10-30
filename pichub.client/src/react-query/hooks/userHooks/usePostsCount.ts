@@ -1,13 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import userService from "../../services/userService";
-interface Props {
-  userId: string;
-  enabled: boolean;
-}
-const usePostsCount = ({ userId, enabled }: Props) => {
+import UserService from "../../services/UserService";
+
+const usePostsCount = (userId: string, enabled: boolean) => {
   return useQuery<number, Error>({
     queryKey: ["postsCount", userId],
-    queryFn: () => userService.postsCount(userId),
+    queryFn: async () => await UserService.postsCount(userId),
     enabled: enabled,
   });
 };

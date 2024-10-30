@@ -1,12 +1,12 @@
 import { Navigate, useNavigate } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
-import { User } from "../../entities/User";
+import { UserDTO } from "../../entities/UserDTO";
 import XIcon from "../../icons/XIcon";
 import { useState } from "react";
 import "./SelectRecord.css";
 import useFollowersCount from "../../react-query/hooks/followHooks/useFollowersCount";
 interface Props {
-  user: User;
+  user: UserDTO;
 }
 const SearchRecord = ({ user }: Props) => {
   const navigate = useNavigate();

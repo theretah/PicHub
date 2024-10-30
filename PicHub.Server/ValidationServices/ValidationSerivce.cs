@@ -7,11 +7,7 @@ namespace PicHub.Server.Validation
     public class ValidationService : IValidationService
     {
         private readonly IConfiguration Configuration;
-        public PasswordRegexErrorMessagesOptions? passwordRegexErrorMessagesOptions
-        {
-            get;
-            private set;
-        }
+        public PasswordRegexErrorMessagesOptions? passwordErrorsConfig { get; private set; }
         public UserNameRegexErrorMessagesOptions? userNameRegexErrorMessagesOptions
         {
             get;
@@ -25,22 +21,19 @@ namespace PicHub.Server.Validation
 
         public IEnumerable<ValidationResult> ValidatePassword(string password)
         {
-            passwordRegexErrorMessagesOptions = new PasswordRegexErrorMessagesOptions();
-            Configuration
-                .GetSection(PasswordRegexErrorMessagesOptions.Position)
-                .Bind(passwordRegexErrorMessagesOptions);
+            passwordErrorsConfig = new PasswordRegexErrorMessagesOptions(Configuration);
 
             // Password must be at least 8 characters.
             if (!Regex.IsMatch(password, "^.{8,}$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.LengthError,
+                    passwordErrorsConfig.LengthError,
                     [nameof(password)]
                 );
 
             // Password to only contain characters (uppercase letters(A-Z), lowercase letters(a-z), special signs(!@#$%^&*), digits(0-9))
             if (!Regex.IsMatch(password, @"^[A-Za-z0-9!@#$%^&*(){}\[\];:'"",.+=\-`~?\/\\_|]+$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.ContainsIllegalCharacter,
+                    passwordErrorsConfig.ContainsIllegalCharacter,
                     [nameof(password)]
                 );
 
@@ -52,45 +45,44 @@ namespace PicHub.Server.Validation
                 )
             )
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.IllegalOrderOfCharacters,
+                    passwordErrorsConfig.IllegalOrderOfCharacters,
                     [nameof(password)]
                 );
 
             // Password must contain at least 1 uppercase(A-Z) character.
             if (!Regex.IsMatch(password, "^(?=.*[A-Z]).*$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.LacksUppercase,
+                    passwordErrorsConfig.LacksUppercase,
                     [nameof(password)]
                 );
 
             // Password must contain at least 1 lowercase(a-z) character.
             if (!Regex.IsMatch(password, "^(?=.*[a-z]).*$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.LacksLowercase,
+                    passwordErrorsConfig.LacksLowercase,
                     [nameof(password)]
                 );
 
             // Password must contain at least 1 digit(0-9).
             if (!Regex.IsMatch(password, "^(?=.*[0-9]).*$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.LacksDigit,
+                    passwordErrorsConfig.LacksDigit,
                     [nameof(password)]
                 );
 
             // Password must contain at least 1 special character such as: !@#$%^&*(){}[];:'",.+=-~?/\_|.
             if (!Regex.IsMatch(password, @"^(?=.*[!@#$%^&*(){}\[\];:'"",.+=\-`~?\/\\_|]).+$"))
                 yield return new ValidationResult(
-                    passwordRegexErrorMessagesOptions.LacksSpecialCharacter,
+                    passwordErrorsConfig.LacksSpecialCharacter,
                     [nameof(password)]
                 );
         }
 
         public IEnumerable<ValidationResult> ValidateUserName(string userName)
         {
-            userNameRegexErrorMessagesOptions = new UserNameRegexErrorMessagesOptions();
-            Configuration
-                .GetSection(UserNameRegexErrorMessagesOptions.Position)
-                .Bind(userNameRegexErrorMessagesOptions);
+            userNameRegexErrorMessagesOptions = new UserNameRegexErrorMessagesOptions(
+                Configuration
+            );
 
             // Username to be between 8 and 20 characters
             if (!Regex.IsMatch(userName, "^.{8,20}$"))

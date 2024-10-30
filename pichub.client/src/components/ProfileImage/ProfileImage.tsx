@@ -1,4 +1,4 @@
-import { User } from "../../entities/User";
+import { User } from "../../entities/UserDTO";
 interface Props {
   user: User | null | undefined;
   widthHeight: number;

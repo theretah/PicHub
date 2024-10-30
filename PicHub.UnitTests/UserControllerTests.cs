@@ -37,12 +37,12 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_ReturnsAllUsers()
+        public async void GetAllUsers_ReturnsAllUsers()
         {
             // Arrange
             var users = new List<AppUser>
             {
-                new AppUser(
+                new(
                     userName: "username1",
                     fullName: "Full name 1",
                     email: "user1@gmail.com",
@@ -52,7 +52,7 @@ namespace PicHub.UnitTests
                     accountCategoryId: 0,
                     professionalCategoryId: 0
                 ),
-                new AppUser(
+                new(
                     userName: "username2",
                     fullName: "Full name 2",
                     email: "user2@gmail.com",
@@ -62,7 +62,7 @@ namespace PicHub.UnitTests
                     accountCategoryId: 0,
                     professionalCategoryId: 0
                 ),
-                new AppUser(
+                new(
                     userName: "username3",
                     fullName: "Full name 3",
                     email: "user3@gmail.com",
@@ -76,10 +76,10 @@ namespace PicHub.UnitTests
             userManagerMock.Setup(um => um.Users).Returns(() => users);
 
             // Act
-            var actionResult = controller.GetAllUsers();
+            var actionResult = await controller.GetAllUsersAsync();
 
             // Assert
-            var result = actionResult.Result as OkObjectResult;
+            var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
 
             var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDto>>(result.Value);
@@ -90,16 +90,16 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_UsersEmpty_ReturnsNoContentResult()
+        public async Task GetAllUsers_UsersEmpty_ReturnsNoContentResult()
         {
             // Arrange
             userManagerMock.Setup(um => um.Users).Returns(() => new List<AppUser>().AsQueryable());
 
             // Act
-            var actionResult = controller.GetAllUsers();
+            var actionResult = await controller.GetAllUsersAsync();
 
             // Assert
-            var result = actionResult.Result as NoContentResult;
+            var result = actionResult as NoContentResult;
             Assert.NotNull(result);
         }
     }

@@ -12,20 +12,34 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public UnitOfWork(PicHubContext context)
         {
             this.context = context;
+
             Posts = new PostRepository(context);
             Saves = new SaveRepository(context);
             Likes = new LikeRepository(context);
+
             Follows = new FollowRepository(context);
-            Chats = new ChatRepository(context);
-            Messages = new MessageRepository(context);
+            Blocks = new BlockRepository(context);
+
+            PrivateChats = new PrivateChatRepository(context);
+            GroupChats = new GroupChatRepository(context);
+            ChatLines = new ChatLineRepository(context);
+            Seens = new SeenRepository(context);
+            GroupChatUsers = new GroupChatUserRepository(context);
         }
 
         public IPostRepository Posts { get; private set; }
         public ISaveRepository Saves { get; private set; }
         public ILikeRepository Likes { get; private set; }
+
         public IFollowRepository Follows { get; private set; }
-        public IChatRepository Chats { get; private set; }
-        public IMessageRepository Messages { get; private set; }
+        public IBlockRepository Blocks { get; private set; }
+
+        public IPrivateChatRepository PrivateChats { get; private set; }
+        public IGroupChatRepository GroupChats { get; private set; }
+        public IChatLineRepository ChatLines { get; private set; }
+        public ISeenRepository Seens { get; private set; }
+
+        public IGroupChatUserRepository GroupChatUsers { get; private set; }
 
         public async Task<int> CompleteAsync()
         {
