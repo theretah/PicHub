@@ -78,7 +78,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public async Task RemoveByIdAsync(int id)
         {
-            var entity = await GetByIdAsync(id);
+            var entity =
+                await set.FindAsync(id)
+                ?? throw new NullReferenceException("Entity with this identifier was not found.");
             set.Remove(entity);
         }
 
@@ -94,7 +96,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public async Task RemoveByIdAsync(string id)
         {
-            var entity = await GetByIdAsync(id);
+            var entity =
+                await set.FindAsync(id)
+                ?? throw new NullReferenceException("Entity with this identifier was not found.");
             set.Remove(entity);
         }
     }

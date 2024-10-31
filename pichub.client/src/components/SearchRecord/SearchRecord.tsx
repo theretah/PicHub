@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import { UserDTO } from "../../entities/UserDTO";
 import XIcon from "../../icons/XIcon";
@@ -10,10 +10,7 @@ interface Props {
 }
 const SearchRecord = ({ user }: Props) => {
   const navigate = useNavigate();
-  const { data: followersCount } = useFollowersCount({
-    userId: user.id,
-    enabled: user != null,
-  });
+  const { data: followersCount } = useFollowersCount(user.id, user != null);
   function onClickItem() {
     navigate(`/${user.userName}`);
     window.location.reload();

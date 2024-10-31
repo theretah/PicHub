@@ -5,11 +5,11 @@ import {
   MDBModalBody,
 } from "mdb-react-ui-kit";
 import { Link, Navigate } from "react-router-dom";
-import { Post } from "../../entities/PostDTO";
+import { PostDTO } from "../../entities/PostDTO";
 import useAuthStore from "../../auth/authStore";
 import useDeletePost from "../../react-query/hooks/postHooks/useDeletePost";
 interface PostModalProps {
-  post: Post;
+  post: PostDTO;
   modalOpen: boolean;
   toggleOpen: () => void;
 }
@@ -20,7 +20,7 @@ export function PostModal({ post, modalOpen, toggleOpen }: PostModalProps) {
 
   const deletePostMutation = useDeletePost();
   function deletePost() {
-    deletePostMutation.mutate({ postId: post.id });
+    deletePostMutation.mutate(post.id);
   }
 
   if (deletePostMutation.isSuccess) {

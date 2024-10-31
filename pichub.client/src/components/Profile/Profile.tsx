@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import ProfileImage from "../ProfileImage/ProfileImage";
 import Layout from "../Layout/Layout";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import useUserByUserName from "../../react-query/hooks/userHooks/useUserByUserName";
 import usePostsCount from "../../react-query/hooks/userHooks/usePostsCount";
@@ -28,35 +28,27 @@ interface Props {
 const Profile = ({ userName, children, activeTab }: Props) => {
   const { user, isAuthenticated } = useAuthStore();
 
-  const { data: pageUser, isSuccess } = useUserByUserName({
-    userName: userName,
-  });
+  const { data: pageUser, isSuccess } = useUserByUserName(userName);
 
   const userIsPageOwner = userName == user?.userName;
 
-  const { data: postsCount } = usePostsCount({
-    userId: pageUser?.id || "",
-    enabled: isSuccess,
-  });
+  const { data: postsCount } = usePostsCount(pageUser?.id || "", isSuccess);
 
-  const { data: isFollowing } = useIsFollowing({
-    followingId: pageUser?.id || "",
-    enabled: isSuccess,
-  });
+  const { data: isFollowing } = useIsFollowing(pageUser?.id || "", isSuccess);
   const [isFollowingState, setIsFollowingState] = useState<boolean>(
     isFollowing || false
   );
 
-  const { data: followersCount } = useFollowersCount({
-    userId: pageUser?.id || "",
-    enabled: isSuccess,
-  });
+  const { data: followersCount } = useFollowersCount(
+    pageUser?.id || "",
+    isSuccess
+  );
   const [followersCountState, setFollowersCountState] = useState<number>(0);
 
-  const { data: followingsCount } = useFollowingsCount({
-    userId: pageUser?.id || "",
-    enabled: isSuccess,
-  });
+  const { data: followingsCount } = useFollowingsCount(
+    pageUser?.id || "",
+    isSuccess
+  );
   const [followingsCountState, setFollowingsCountState] = useState<number>(0);
 
   useEffect(() => {
@@ -73,7 +65,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const follow = useFollow();
   async function followUser() {
     if (pageUser && followersCount != undefined) {
-      follow.mutateAsync({ followingId: pageUser.id });
+      follow.mutateAsync(pageUser.id);
       setIsFollowingState(true);
       setFollowersCountState(followersCountState + 1);
     }
@@ -82,7 +74,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const unFollow = useUnfollow();
   async function unFollowUser() {
     if (pageUser && followersCount != undefined) {
-      unFollow.mutateAsync({ followingId: pageUser.id });
+      unFollow.mutateAsync(pageUser.id);
       setIsFollowingState(false);
       setFollowersCountState(followersCountState - 1);
     }

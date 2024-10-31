@@ -41,6 +41,11 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public IGroupChatUserRepository GroupChatUsers { get; private set; }
 
+        public int Complete()
+        {
+            return context.SaveChanges();
+        }
+
         public async Task<int> CompleteAsync()
         {
             return await context.SaveChangesAsync();

@@ -9,7 +9,7 @@ interface Props {
   setActive: () => void;
 }
 const ChatRecord = ({ isMedium, userId, isActive, setActive }: Props) => {
-  const { data: targetUser } = useUserById({ userId: userId });
+  const { data: targetUser } = useUserById(userId);
 
   return (
     <Link

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import SearchButton from "./ActionButtons/SearchButton";
-import LeftSideBarButton from "./LeftSideBarButton";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import ProfileImage from "../ProfileImage/ProfileImage";

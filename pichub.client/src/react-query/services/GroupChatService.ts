@@ -30,7 +30,7 @@ class GroupChatService {
   send = async (
     groupChatId: string,
     content: string,
-    replyingToId: string | null
+    replyingToId: number | null
   ) => {
     return await axiosInstance
       .post(

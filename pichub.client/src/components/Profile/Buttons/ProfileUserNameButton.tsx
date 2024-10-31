@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { User } from "../../../entities/UserDTO";
+import { UserDTO } from "../../../entities/UserDTO";
 
 interface ProfileUserNameButtonProps {
-  user: User;
+  user: UserDTO;
 }
 const ProfileUserNameButton = ({ user }: ProfileUserNameButtonProps) => {
   return (

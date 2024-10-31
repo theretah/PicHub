@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { User } from "../../../entities/UserDTO";
+import { UserDTO } from "../../../entities/UserDTO";
 import TabsButton from "./TabsButton";
 
 interface TabsRowProps {
   activeTab: string;
   fontSize: number;
-  pageUser: User | undefined;
+  pageUser: UserDTO | undefined;
   userIsPageOwner: boolean;
   windowWidth: number;
 }

@@ -1,17 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { PrivateChatDTO } from "../../../entities/PrivateChatDTO";
 import PrivateChatService from "../../services/PrivateChatService";
+
 interface Props {
-  recieverId: string;
+  user1Id: string;
+  user2Id: string;
   enabled: boolean;
-  senderId: string;
 }
-const useGetChat = ({ recieverId, senderId, enabled }: Props) => {
+
+const useGetPrivateChat = ({ user1Id, user2Id, enabled }: Props) => {
   return useQuery<PrivateChatDTO>({
-    queryKey: ["getChat", recieverId, senderId],
-    queryFn: async () => await PrivateChatService.getChat(recieverId, senderId),
+    queryKey: ["privateChat", user1Id, user2Id],
+    queryFn: async () => await PrivateChatService.get(user1Id, user2Id),
     enabled: enabled,
   });
 };
 
-export default useGetChat;
+export default useGetPrivateChat;

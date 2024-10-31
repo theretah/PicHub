@@ -5,7 +5,7 @@ import UserService from "../../services/UserService";
 
 const useUserById = (userId: string) => {
   return useQuery<UserDTO, AxiosError>({
-    queryKey: ["userById", userId],
+    queryKey: ["user", userId],
     queryFn: async () => await UserService.getById(userId),
   });
 };

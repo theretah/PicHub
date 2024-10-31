@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { PrivateChatDTO } from "../../../entities/PrivateChatDTO";
 import PrivateChatService from "../../services/PrivateChatService";
 
-const useGetChats = () => {
+const useGetPrivateChats = () => {
   return useQuery<PrivateChatDTO[]>({
-    queryKey: ["getChats"],
-    queryFn: async () => PrivateChatService.getChats(),
+    queryKey: ["privateChats"],
+    queryFn: async () => await PrivateChatService.getAll(),
   });
 };
 
-export default useGetChats;
+export default useGetPrivateChats;

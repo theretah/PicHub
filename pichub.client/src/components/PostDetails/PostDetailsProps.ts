@@ -1,10 +1,10 @@
-import { Post } from "../../entities/PostDTO";
-import { User } from "../../entities/UserDTO";
+import { PostDTO } from "../../entities/PostDTO";
+import { UserDTO } from "../../entities/UserDTO";
 
 export interface PostDetailsProps {
-  post: Post;
+  post: PostDTO;
 
-  author: User;
+  author: UserDTO;
   isFollowing: boolean;
 
   isSaved: boolean;

@@ -4,7 +4,7 @@ import PostService from "../../services/PostService";
 
 const usePostById = (id: number) => {
   return useQuery<PostDTO, Error>({
-    queryKey: ["postById", id],
+    queryKey: ["post", id],
     queryFn: () => PostService.getById(id),
   });
 };

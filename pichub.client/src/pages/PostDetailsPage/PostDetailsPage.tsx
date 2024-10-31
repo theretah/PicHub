@@ -9,9 +9,7 @@ import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator
 const PostDetailsPage = () => {
   const { id } = useParams();
   const { isAuthenticated } = useAuthStore();
-  const { data, error, isLoading } = usePostById({
-    id: parseInt(id ? id : ""),
-  });
+  const { data, error, isLoading } = usePostById(parseInt(id ? id : ""));
 
   if (isLoading)
     return (

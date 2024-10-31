@@ -2,17 +2,17 @@ import { ReactNode, useEffect, useState } from "react";
 import Layout from "../Layout/Layout";
 import { Link, Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import useGetChats from "../../react-query/hooks/privateChatHooks/useGetChats";
 import ChatRecord from "./ChatRecord";
+import useGetPrivateChats from "../../react-query/hooks/privateChatHooks/useGetPrivateChats";
 interface Props {
   children: ReactNode;
 }
 const MessagesLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useAuthStore();
 
-  const { data: chats } = useGetChats();
+  const { data: chats } = useGetPrivateChats();
 
-  const [activeChat, setActiveChat] = useState<number>();
+  const [activeChat, setActiveChat] = useState<string>();
 
   const md = 768;
   const xl = 1200;
@@ -130,9 +130,7 @@ const MessagesLayout = ({ children }: Props) => {
                       isActive={activeChat == chat.id}
                       setActive={() => setActiveChat(chat.id)}
                       userId={
-                        chat.recieverId == user?.id
-                          ? chat.senderId
-                          : chat.recieverId
+                        chat.user1Id == user?.id ? chat.user2Id : chat.user1Id
                       }
                       isMedium={windowWidth <= 1100}
                     />

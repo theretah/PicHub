@@ -11,9 +11,7 @@ const Posts = () => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
-  const { data, error, isLoading } = usePostsByAuthorUserName({
-    userName: userName,
-  });
+  const { data, error, isLoading } = usePostsByAuthorUserName(userName);
 
   if (error) return <p className="text-light">{error.message}</p>;
 

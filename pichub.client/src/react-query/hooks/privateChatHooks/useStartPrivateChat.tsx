@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import PrivateChatService from "../../services/PrivateChatService";
-const useStartChat = () => {
+
+const useStartPrivateChat = () => {
   return useMutation({
     mutationFn: async (recieverId: string) =>
-      await PrivateChatService.startChat(recieverId),
+      await PrivateChatService.start(recieverId),
   });
 };
 
-export default useStartChat;
+export default useStartPrivateChat;

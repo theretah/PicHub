@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
-import { User } from "../../entities/UserDTO";
+import { UserDTO } from "../../entities/UserDTO";
 
 interface Props {
   isOpen: boolean;
-  records: User[];
+  records: UserDTO[];
 }
 
 const ExploreSearchPanel = ({ isOpen, records }: Props) => {

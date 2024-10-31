@@ -5,7 +5,7 @@ import useIsSaved from "../../react-query/hooks/postHooks/useIsSaved";
 import useIsFollowing from "../../react-query/hooks/followHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
-import { Post } from "../../entities/PostDTO";
+import { PostDTO } from "../../entities/PostDTO";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/authStore";
 import useLike from "../../react-query/hooks/postHooks/useLike";
@@ -14,10 +14,9 @@ import useDisLike from "../../react-query/hooks/postHooks/useDisLike";
 import useUnSave from "../../react-query/hooks/postHooks/useUnSave";
 import useLikesCount from "../../react-query/hooks/postHooks/useLikesCount";
 import useFollow from "../../react-query/hooks/followHooks/useFollow";
-import useUnfollow from "../../react-query/hooks/followHooks/useUnfollow";
 
 interface Props {
-  post: Post;
+  post: PostDTO;
   onlyVertical: boolean;
 }
 
@@ -39,19 +38,17 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     };
   }, [window.innerWidth]);
 
-  const { data: author } = useUserById({
-    userId: post.authorId,
-  });
+  const { data: author } = useUserById(post.authorId);
 
   const enabled = author != null && isAuthenticated;
 
-  const { data: isLiked } = useIsLiked({ postId: post.id, enabled: enabled });
+  const { data: isLiked } = useIsLiked(post.id, enabled);
   const [isLikedState, setIsLikedState] = useState<boolean>(isLiked || false);
 
-  const { data: isSaved } = useIsSaved({ postId: post.id, enabled: enabled });
+  const { data: isSaved } = useIsSaved(post.id, enabled);
   const [isSavedState, setIsSavedState] = useState<boolean>(isSaved || false);
 
-  const { data: likesCount } = useLikesCount({ postId: post.id });
+  const { data: likesCount } = useLikesCount(post.id);
   const [likesCountState, setLikesCountState] = useState<number>(likesCount);
 
   useEffect(() => {
@@ -68,17 +65,14 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   function handleLikeButton() {
     setIsLikedState(!isLikedState);
     if (isLikedState == true) {
-      disLikeMutation.mutate({ postId: post.id });
+      disLikeMutation.mutate(post.id);
       setLikesCountState(likesCountState - 1);
     } else {
-      likeMutation.mutate({ postId: post.id });
+      likeMutation.mutate(post.id);
       setLikesCountState(likesCountState + 1);
     }
   }
-  const { data: isFollowing } = useIsFollowing({
-    followingId: post.authorId,
-    enabled: enabled,
-  });
+  const { data: isFollowing } = useIsFollowing(post.authorId, enabled);
 
   const [isFollowingState, setIsFollowingState] = useState<boolean>(false);
   useEffect(() => {
@@ -90,7 +84,7 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   const followMutation = useFollow();
   function followUser() {
     if (isFollowingState == false) {
-      followMutation.mutate({ followingId: post.authorId });
+      followMutation.mutate(post.authorId);
       setIsFollowingState(true);
     }
   }
@@ -100,9 +94,9 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
   function handleSaveButton() {
     setIsSavedState(!isSavedState);
     if (isSavedState == true) {
-      unSaveMutation.mutate({ postId: post.id });
+      unSaveMutation.mutate(post.id);
     } else {
-      saveMutation.mutate({ postId: post.id });
+      saveMutation.mutate(post.id);
     }
   }
 

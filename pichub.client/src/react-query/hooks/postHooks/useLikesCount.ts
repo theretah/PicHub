@@ -3,7 +3,7 @@ import PostService from "../../services/PostService";
 
 const useLikesCount = (postId: number) => {
   return useQuery({
-    queryKey: ["likesCount", postId],
+    queryKey: ["postLikesCount", postId],
     queryFn: () => PostService.likesCount(postId),
   });
 };

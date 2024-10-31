@@ -17,5 +17,6 @@
         ISeenRepository Seens { get; }
 
         Task<int> CompleteAsync();
+        int Complete();
     }
 }

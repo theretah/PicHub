@@ -186,7 +186,7 @@ const EditProfile = () => {
             placeholder="Write something about yourself"
             rows={4}
             style={{ resize: "none" }}
-            defaultValue={user?.bio}
+            defaultValue={user?.bio || ""}
           ></textarea>
         </div>
 

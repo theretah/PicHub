@@ -4,7 +4,7 @@ import PostService from "../../services/PostService";
 
 const useSavedPosts = (userId: string) => {
   return useQuery<PostDTO[], Error>({
-    queryKey: ["savedPosts", userId],
+    queryKey: ["postsSaved", userId],
     queryFn: () => PostService.getSavedPosts(),
   });
 };

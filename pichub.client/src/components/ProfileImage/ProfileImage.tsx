@@ -1,6 +1,6 @@
-import { User } from "../../entities/UserDTO";
+import { UserDTO } from "../../entities/UserDTO";
 interface Props {
-  user: User | null | undefined;
+  user: UserDTO | null | undefined;
   widthHeight: number;
 }
 const ProfileImage = ({ widthHeight, user }: Props) => {

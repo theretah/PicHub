@@ -54,9 +54,9 @@ class PrivateChatService {
   };
 
   send = async (
-    chatId: number,
+    chatId: string,
     content: string,
-    replyingToId: string | null
+    replyingToId: number | null
   ) => {
     return await axiosInstance.post(
       `send?chatId=${chatId}&content=${content}&replyingToId=${replyingToId}`,

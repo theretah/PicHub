@@ -14,7 +14,7 @@ const Index = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [searchQueryState, setSearchQueryState] = useState<string>("");
-  const { data: searchResult } = useSearch({ searchQuery: searchQueryState });
+  const { data: searchResult } = useSearch(searchQueryState);
 
   function handleSearch(e: ChangeEvent<HTMLInputElement>) {
     setSearchQueryState(e.target.value);

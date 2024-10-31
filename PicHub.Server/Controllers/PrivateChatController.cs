@@ -6,7 +6,7 @@ using PicHub.Server.Entities;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/private-chats")]
     public class PrivateChatController : ControllerBase
     {
         private readonly IUnitOfWork unit;
@@ -16,14 +16,86 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
-        [HttpPost("start")]
-        public async Task<IActionResult> StartAsync(string recieverId)
+        [HttpGet]
+        public async Task<IActionResult> GetPrivateChatsAsync()
         {
-            var starterId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (starterId == null)
-            {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
                 return Unauthorized();
+
+            var chats = await unit.PrivateChats.GetAllByPredicateAsync(c =>
+                c.User1Id == loggedInUserId || c.User2Id == loggedInUserId
+            );
+
+            return chats == null ? NoContent() : Ok(chats);
+        }
+
+        [HttpGet("{user-id}")]
+        public async Task<IActionResult> GetPrivateChatAsync(string userId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var chat = await unit.PrivateChats.GetByPredicateAsync(c =>
+                (c.User1Id == loggedInUserId && c.User2Id == userId)
+                || (c.User1Id == userId && c.User2Id == loggedInUserId)
+            );
+
+            return chat == null ? NotFound() : Ok(chat);
+        }
+
+        [HttpGet("{private-chat-id}/chat-lines")]
+        public async Task<IActionResult> GetChatLinesAsync(string privateChatId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
+                cl.PrivateChatId == privateChatId
+            );
+
+            return chatLines == null ? NoContent() : Ok(chatLines);
+        }
+
+        [HttpPost("{private-chat-id}/chat-lines")]
+        public async Task<IActionResult> SendChatLineAsync(
+            string privateChatId,
+            string content,
+            int? replyingToId = null
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                await unit.ChatLines.AddAsync(
+                    new ChatLine
+                    {
+                        SenderId = loggedInUserId,
+                        PrivateChatId = privateChatId,
+                        Content = content,
+                        ReplyingToId = replyingToId,
+                    }
+                );
+                await unit.CompleteAsync();
+                return Created();
             }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not send message. " + ex.Message);
+            }
+        }
+
+        [HttpPost("{reciever-id}")]
+        public async Task<IActionResult> StartPrivateChatAsync(string recieverId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
 
             try
             {
@@ -32,7 +104,7 @@ namespace PicHub.Server.Controllers
                     new PrivateChat
                     {
                         Id = id,
-                        User1Id = starterId,
+                        User1Id = loggedInUserId,
                         User2Id = recieverId,
                     }
                 );
@@ -46,59 +118,16 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpPost("send")]
-        public async Task<IActionResult> SendAsync(
-            string privateChatId,
-            string content,
-            string? replyingToId = null
-        )
+        [HttpDelete("{private-chat-id}")]
+        public async Task<IActionResult> DeletePrivateChatAsync(string privateChatId)
         {
-            var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (senderId == null)
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
                 return Unauthorized();
 
             try
             {
-                await unit.ChatLines.AddAsync(
-                    new ChatLine
-                    {
-                        SenderId = senderId,
-                        PrivateChatId = privateChatId,
-                        Content = content,
-                        ReplyingToId = replyingToId ?? null,
-                    }
-                );
-                await unit.CompleteAsync();
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not send message. " + ex.Message);
-            }
-        }
-
-        [HttpDelete("unSend")]
-        public async Task<IActionResult> UnSendAsync(int chatLineId)
-        {
-            try
-            {
-                await unit.ChatLines.RemoveByIdAsync(chatLineId);
-                await unit.CompleteAsync();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not delete message." + ex.Message);
-            }
-        }
-
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteAsync(string chatId)
-        {
-            try
-            {
-                await unit.PrivateChats.RemoveByIdAsync(chatId);
+                await unit.PrivateChats.RemoveByIdAsync(privateChatId);
                 await unit.CompleteAsync();
 
                 return NoContent();
@@ -107,54 +136,6 @@ namespace PicHub.Server.Controllers
             {
                 return BadRequest("Could not delete chat." + ex.Message);
             }
-        }
-
-        [HttpGet("exists")]
-        public async Task<IActionResult> ExistsAsync(string user1Id, string user2Id)
-        {
-            return Ok(await GetAsync(user1Id, user2Id) != NotFound());
-        }
-
-        [HttpGet("get")]
-        public async Task<IActionResult> GetAsync(string user1Id, string user2Id)
-        {
-            var chat = await unit.PrivateChats.GetByPredicateAsync(c =>
-                (c.User1Id == user2Id && c.User2Id == user1Id)
-                || (c.User1Id == user1Id && c.User2Id == user2Id)
-            );
-
-            if (chat == null)
-                return NotFound();
-
-            return Ok(chat);
-        }
-
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetChatsAsync()
-        {
-            string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var chats = await unit.PrivateChats.GetAllByPredicateAsync(c =>
-                c.User1Id == loggedInUserId || c.User2Id == loggedInUserId
-            );
-            if (chats == null)
-                return NoContent();
-
-            return Ok(chats);
-        }
-
-        [HttpGet("getChatLines")]
-        public async Task<IActionResult> GetChatLinesAsync(string chatId)
-        {
-            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
-                cl.PrivateChatId == chatId
-            );
-            if (chatLines == null)
-                return NoContent();
-
-            return Ok(chatLines);
         }
     }
 }

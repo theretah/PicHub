@@ -13,8 +13,8 @@ namespace PicHub.Server.Entities
         public required string SenderId { get; set; }
         public AppUser? Sender { get; set; }
 
-        public string? ReplyingToId { get; set; }
-        public AppUser? ReplyingTo { get; set; }
+        public int? ReplyingToId { get; set; }
+        public ChatLine? ReplyingTo { get; set; }
 
         public required string Content { get; set; }
 

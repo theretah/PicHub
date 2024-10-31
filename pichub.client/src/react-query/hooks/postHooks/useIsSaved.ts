@@ -3,7 +3,7 @@ import PostService from "../../services/PostService";
 
 const useIsSaved = (postId: number, enabled: boolean) => {
   return useQuery<boolean, Error>({
-    queryKey: ["isSaved", postId],
+    queryKey: ["postIsSaved", postId],
     queryFn: () => PostService.isSaved(postId),
     enabled: enabled,
   });
