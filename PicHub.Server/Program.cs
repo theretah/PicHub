@@ -5,6 +5,7 @@ using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using PicHub.Server.Data;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
+using PicHub.Server.Extensions;
 using PicHub.Server.Options;
 using PicHub.Server.Validation;
 
@@ -21,7 +23,12 @@ public partial class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder
-            .Services.AddControllers()
+            .Services.AddControllers(o =>
+            {
+                o.Conventions.Add(
+                    new RouteTokenTransformerConvention(new SlugifyParameterTransformer())
+                );
+            })
             .AddNewtonsoftJson(o =>
                 o.SerializerSettings.ReferenceLoopHandling = Newtonsoft
                     .Json

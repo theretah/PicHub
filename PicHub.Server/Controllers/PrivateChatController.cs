@@ -31,7 +31,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{user-id}")]
-        public async Task<IActionResult> GetPrivateChatAsync(string userId)
+        public async Task<IActionResult> GetPrivateChatAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -46,7 +48,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{private-chat-id}/chat-lines")]
-        public async Task<IActionResult> GetChatLinesAsync(string privateChatId)
+        public async Task<IActionResult> GetChatLinesAsync(
+            [FromRoute(Name = "private-chat-id")] string privateChatId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
