@@ -19,17 +19,14 @@ namespace PicHub.Server.Controllers
         private readonly IUnitOfWork unit;
         private readonly ILogger<UserController> logger;
         private readonly IMapper mapper;
-        private readonly IAppUserRepository userRepository;
 
         public UserController(
             UserManager<AppUser> userManager,
-            IAppUserRepository userRepository,
             IUnitOfWork unit,
             ILogger<UserController> logger,
             IMapper mapper
         )
         {
-            this.userRepository = userRepository;
             this.logger = logger;
             this.mapper = mapper;
             this.userManager = userManager;
@@ -37,23 +34,32 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchByUserNameAsync(
-            [FromQuery(Name = "query")] string? query
-        )
+        public IActionResult SearchByUserName([FromQuery(Name = "query")] string? query)
         {
-            return Ok(await userRepository.Search(query));
+            var users = userManager.Users;
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                users = users.Where(u =>
+                    u.UserName.Contains(query.Trim(), StringComparison.OrdinalIgnoreCase)
+                );
+            }
+
+            if (users.Any())
+                return Ok(users.OrderBy(u => u.UserName));
+
+            return NotFound();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllUsersAsync()
+        public IActionResult GetAllUsers()
         {
-            var users = await userManager.Users.ToListAsync();
+            var users = userManager.Users;
             if (users.Any())
             {
                 var mapped = mapper.Map<IEnumerable<UserDto>>(users);
                 return Ok(mapped);
             }
-            return NoContent();
+            return NotFound();
         }
 
         [HttpGet("by-email/{email}")]

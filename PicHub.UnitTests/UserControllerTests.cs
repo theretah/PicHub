@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -33,11 +34,11 @@ namespace PicHub.UnitTests
                 c.CreateMap<AppUser, UserDto>();
             });
             var mapper = config.CreateMapper();
-            controller = new UserController(userManagerMock.Object, null, null, null, mapper);
+            controller = new UserController(userManagerMock.Object, null, null, mapper);
         }
 
         [Fact]
-        public async void GetAllUsers_ReturnsAllUsers()
+        public void GetAllUsers_ReturnsAllUsers()
         {
             // Arrange
             var users = new List<AppUser>
@@ -72,11 +73,11 @@ namespace PicHub.UnitTests
                     accountCategoryId: 0,
                     professionalCategoryId: 0
                 ),
-            }.AsQueryable();
-            userManagerMock.Setup(um => um.Users).Returns(() => users);
+            };
+            userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
             // Act
-            var actionResult = await controller.GetAllUsersAsync();
+            var actionResult = controller.GetAllUsers();
 
             // Assert
             var result = actionResult as OkObjectResult;
@@ -90,16 +91,116 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public async Task GetAllUsers_UsersEmpty_ReturnsNoContentResult()
+        public void GetAllUsers_UsersEmpty_ReturnsNotFoundResult()
         {
             // Arrange
-            userManagerMock.Setup(um => um.Users).Returns(() => new List<AppUser>().AsQueryable());
+            var users = new List<AppUser>();
+            userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
             // Act
-            var actionResult = await controller.GetAllUsersAsync();
+            var actionResult = controller.GetAllUsers();
 
             // Assert
-            var result = actionResult as NoContentResult;
+            var result = actionResult as NotFoundResult;
+            Assert.NotNull(result);
+        }
+
+        [Theory]
+        [InlineData("user", 2)]
+        [InlineData("user_", 1)]
+        [InlineData("someuser", 1)]
+        [InlineData("the", 2)]
+        [InlineData("us", 3)]
+        public void Search_PatternMatches_ReturnsMatchedUsers(string query, int resultsCount)
+        {
+            var users = new List<AppUser>
+            {
+                new(
+                    userName: "someuser",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new(
+                    userName: "user_123another",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new(
+                    userName: "the_us3r",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+            };
+            userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
+
+            var actionResult = controller.SearchByUserName(query);
+
+            var result = actionResult as OkObjectResult;
+            Assert.NotNull(result);
+
+            var returnResult = Assert.IsAssignableFrom<IQueryable<AppUser>>(result.Value);
+            Assert.Contains(returnResult, u => u.UserName.Contains(query));
+            Assert.Equal(resultsCount, returnResult.Count());
+        }
+
+        [Theory]
+        [InlineData("us_3r")]
+        [InlineData("useer")]
+        public void Search_PatternDoesNotMatch_ReturnsNotFound(string query)
+        {
+            var users = new List<AppUser>
+            {
+                new(
+                    userName: "someuser",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new(
+                    userName: "user_123another",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+                new(
+                    userName: "the_us3r",
+                    fullName: string.Empty,
+                    email: string.Empty,
+                    phoneNumber: string.Empty,
+                    isPrivate: false,
+                    genderId: 0,
+                    accountCategoryId: 0,
+                    professionalCategoryId: 0
+                ),
+            };
+            userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
+
+            var actionResult = controller.SearchByUserName(query);
+
+            var result = actionResult as NotFoundResult;
             Assert.NotNull(result);
         }
     }

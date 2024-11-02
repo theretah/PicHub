@@ -9,35 +9,25 @@ namespace CMSReactDotNet.Server.Data.Repositories
     public class AppUserRepository : IAppUserRepository
     {
         private readonly PicHubContext context;
+        private readonly UserManager<AppUser> userManager;
 
-        public AppUserRepository(PicHubContext context)
+        public AppUserRepository(PicHubContext context, UserManager<AppUser> userManager)
         {
             this.context = context;
+            this.userManager = userManager;
         }
 
         public async Task<IEnumerable<AppUser>> Search(string? searchQuery)
         {
-            var users = await context.AppUsers.ToListAsync();
+            var users = userManager.Users;
             if (!string.IsNullOrWhiteSpace(searchQuery))
             {
-                try
-                {
-                    users = users
-                        .Where(u =>
-                            u.UserName.Contains(
-                                searchQuery.Trim(),
-                                StringComparison.OrdinalIgnoreCase
-                            )
-                        )
-                        .ToList();
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
+                users = users.Where(u =>
+                    u.UserName.Contains(searchQuery.Trim(), StringComparison.OrdinalIgnoreCase)
+                );
             }
 
-            return users.OrderBy(u => u.UserName).ToList();
+            return users.OrderBy(u => u.UserName);
         }
     }
 }

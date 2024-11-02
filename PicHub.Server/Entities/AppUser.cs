@@ -60,5 +60,10 @@ namespace PicHub.Server.Entities
 
         public IEnumerable<PrivateChat>? PrivateChats { get; set; }
         public IEnumerable<GroupChatUser>? GroupChats { get; set; }
+
+        public override string ToString()
+        {
+            return UserName;
+        }
     }
 }
