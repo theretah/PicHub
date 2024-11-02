@@ -2,6 +2,7 @@ using System.Security.Claims;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
@@ -10,7 +11,7 @@ using Pichub.Server.Utilities;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/post")]
+    [Route("api/posts")]
     public class PostController : ControllerBase
     {
         private readonly IUnitOfWork unit;
@@ -22,68 +23,40 @@ namespace PicHub.Server.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet("getAll")]
+        [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            try
-            {
-                var posts = await unit.Posts.GetAllAsync();
-                if (!posts.Any() || posts == null)
-                    return NoContent();
+            var posts = await unit.Posts.GetAllAsync();
+
+            if (posts.Any())
                 return Ok(posts.OrderByDescending(p => p.CreateDate).ToList());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("A problem occured while getting posts. " + ex.Message);
-            }
+
+            return NoContent();
         }
 
-        [HttpGet("getAllByAuthorId")]
-        public async Task<IActionResult> GetAllByAuthorIdAsync(string authorId)
+        [HttpGet("by-author/{author-id}")]
+        public async Task<IActionResult> GetAllByAuthorIdAsync(
+            [FromRoute(Name = "author-id")] string authorId
+        )
         {
-            try
-            {
-                var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
+            var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
+
+            if (posts.Any())
                 return Ok(posts);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not find posts created by this user. " + ex.Message);
-            }
+
+            return NotFound();
         }
 
-        [HttpGet("getAllByAuthorUserName")]
-        public async Task<IActionResult> GetAllByAuthorUserNameAsync(string userName)
-        {
-            try
-            {
-                var user = await userManager.FindByNameAsync(userName);
-                if (user == null)
-                {
-                    return BadRequest("User not found.");
-                }
-                return Ok(await unit.Posts.GetAllByAuthorIdAsync(user.Id));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not find posts created by this user. " + ex.Message);
-            }
-        }
-
-        [HttpGet("get")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAsync(int id)
         {
             try
             {
                 var post = await unit.Posts.GetByIdAsync(id);
                 if (post != null)
-                {
                     return Ok(post);
-                }
-                else
-                {
-                    return NotFound();
-                }
+
+                return NotFound();
             }
             catch (Exception ex)
             {
@@ -91,14 +64,107 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        [HttpGet("{post-id}/likes-count")]
+        public async Task<IActionResult> GetLikesCountAsync(
+            [FromRoute(Name = "post-id")] int postId
+        )
         {
+            return Ok(await unit.Likes.CountLikesByPostId(postId));
+        }
+
+        [HttpGet("{post-id}/saves")]
+        public async Task<IActionResult> IsSavedByLoggedInUserAsync(
+            [FromRoute(Name = "post-id")] int postId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
             try
             {
-                await unit.Posts.RemoveByIdAsync(id);
-                await unit.CompleteAsync();
-                return Ok();
+                var isSaved = await unit.Saves.ExistsByPredicateAsync(l =>
+                    l.PostId == postId && l.UserId == loggedInUserId
+                );
+                return Ok(isSaved);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not get data. " + ex.Message);
+            }
+        }
+
+        [HttpGet("{post-id}/likes")]
+        public async Task<IActionResult> IsLikedByLoggedInUserAsync(
+            [FromRoute(Name = "post-id")] int postId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                var isLiked = await unit.Likes.ExistsByPredicateAsync(l =>
+                    l.PostId == postId && l.UserId == loggedInUserId
+                );
+                return Ok(isLiked);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not get data. " + ex.Message);
+            }
+        }
+
+        [HttpGet("likes")]
+        public async Task<IActionResult> GetLikedPostsAsync()
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                var postIds = new List<int>();
+
+                var likesByUserId = await unit.Likes.GetLikesByUserId(loggedInUserId);
+                if (!likesByUserId.Any())
+                    return NotFound();
+
+                foreach (var like in likesByUserId)
+                {
+                    postIds.Add(like.PostId);
+                }
+
+                return Ok(await unit.Posts.GetAllByPredicateAsync(p => postIds.Contains(p.Id)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("saves")]
+        public async Task<IActionResult> GetSavedPostsAsync()
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                var postIds = new List<int>();
+
+                var savesByUserId = await unit.Saves.GetSavesByUserId(loggedInUserId);
+                if (!savesByUserId.Any())
+                    return NotFound();
+
+                foreach (var save in savesByUserId)
+                {
+                    postIds.Add(save.PostId);
+                }
+
+                return Ok(await unit.Posts.GetAllByPredicateAsync(p => postIds.Contains(p.Id)));
             }
             catch (Exception ex)
             {
@@ -107,14 +173,12 @@ namespace PicHub.Server.Controllers
         }
 
         [Authorize]
-        [HttpPost("create")]
+        [HttpPost]
         public async Task<IActionResult> CreateAsync(CreatePostDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
-            {
                 return Unauthorized();
-            }
 
             try
             {
@@ -138,39 +202,15 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpDelete("unSave")]
-        public async Task<IActionResult> UnSaveAsync(int postId)
+        [HttpPost("{post-id}/saves")]
+        public async Task<IActionResult> SaveAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
-            {
                 return Unauthorized();
-            }
 
-            var save = await unit.Saves.GetByPredicateAsync(s =>
-                s.UserId == loggedInUserId && s.PostId == postId
-            );
-            if (save != null)
-            {
-                unit.Saves.Remove(save);
-                await unit.CompleteAsync();
-                return NoContent();
-            }
-
-            return BadRequest("Could not remove post from saves.");
-        }
-
-        [HttpPost("save")]
-        public async Task<IActionResult> SaveAsync(int postId)
-        {
             try
             {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (loggedInUserId == null)
-                {
-                    return Unauthorized();
-                }
-
                 await unit.Saves.AddAsync(new Save() { PostId = postId, UserId = loggedInUserId });
                 await unit.CompleteAsync();
                 return Created();
@@ -181,42 +221,68 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpGet("isSaved")]
-        public async Task<IActionResult> IsSavedAsync(int postId)
+        [HttpPost("{post-id}/likes")]
+        public async Task<IActionResult> LikeAsync([FromRoute(Name = "post-id")] int postId)
         {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
             try
             {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isSaved = await unit.Saves.ExistsByPredicateAsync(l =>
-                    l.PostId == postId && l.UserId == loggedInUserId
-                );
-                return Ok(isSaved);
+                await unit.Likes.AddAsync(new Like { UserId = loggedInUserId, PostId = postId });
+                await unit.CompleteAsync();
+
+                return Created();
             }
             catch (Exception ex)
             {
-                return BadRequest("Could not get data. " + ex.Message);
+                return BadRequest("A problem occured while liking the post. " + ex.Message);
             }
         }
 
-        [HttpGet("isLiked")]
-        public async Task<IActionResult> IsLikedAsync(int postId)
+        [HttpPatch("{post-id}")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromRoute(Name = "post-id")] int postId,
+            [FromBody] JsonPatchDocument<Post> jsonPatch
+        )
         {
-            try
-            {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var isLiked = await unit.Likes.ExistsByPredicateAsync(l =>
-                    l.PostId == postId && l.UserId == loggedInUserId
-                );
-                return Ok(isLiked);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not get data. " + ex.Message);
-            }
+            var post = await unit.Posts.GetByIdAsync(postId);
+            if (post == null)
+                return NotFound();
+
+            jsonPatch.ApplyTo(post, ModelState);
+            if (!TryValidateModel(post))
+                return BadRequest(ModelState);
+
+            unit.Posts.Update(post);
+            await unit.CompleteAsync();
+
+            return NoContent();
         }
 
-        [HttpDelete("disLike")]
-        public async Task<IActionResult> DisLikeAsync(int postId)
+        [HttpDelete("{post-id}/saves")]
+        public async Task<IActionResult> UnSaveAsync([FromRoute(Name = "post-id")] int postId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var existingSave = await unit.Saves.GetByPredicateAsync(s =>
+                s.UserId == loggedInUserId && s.PostId == postId
+            );
+            if (existingSave != null)
+            {
+                unit.Saves.Remove(existingSave);
+                await unit.CompleteAsync();
+                return NoContent();
+            }
+
+            return BadRequest("Could not remove the post from saves.");
+        }
+
+        [HttpDelete("{post-id}/likes")]
+        public async Task<IActionResult> DisLikeAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -236,76 +302,28 @@ namespace PicHub.Server.Controllers
             return BadRequest("Could not remove your like from the post.");
         }
 
-        [HttpPost("like")]
-        public async Task<IActionResult> LikeAsync(int postId)
+        [HttpDelete("{post-id}")]
+        public async Task<IActionResult> DeleteAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
+
             try
             {
-                await unit.Likes.AddAsync(new Like { UserId = loggedInUserId, PostId = postId });
-                await unit.CompleteAsync();
-
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("A problem occured while liking the post. " + ex.Message);
-            }
-        }
-
-        [HttpGet("getSavedPosts")]
-        public async Task<ActionResult> GetSavedsAsync()
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-            {
-                return Unauthorized();
-            }
-            try
-            {
-                var postIds = new List<int>();
-
-                var savesByUserId = await unit.Saves.GetSavesByUserId(loggedInUserId);
-                foreach (var save in savesByUserId)
+                var post = await unit.Posts.GetByIdAsync(postId);
+                if (post.AuthorId == loggedInUserId)
                 {
-                    postIds.Add(save.PostId);
+                    unit.Posts.Remove(post);
+                    await unit.CompleteAsync();
+                    return Ok();
                 }
-
-                var savedPosts = new List<Post>();
-                foreach (var postId in postIds)
-                {
-                    var post = await unit.Posts.GetByIdAsync(postId);
-                    if (post != null)
-                    {
-                        savedPosts.Add(post);
-                    }
-                }
-
-                return Ok(savedPosts);
+                return Forbid();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-        }
-
-        [HttpGet("getLikedPosts")]
-        public async IAsyncEnumerable<Post> GetLikedsAsync(string userId)
-        {
-            foreach (var like in await unit.Likes.GetLikesByUserId(userId))
-            {
-                yield return await unit.Posts.GetByPredicateAsync(p => p.Id == like.PostId);
-            }
-        }
-
-        [HttpGet("getLikesCount")]
-        public async Task<ActionResult<int>> GetLikesCountAsync(int postId)
-        {
-            var post = await unit.Posts.GetByIdAsync(postId);
-            var likes = await unit.Likes.GetAllByPredicateAsync(l => l.PostId == postId);
-            return Ok(likes.Count());
         }
     }
 }

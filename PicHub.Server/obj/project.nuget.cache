@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "4pcObYBxWJ7EDDuCwxYpdru9LECQLUyB01+vUpTGp7y3OERkv8L8DFUFsR0CNOsm+932APyQNB2uqa6+p5kSXQ==",
+  "dgSpecHash": "2JdxO8ofpbjckWzHgKXyN4HmywhZsxkQERnAmrXbP40O+2NaMTLXz5RUHeCAINHSBYQr3Xw31xJpY0VHzGSVrw==",
   "success": true,
   "projectFilePath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\PicHub.Server.csproj",
   "expectedPackageFiles": [
@@ -16,7 +16,7 @@
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.6\\microsoft.aspnetcore.cryptography.keyderivation.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\8.0.6\\microsoft.aspnetcore.identity.entityframeworkcore.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\8.0.6\\microsoft.aspnetcore.identity.ui.8.0.6.nupkg.sha512",
-    "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\8.0.6\\microsoft.aspnetcore.jsonpatch.8.0.6.nupkg.sha512",
+    "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\8.0.10\\microsoft.aspnetcore.jsonpatch.8.0.10.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\8.0.6\\microsoft.aspnetcore.mvc.newtonsoftjson.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\8.0.6\\microsoft.aspnetcore.spaproxy.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",

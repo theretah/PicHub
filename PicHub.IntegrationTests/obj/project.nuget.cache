@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "8wG91LnwvkypbAKQWBSPH+UT3HZ/VX2lRtMAZBuxeB2rr0X6BlXL2K3Ox2l00ZvKexSU/Bd5OOsox4X1Y8B/Gw==",
+  "dgSpecHash": "tbZqMSYR13RnnQU2/OKAlgKBxosxgXFwHE3e0A8kAPvMUlVEQrj08xdfyfxgPM2fEX6y+UxTgQUpkW2g9HeQKg==",
   "success": true,
   "projectFilePath": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.IntegrationTests\\PicHub.IntegrationTests.csproj",
   "expectedPackageFiles": [
@@ -17,7 +17,7 @@
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.cryptography.keyderivation\\8.0.6\\microsoft.aspnetcore.cryptography.keyderivation.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.identity.entityframeworkcore\\8.0.6\\microsoft.aspnetcore.identity.entityframeworkcore.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.identity.ui\\8.0.6\\microsoft.aspnetcore.identity.ui.8.0.6.nupkg.sha512",
-    "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\8.0.6\\microsoft.aspnetcore.jsonpatch.8.0.6.nupkg.sha512",
+    "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.jsonpatch\\8.0.10\\microsoft.aspnetcore.jsonpatch.8.0.10.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.mvc.newtonsoftjson\\8.0.6\\microsoft.aspnetcore.mvc.newtonsoftjson.8.0.6.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.mvc.testing\\8.0.8\\microsoft.aspnetcore.mvc.testing.8.0.8.nupkg.sha512",
     "C:\\Users\\taher\\.nuget\\packages\\microsoft.aspnetcore.spaproxy\\8.0.6\\microsoft.aspnetcore.spaproxy.8.0.6.nupkg.sha512",

@@ -32,20 +32,16 @@ namespace PicHub.Server.Controllers
         }
 
         [Authorize]
-        [HttpGet("getLoggedInUser")]
+        [HttpGet()]
         public async Task<IActionResult> GetLoggedInUserAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
-            {
                 return Unauthorized();
-            }
 
             var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return Ok(mapper.Map<UserDto>(user));
         }

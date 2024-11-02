@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using System.Text.Json;
 using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +12,7 @@ using Pichub.Server.Utilities;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/user")]
+    [Route("api/users")]
     public class UserController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
@@ -37,15 +36,97 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchByUserNameAsync(
+            [FromQuery(Name = "query")] string? query
+        )
+        {
+            return Ok(await userRepository.Search(query));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersAsync()
+        {
+            var users = await userManager.Users.ToListAsync();
+            if (users.Any())
+            {
+                var mapped = mapper.Map<IEnumerable<UserDto>>(users);
+                return Ok(mapped);
+            }
+            return NoContent();
+        }
+
+        [HttpGet("by-email/{email}")]
+        public async Task<IActionResult> GetUserByEmailAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserByIdAsync(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("by-username/{username}")]
+        public async Task<IActionResult> GetUserByUserNameAsync(string username)
+        {
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
+        [HttpGet("last-registered")]
+        public async Task<IActionResult> GetLastRegisteredUsersAsync()
+        {
+            try
+            {
+                var lastRegisteredUsers = await userManager
+                    .Users.OrderByDescending(u => u.RegistrationDate)
+                    .Take(5)
+                    .ToListAsync();
+                return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    "Problem occured while fetching last registerd users. " + ex.Message
+                );
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUserAsync(string id)
+        {
+            var user = await userManager.FindByIdAsync(id);
+            if (user != null)
+            {
+                await userManager.DeleteAsync(user);
+                return Ok(new { success = true });
+            }
+            return BadRequest("A problem occured while removing the user.");
+        }
+
         [Authorize]
-        [HttpPut("update")]
+        [HttpPut]
         public async Task<IActionResult> UpdateProfileAsync([FromForm] EditProfileDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
-            {
                 return Unauthorized();
-            }
 
             var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
@@ -87,150 +168,6 @@ namespace PicHub.Server.Controllers
             {
                 return BadRequest(e.Message);
             }
-        }
-
-        [HttpGet("getPostsCount")]
-        public async Task<IActionResult> GetPostsCountAsync(string userId)
-        {
-            var user = await userManager.FindByIdAsync(userId);
-            if (user == null)
-                return NotFound();
-            var posts = await unit.Posts.GetAllByPredicateAsync(p => p.AuthorId == user.Id);
-            return Ok(posts.Count());
-        }
-
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchAsync(string? query)
-        {
-            return Ok(await userRepository.Search(query));
-        }
-
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAllUsersAsync()
-        {
-            var users = await userManager.Users.ToListAsync();
-            if (users == null || users.Count == 0)
-            {
-                return NoContent();
-            }
-            var mapped = mapper.Map<IEnumerable<UserDto>>(users);
-            return Ok(mapped);
-        }
-
-        [HttpGet("getUsersCount")]
-        public async Task<IActionResult> GetUsersCountAsync()
-        {
-            return Ok(await userManager.Users.CountAsync());
-        }
-
-        [HttpGet("getByEmail")]
-        public async Task<IActionResult> GetUserByEmailAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(mapper.Map<UserDto>(user));
-        }
-
-        [HttpGet("getById")]
-        public async Task<IActionResult> GetUserByIdAsync(string id)
-        {
-            var user = await userManager.FindByIdAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(mapper.Map<UserDto>(user));
-        }
-
-        [HttpGet("getByUserName")]
-        public async Task<IActionResult> GetUserByUserNameAsync(string userName)
-        {
-            var user = await userManager.FindByNameAsync(userName);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(mapper.Map<UserDto>(user));
-        }
-
-        [HttpGet("lastRegistered")]
-        public async Task<IActionResult> GetLastRegisteredUsersAsync()
-        {
-            try
-            {
-                var lastRegisteredUsers = await userManager
-                    .Users.OrderByDescending(u => u.RegistrationDate)
-                    .ToListAsync();
-                return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(
-                    "Problem occured while fetching last registerd users. " + ex.Message
-                );
-            }
-        }
-
-        [HttpDelete("delete")]
-        public async Task<IActionResult> DeleteUserAsync(string id)
-        {
-            var user = await userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                await userManager.DeleteAsync(user);
-                return Ok(new { success = true });
-            }
-            return BadRequest("A problem occured while removing the user.");
-        }
-
-        [HttpPost("block")]
-        public async Task<IActionResult> BlockUserAsync(string userId)
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            await unit.Blocks.AddAsync(
-                new Block { BlockerId = loggedInUserId, BlockedId = userId }
-            );
-            await unit.CompleteAsync();
-
-            return NoContent();
-        }
-
-        [HttpDelete("unBlock")]
-        public async Task<IActionResult> UnBlockUserAsync(string userId)
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var block = await unit.Blocks.GetByPredicateAsync(b =>
-                b.BlockedId == userId && b.BlockerId == loggedInUserId
-            );
-            unit.Blocks.Remove(block);
-            await unit.CompleteAsync();
-
-            return NoContent();
-        }
-
-        [HttpGet("getBlockedUsers")]
-        public async Task<IActionResult> GetBlockedUsersAsync()
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-            var blockedUsers = await unit.Blocks.GetAllByPredicateAsync(b =>
-                b.BlockerId == loggedInUserId
-            );
-
-            if (blockedUsers.Count() != 0)
-                return Ok(blockedUsers);
-            else
-                return NoContent();
         }
     }
 }

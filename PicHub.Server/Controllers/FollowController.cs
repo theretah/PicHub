@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ using PicHub.Server.Entities;
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/follow")]
+    [Route("api/follows")]
     public class FollowController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
@@ -19,65 +20,60 @@ namespace PicHub.Server.Controllers
             this.userManager = userManager;
         }
 
-        [HttpGet("getFollowersCount")]
-        public async Task<ActionResult<int>> GetFollowersCountAsync(string userId)
+        [HttpGet("{user-id}/followers-count")]
+        public async Task<ActionResult<int>> GetFollowersCountAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
-            return Ok(await FollowersCountAsync(userId));
+            var followers = await unit.Follows.GetFollowersAsync(userId);
+            return Ok(followers.Count());
         }
 
-        [HttpGet("getFollowingsCount")]
-        public async Task<ActionResult<int>> GetFollowingsCountAsync(string userId)
+        [HttpGet("{user-id}/followings-count")]
+        public async Task<ActionResult<int>> GetFollowingsCountAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
-            return Ok(await FollowingsCountAsync(userId));
+            var followings = await unit.Follows.GetFollowingsAsync(userId);
+            return Ok(followings.Count());
         }
 
-        private async Task<int> FollowersCountAsync(string userId)
-        {
-            var follows = await unit.Follows.GetAllByPredicateAsync(f => f.FollowingId == userId);
-            return follows.Count();
-        }
-
-        private async Task<int> FollowingsCountAsync(string userId)
-        {
-            var follows = await unit.Follows.GetAllByPredicateAsync(f => f.FollowerId == userId);
-            return follows.Count();
-        }
-
-        [HttpGet("getIsFollowing")]
-        public async Task<ActionResult<bool>> GetIsFollowingAsync(string followingId)
+        [HttpGet("is-followed/{user-id}")]
+        public async Task<ActionResult<bool>> GetIsFollowedByLoggedInUserAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
             var followerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (followerId == null)
                 return Unauthorized();
 
             var follow = await unit.Follows.ExistsByPredicateAsync(f =>
-                f.FollowerId == followerId && f.FollowingId == followingId
+                f.FollowerId == followerId && f.FollowingId == userId
             );
 
             return Ok(follow);
         }
 
-        [HttpPost("follow")]
-        public async Task<IActionResult> FollowAsync(string followingId)
+        [HttpPost("{user-id}")]
+        public async Task<IActionResult> FollowAsync([FromRoute(Name = "user-id")] string userId)
         {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
             try
             {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (loggedInUserId == null)
-                    return Unauthorized();
-
-                var follower = await userManager.FindByIdAsync(loggedInUserId);
-                if (follower == null)
-                    return Unauthorized();
-                var following = await userManager.FindByIdAsync(followingId);
-                if (following == null)
-                    return NotFound();
+                var follow = await unit.Follows.ExistsByPredicateAsync(f =>
+                    f.FollowerId == loggedInUserId && f.FollowingId == userId
+                );
+                if (follow == true)
+                    return BadRequest("You've already followed this user.");
 
                 await unit.Follows.AddAsync(
                     new Follow
                     {
                         FollowerId = loggedInUserId,
-                        FollowingId = followingId,
+                        FollowingId = userId,
                         DateTime = DateTime.Now,
                     }
                 );
@@ -90,22 +86,16 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpDelete("unFollow")]
-        public async Task<IActionResult> UnFollowAsync(string followingId)
+        [HttpDelete("{user-id}")]
+        public async Task<IActionResult> UnFollowAsync(
+            [FromRoute(Name = "user-id")] string followingId
+        )
         {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
             try
             {
-                var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (loggedInUserId == null)
-                    return Unauthorized();
-
-                var follower = await userManager.FindByIdAsync(loggedInUserId);
-                if (follower == null)
-                    return Unauthorized();
-                var following = await userManager.FindByIdAsync(followingId);
-                if (following == null)
-                    return NotFound();
-
                 var follow = await unit.Follows.GetByPredicateAsync(f =>
                     f.FollowerId == loggedInUserId && f.FollowingId == followingId
                 );

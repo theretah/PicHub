@@ -1,7 +1,9 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
 namespace PicHub.Server.Controllers
@@ -17,15 +19,42 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
-        [HttpGet("{group-chat-id}")]
-        public async Task<IActionResult> GetAsync(string groupChatId)
+        [HttpGet]
+        public async Task<IActionResult> GetAllAsync()
         {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var groupChatUsers = await unit.GroupChatUsers.GetAllByPredicateAsync(gcu =>
+                gcu.UserId == loggedInUserId
+            );
+
+            var groupChats = new List<GroupChat>();
+            foreach (var groupChatUserId in groupChatUsers.Select(gcu => gcu.GroupChatId))
+            {
+                groupChats.Add(await unit.GroupChats.GetByIdAsync(groupChatUserId));
+            }
+            return Ok(groupChats);
+        }
+
+        [HttpGet("{group-chat-id}")]
+        public async Task<IActionResult> GetAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
             var groupChat = await unit.GroupChats.GetByIdAsync(groupChatId);
             return groupChat == null ? NotFound() : Ok(groupChat);
         }
 
         [HttpGet("{group-chat-id}/chat-lines")]
-        public async Task<IActionResult> GetChatLinesAsync(string groupChatId)
+        public async Task<IActionResult> GetChatLinesAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -41,7 +70,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(string title, bool isPrivate, bool isChannel)
+        public async Task<IActionResult> CreateAsync(CreateGroupChatDTO dto)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -53,10 +82,10 @@ namespace PicHub.Server.Controllers
                 new GroupChat
                 {
                     Id = id,
-                    Title = title,
+                    Title = dto.Title,
                     OwnerId = loggedInUserId,
-                    IsPrivate = isPrivate,
-                    IsChannel = isChannel,
+                    IsPrivate = dto.IsPrivate,
+                    IsChannel = dto.IsChannel,
                     IsDisabled = false,
                 }
             );
@@ -72,9 +101,8 @@ namespace PicHub.Server.Controllers
 
         [HttpPost("{group-chat-id}/chat-lines")]
         public async Task<IActionResult> SendChatLineAsync(
-            string groupChatId,
-            string content,
-            int? replyingToId = null
+            [FromRoute(Name = "group-chat-id")] string groupChatId,
+            CreateChatLineDTO dto
         )
         {
             var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -88,8 +116,8 @@ namespace PicHub.Server.Controllers
                     {
                         SenderId = senderId,
                         GroupChatId = groupChatId,
-                        Content = content,
-                        ReplyingToId = replyingToId ?? null,
+                        Content = dto.Content,
+                        ReplyingToId = dto.ReplyingToId,
                     }
                 );
                 await unit.CompleteAsync();
@@ -102,7 +130,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("{group-chat-id}/members")]
-        public async Task<IActionResult> JoinAsync(string groupChatId)
+        public async Task<IActionResult> JoinAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
         {
             string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -125,7 +155,10 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("{group-chat-id}/members/{user-id}")]
-        public async Task<IActionResult> AddMemberAsync(string groupChatId, string userId)
+        public async Task<IActionResult> AddMemberAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId,
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
             string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -168,26 +201,6 @@ namespace PicHub.Server.Controllers
             await unit.CompleteAsync();
 
             return NoContent();
-        }
-
-        [HttpDelete("{group-chat-id}/chat-lines/{chat-line-id}")]
-        public async Task<IActionResult> UnSendAsync(int chatLineId)
-        {
-            string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            try
-            {
-                await unit.ChatLines.RemoveByIdAsync(chatLineId);
-                await unit.CompleteAsync();
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not delete message." + ex.Message);
-            }
         }
 
         [HttpDelete("{group-chat-id}/members/{user-id}")]

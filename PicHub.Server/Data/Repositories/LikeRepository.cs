@@ -15,10 +15,14 @@ namespace CMSReactDotNet.Server.Data.Repositories
             this.context = context;
         }
 
+        public async Task<int> CountLikesByPostId(int postId)
+        {
+            return await context.Likes.Where(l => l.PostId == postId).CountAsync();
+        }
+
         public async Task<IEnumerable<Like>> GetLikesByUserId(string userId)
         {
             return await context.Likes.Where(l => l.UserId == userId).ToListAsync();
-            ;
         }
 
         public void Update(Like like)
