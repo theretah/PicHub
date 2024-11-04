@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
 namespace PicHub.Server.Controllers
@@ -65,9 +66,8 @@ namespace PicHub.Server.Controllers
 
         [HttpPost("{private-chat-id}/chat-lines")]
         public async Task<IActionResult> SendChatLineAsync(
-            string privateChatId,
-            string content,
-            int? replyingToId = null
+            [FromRoute(Name = "private-chat-id")] string privateChatId,
+            CreateChatLineDTO createChatLineDto
         )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -81,8 +81,8 @@ namespace PicHub.Server.Controllers
                     {
                         SenderId = loggedInUserId,
                         PrivateChatId = privateChatId,
-                        Content = content,
-                        ReplyingToId = replyingToId,
+                        Content = createChatLineDto.Content,
+                        ReplyingToId = createChatLineDto.ReplyingToId,
                     }
                 );
                 await unit.CompleteAsync();
@@ -95,7 +95,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("{reciever-id}")]
-        public async Task<IActionResult> StartPrivateChatAsync(string recieverId)
+        public async Task<IActionResult> StartPrivateChatAsync(
+            [FromRoute(Name = "reciever-id")] string recieverId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -123,7 +125,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{private-chat-id}")]
-        public async Task<IActionResult> DeletePrivateChatAsync(string privateChatId)
+        public async Task<IActionResult> DeletePrivateChatAsync(
+            [FromRoute(Name = "private-chat-id")] string privateChatId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
