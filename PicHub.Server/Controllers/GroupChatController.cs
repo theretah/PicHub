@@ -181,7 +181,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{group-chat-id}")]
-        public async Task<IActionResult> DeleteAsync(string groupChatId)
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -204,9 +206,12 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{group-chat-id}/members/{user-id}")]
-        public async Task<IActionResult> RemoveMemberAsync(string groupChatId, string userId)
+        public async Task<IActionResult> RemoveMemberAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId,
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
-            string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
 
@@ -220,9 +225,11 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{group-chat-id}/members")]
-        public async Task<IActionResult> LeaveAsync(string groupChatId)
+        public async Task<IActionResult> LeaveAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
         {
-            string? loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
 
