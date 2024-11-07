@@ -1,11 +1,10 @@
 using System.Text;
-using System.Text.Json;
 using Microsoft.AspNetCore.JsonPatch;
 using Newtonsoft.Json;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
-namespace PicHub.UnitTests.ControllersAuthenticationTests
+namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
 {
     public static class TestDataGenerator
     {

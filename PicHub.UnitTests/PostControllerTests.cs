@@ -1,5 +1,4 @@
 using CMSReactDotNet.Server.Data.IRepositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PicHub.Server.Controllers;
@@ -10,26 +9,12 @@ namespace PicHub.UnitTests
     public class PostControllerTests
     {
         private readonly Mock<IUnitOfWork> unitOfWorkMock;
-        private readonly Mock<IUserStore<AppUser>> userStoreMock;
-        private readonly Mock<UserManager<AppUser>> userManagerMock;
         private readonly PostController controller;
 
         public PostControllerTests()
         {
             unitOfWorkMock = new Mock<IUnitOfWork>();
-            userStoreMock = new Mock<IUserStore<AppUser>>();
-            userManagerMock = new Mock<UserManager<AppUser>>(
-                userStoreMock.Object,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            );
-            controller = new PostController(unitOfWorkMock.Object, userManagerMock.Object);
+            controller = new PostController(unitOfWorkMock.Object);
         }
 
         [Fact]

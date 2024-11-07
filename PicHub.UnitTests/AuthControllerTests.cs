@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using PicHub.Server.Controllers;
 using PicHub.Server.DTOs;
@@ -15,9 +16,19 @@ namespace PicHub.UnitTests
         private readonly Mock<IUserStore<AppUser>> userStoreMock;
         private readonly Mock<UserManager<AppUser>> userManagerMock;
         private readonly AppUser user;
+        private readonly RegisterDto validRegisterDto;
+
+        private const string Issuer = "https://localhost:4000";
+        private const string Audience = "https://localhost:4000";
+        private const string Secret = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
+        private readonly Mock<IConfiguration> Config = new Mock<IConfiguration>();
 
         public AuthControllerTests()
         {
+            Config.SetupGet(c => c["JwtConfig:Secret"]).Returns(Secret);
+            Config.SetupGet(c => c["JwtConfig:ValidIssuer"]).Returns(Issuer);
+            Config.SetupGet(c => c["JwtConfig:ValidAudiences"]).Returns(Audience);
+
             user = new(
                 userName: "username1",
                 fullName: "Full name 1",
@@ -28,6 +39,16 @@ namespace PicHub.UnitTests
                 accountCategoryId: (int)AccountCategories.Personal,
                 professionalCategoryId: null
             );
+            validRegisterDto = new()
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                Password = "Password@1234",
+                AccountCategoryId = user.AccountCategoryId,
+                GenderId = user.GenderId,
+                ProfessionalCategoryId = user.ProfessionalCategoryId,
+                FullName = user.FullName,
+            };
             userStoreMock = new Mock<IUserStore<AppUser>>();
             userManagerMock = new Mock<UserManager<AppUser>>(
                 userStoreMock.Object,
@@ -45,7 +66,7 @@ namespace PicHub.UnitTests
                 c.CreateMap<AppUser, UserDto>();
             });
             var mapper = config.CreateMapper();
-            controller = new AuthController(mapper, null, userManagerMock.Object);
+            controller = new AuthController(mapper, Config.Object, userManagerMock.Object);
         }
 
         [Fact]
@@ -59,20 +80,22 @@ namespace PicHub.UnitTests
             var actionResult = await controller.RegisterAsync(
                 new RegisterDto
                 {
-                    UserName = "",
+                    UserName = string.Empty,
                     Email = email,
-                    Password = "",
+                    Password = string.Empty,
                     AccountCategoryId = 1,
                     GenderId = 1,
                     ProfessionalCategoryId = null,
-                    FullName = "",
+                    FullName = string.Empty,
                 }
             );
 
             // Assert
-            var result = actionResult as BadRequestObjectResult;
-            Assert.NotNull(result);
-            Assert.Equal("User with this email address already exists.", result.Value);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
+            Assert.Equal(
+                "User with this email address already exists.",
+                badRequestResult.Value.ToString()
+            );
         }
 
         [Fact]
@@ -87,19 +110,81 @@ namespace PicHub.UnitTests
                 new RegisterDto
                 {
                     UserName = userName,
-                    Email = "",
-                    Password = "",
+                    Email = string.Empty,
+                    Password = string.Empty,
                     AccountCategoryId = 1,
                     GenderId = 1,
                     ProfessionalCategoryId = null,
-                    FullName = "",
+                    FullName = string.Empty,
                 }
             );
 
             // Assert
-            var result = actionResult as BadRequestObjectResult;
-            Assert.NotNull(result);
-            Assert.Equal("User with this username already exists.", result.Value);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
+            Assert.Equal(
+                "User with this username already exists.",
+                badRequestResult.Value.ToString()
+            );
+        }
+
+        [Fact]
+        public async Task Register_CreateNotSucceeded_ReturnsBadRequest()
+        {
+            // Arrange
+            userManagerMock
+                .Setup(u => u.CreateAsync(It.IsAny<AppUser>(), "Password@1234"))
+                .ReturnsAsync(IdentityResult.Failed());
+
+            // Act
+            var actionResult = await controller.RegisterAsync(validRegisterDto);
+
+            // Assert
+            Assert.IsType<BadRequestObjectResult>(actionResult);
+        }
+
+        [Fact]
+        public async Task Register_UserNotFoundByUserName_ReturnsBadRequest()
+        {
+            // Arrange
+            userManagerMock
+                .Setup(u => u.CreateAsync(It.IsAny<AppUser>(), "Password@1234"))
+                .ReturnsAsync(IdentityResult.Success);
+            userManagerMock
+                .Setup(u => u.FindByNameAsync(It.IsAny<string>()))
+                .ReturnsAsync(() => null);
+
+            // Act
+            var actionResult = await controller.RegisterAsync(validRegisterDto);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
+            Assert.Equal(
+                "There was some problem registering the user.",
+                badRequestResult.Value.ToString()
+            );
+        }
+
+        [Fact]
+        public async Task Register_PasswordInvalid_ReturnsBadRequest()
+        {
+            // Arrange
+            userManagerMock
+                .Setup(u => u.CreateAsync(It.IsAny<AppUser>(), "Password@1234"))
+                .ReturnsAsync(IdentityResult.Success);
+            userManagerMock
+                .SetupSequence(u => u.FindByNameAsync(It.IsAny<string>()))
+                .ReturnsAsync(() => null)
+                .ReturnsAsync(() => user);
+            userManagerMock
+                .Setup(u => u.CheckPasswordAsync(user, It.IsAny<string>()))
+                .ReturnsAsync(() => false);
+
+            // Act
+            var actionResult = await controller.RegisterAsync(validRegisterDto);
+
+            // Assert
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
+            Assert.Equal("Invalid password.", badRequestResult.Value.ToString());
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit.Abstractions;
 
-namespace PicHub.UnitTests.ControllersAuthenticationTests
+namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
 {
     public class UnauthorizedAccessTests : IClassFixture<WebApplicationFactory<Program>>
     {

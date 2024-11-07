@@ -67,29 +67,19 @@ namespace PicHub.Server.Controllers
             );
 
             var result = await userManager.CreateAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                var createdUser = await userManager.FindByNameAsync(model.UserName);
-                if (
-                    createdUser != null
-                    && await userManager.CheckPasswordAsync(createdUser, model.Password)
-                )
-                {
-                    var jwtConfigSection = configuration.GetSection("JwtConfig");
-                    var token = GenerateToken(user.Id);
-                    var response = new LoginDto
-                    {
-                        UserName = model.UserName,
-                        Password = model.Password,
-                    };
-                    return CreatedAtAction(nameof(LoginAsync), response);
-                }
-                return BadRequest("Unable to login as registered user.");
-            }
-            else
-            {
+            if (!result.Succeeded)
                 return BadRequest(result.Errors);
-            }
+
+            var createdUser = await userManager.FindByNameAsync(model.UserName);
+            if (createdUser == null)
+                return BadRequest("There was some problem registering the user.");
+
+            var isPasswordValid = await userManager.CheckPasswordAsync(createdUser, model.Password);
+            if (!isPasswordValid)
+                return BadRequest("Invalid password.");
+
+            var response = new LoginDto { UserName = model.UserName, Password = model.Password };
+            return CreatedAtAction(nameof(LoginAsync), response);
         }
 
         [HttpPost("login")]
