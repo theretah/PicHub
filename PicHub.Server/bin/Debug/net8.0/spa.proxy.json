@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:3000",
 "RedirectUrl": "",
 "LaunchCommand": "npm run dev",
-"WorkingDirectory": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\..\\pichub.client",
+"WorkingDirectory": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\PicHub.Server\\..\\pichub.client",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

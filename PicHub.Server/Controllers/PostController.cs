@@ -1,12 +1,11 @@
 using System.Security.Claims;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using Pichub.Server.Utilities;
+using PicHub.Server.Utilities;
 
 namespace PicHub.Server.Controllers
 {
@@ -15,12 +14,10 @@ namespace PicHub.Server.Controllers
     public class PostController : ControllerBase
     {
         private readonly IUnitOfWork unit;
-        private readonly UserManager<AppUser> userManager;
 
-        public PostController(IUnitOfWork unit, UserManager<AppUser> userManager)
+        public PostController(IUnitOfWork unit)
         {
             this.unit = unit;
-            this.userManager = userManager;
         }
 
         [HttpGet]
@@ -32,19 +29,6 @@ namespace PicHub.Server.Controllers
                 return Ok(posts.OrderByDescending(p => p.CreateDate).ToList());
 
             return NoContent();
-        }
-
-        [HttpGet("by-author/{author-id}")]
-        public async Task<IActionResult> GetAllByAuthorIdAsync(
-            [FromRoute(Name = "author-id")] string authorId
-        )
-        {
-            var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
-
-            if (posts.Any())
-                return Ok(posts);
-
-            return NotFound();
         }
 
         [HttpGet("{id}")]
@@ -64,6 +48,28 @@ namespace PicHub.Server.Controllers
             }
         }
 
+        [HttpGet("by-author/{user-id}")]
+        public async Task<IActionResult> GetByAuthorAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
+        {
+            var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
+
+            if (posts.Any())
+                return Ok(posts);
+
+            return NotFound();
+        }
+
+        [HttpGet("by-author/{user-id}/count")]
+        public async Task<IActionResult> GetCountByAuthorAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
+        {
+            var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
+            return Ok(posts.Count());
+        }
+
         [HttpGet("{post-id}/likes-count")]
         public async Task<IActionResult> GetLikesCountAsync(
             [FromRoute(Name = "post-id")] int postId
@@ -72,10 +78,8 @@ namespace PicHub.Server.Controllers
             return Ok(await unit.Likes.CountLikesByPostId(postId));
         }
 
-        [HttpGet("{post-id}/saves")]
-        public async Task<IActionResult> IsSavedByLoggedInUserAsync(
-            [FromRoute(Name = "post-id")] int postId
-        )
+        [HttpGet("{post-id}/is-saved")]
+        public async Task<IActionResult> IsSavedAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -94,10 +98,8 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpGet("{post-id}/likes")]
-        public async Task<IActionResult> IsLikedByLoggedInUserAsync(
-            [FromRoute(Name = "post-id")] int postId
-        )
+        [HttpGet("{post-id}/is-liked")]
+        public async Task<IActionResult> IsLikedAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -174,7 +176,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreatePostDto model)
+        public async Task<IActionResult> CreateAsync(CreateEditPostDTO model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -244,14 +246,18 @@ namespace PicHub.Server.Controllers
         [HttpPatch("{post-id}")]
         public async Task<IActionResult> UpdateAsync(
             [FromRoute(Name = "post-id")] int postId,
-            [FromBody] JsonPatchDocument<Post> jsonPatch
+            [FromBody] JsonPatchDocument<Post> patchDoc
         )
         {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
             var post = await unit.Posts.GetByIdAsync(postId);
             if (post == null)
                 return NotFound();
 
-            jsonPatch.ApplyTo(post, ModelState);
+            patchDoc.ApplyTo(post, ModelState);
             if (!TryValidateModel(post))
                 return BadRequest(ModelState);
 
@@ -316,7 +322,7 @@ namespace PicHub.Server.Controllers
                 {
                     unit.Posts.Remove(post);
                     await unit.CompleteAsync();
-                    return Ok();
+                    return NoContent();
                 }
                 return Forbid();
             }

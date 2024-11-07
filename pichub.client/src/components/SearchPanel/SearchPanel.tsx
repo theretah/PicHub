@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import SearchRecord from "../SearchRecord/SearchRecord";
-import useSearch from "../../react-query/hooks/userHooks/useSearch";
+import { useSearch } from "../../react-query/hooks/userHooks";
 
 interface Props {
   isOpen: boolean;

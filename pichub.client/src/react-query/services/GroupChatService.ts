@@ -1,94 +1,79 @@
 import axios from "axios";
+import { GroupChatDTO } from "../../entities/GroupChatDTO";
+import { CreateGroupChatDTO } from "../../entities/CreateGroupChatDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/groupChat/`,
+  baseURL: `/api/group-chats/`,
 });
 
 class GroupChatService {
-  create = async (isPrivate: boolean, isChannel: boolean) => {
-    return await axiosInstance
-      .post(
-        `start?isPrivate=${isPrivate}&isChannel=${isChannel}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      )
-      .then((res) => res.data);
-  };
+  private getAuthHeaders = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 
-  delete = async (groupChatId: string) => {
-    return await axiosInstance
-      .delete(`send?groupChatId=${groupChatId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => res.data);
-  };
+  getAsync = async (groupChatId: string) =>
+    await axiosInstance
+      .get<GroupChatDTO>(`${groupChatId}`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  send = async (
-    groupChatId: string,
-    content: string,
-    replyingToId: number | null
-  ) => {
-    return await axiosInstance
-      .post(
-        `send?groupChatId=${groupChatId}&content=${content}&replyingToId=${replyingToId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then((res) => res.data);
-  };
+  getGroupChatsAsync = async () =>
+    await axiosInstance
+      .get<GroupChatDTO[]>("", this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  unSend = async (chatLineId: string) => {
-    return await axiosInstance
-      .delete(`unSend?chatLineId=${chatLineId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => res.data);
-  };
+  createAsync = async (data: CreateGroupChatDTO) =>
+    await axiosInstance
+      .post("", { data }, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  addMember = async (groupChatId: string, userId: string) => {
-    return await axiosInstance
-      .post(
-        `addMember?groupChatId=${groupChatId}&userId=${userId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then((res) => res.data);
-  };
+  joinAsync = async (groupChatId: string) =>
+    await axiosInstance
+      .post(`${groupChatId}/members`, {}, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  removeMember = async (groupChatId: string, userId: string) => {
-    return await axiosInstance
-      .delete(`removeMember?groupChatId=${groupChatId}&userId=${userId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => res.data);
-  };
+  addMemberAsync = async (groupChatId: string, userId: string) =>
+    await axiosInstance
+      .post(`${groupChatId}/members/${userId}`, {}, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  join = async (groupChatId: string) => {
-    return await axiosInstance
-      .post(
-        `join?groupChatId=${groupChatId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      )
-      .then((res) => res.data);
-  };
+  deleteAsync = async (groupChatId: string) =>
+    await axiosInstance
+      .delete(`${groupChatId}`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  leave = async (groupChatId: string) => {
-    return await axiosInstance
-      .delete(`leave?groupChatId=${groupChatId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => res.data);
-  };
+  removeMemberAsync = async (groupChatId: string, userId: string) =>
+    await axiosInstance
+      .delete(`${groupChatId}/members/${userId}`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
+
+  leaveAsync = async (groupChatId: string) =>
+    await axiosInstance
+      .delete(`${groupChatId}/members`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 }
+
 export default new GroupChatService();

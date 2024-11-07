@@ -34,7 +34,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("{user-id}")]
-        public async Task<IActionResult> BlockUserAsync([FromRoute(Name = "user-id")] string userId)
+        public async Task<IActionResult> CreateAsync([FromRoute(Name = "user-id")] string userId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -49,9 +49,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{user-id}")]
-        public async Task<IActionResult> UnBlockUserAsync(
-            [FromRoute(Name = "user-id")] string userId
-        )
+        public async Task<IActionResult> DeleteAsync([FromRoute(Name = "user-id")] string userId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

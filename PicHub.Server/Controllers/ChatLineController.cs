@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
+using PicHub.Server.DTOs;
 
 namespace PicHub.Server.Controllers
 {
@@ -15,8 +16,93 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
-        [HttpPut("{chat-line-id}")]
-        public async Task<IActionResult> EditChatLineAsync(int chatLineId, string newContent)
+        [HttpGet("group-chats/{group-chat-id}")]
+        public async Task<IActionResult> GetGroupChatLinesAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
+                cl.GroupChatId == groupChatId
+            );
+
+            if (chatLines == null)
+                return NoContent();
+
+            return Ok(chatLines);
+        }
+
+        [HttpGet("private-chats/{private-chat-id}")]
+        public async Task<IActionResult> GetPrivateChatLinesAsync(
+            [FromRoute(Name = "private-chat-id")] string privateChatId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
+                cl.PrivateChatId == privateChatId
+            );
+
+            if (chatLines == null)
+                return NoContent();
+
+            return Ok(chatLines);
+        }
+
+        [HttpPost("group-chats/{group-chat-id}/")]
+        public async Task<IActionResult> SendGroupChatLineAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId,
+            [FromBody] CreateChatLineDTO dto
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                await unit.ChatLines.SendGroupChatAsync(groupChatId, loggedInUserId, dto);
+                await unit.CompleteAsync();
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not send message. " + ex.Message);
+            }
+        }
+
+        [HttpPost("private-chats/{private-chat-id}/")]
+        public async Task<IActionResult> SendPrivateChatLineAsync(
+            [FromRoute(Name = "private-chat-id")] string privateChatId,
+            [FromBody] CreateChatLineDTO dto
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            try
+            {
+                await unit.ChatLines.SendPrivateChatAsync(privateChatId, loggedInUserId, dto);
+                await unit.CompleteAsync();
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Could not send message. " + ex.Message);
+            }
+        }
+
+        [HttpPatch("{chat-line-id}")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromRoute(Name = "chat-line-id")] int chatLineId,
+            [FromBody] string newContent
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -43,7 +129,9 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{chat-line-id}")]
-        public async Task<IActionResult> UnSendChatLineAsync(int chatLineId)
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute(Name = "chat-line-id")] int chatLineId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

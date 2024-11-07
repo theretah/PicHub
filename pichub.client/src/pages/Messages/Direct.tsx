@@ -6,12 +6,12 @@ import DirectChatMessage from "../../components/Messages/DirectChatMessage";
 import MessagesLayout from "../../components/Messages/MessagesLayout";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import { ChatLineDTO } from "../../entities/ChatLineDTO";
-import useUserByUserName from "../../react-query/hooks/userHooks/useUserByUserName";
-import useGetPrivateChatLines from "../../react-query/hooks/privateChatHooks/useGetPrivateChatLines";
-import useGetPrivateChat from "../../react-query/hooks/privateChatHooks/useGetPrivateChat";
-import usePrivateChatExists from "../../react-query/hooks/privateChatHooks/usePrivateChatExists";
-import useStartPrivateChat from "../../react-query/hooks/privateChatHooks/useStartPrivateChat";
-import useSendPrivateChat from "../../react-query/hooks/privateChatHooks/useSendPrivateChat";
+import { useUserByUserName } from "../../react-query/hooks/userHooks";
+import {
+  usePrivateChatLines,
+  useSendPrivateChatLine,
+} from "../../react-query/hooks/ChatLineHooks";
+import { useCreatePrivateChat } from "../../react-query/hooks/PrivateChatHooks";
 
 const Direct = () => {
   const { user, isAuthenticated } = useAuthStore();
@@ -26,19 +26,9 @@ const Direct = () => {
     error,
   } = useUserByUserName(userName || "");
 
-  const { data: chatExists } = usePrivateChatExists({
-    user1Id: targetUser?.id || "",
-    user2Id: user?.id || "",
-    enabled: !!targetUser,
-  });
+  const { data: chat } = useSendPrivateChatLine(targetUser?.id || "");
 
-  const { data: chat } = useGetPrivateChat({
-    user1Id: targetUser?.id || "",
-    user2Id: user?.id || "",
-    enabled: chatExists == true,
-  });
-
-  const { data: chatLines } = useGetPrivateChatLines(chat?.id || "");
+  const { data: chatLines } = usePrivateChatLines(chat?.id || "");
 
   const [newMessages, setNewMessages] = useState<ChatLineDTO[] | undefined>([]);
 
@@ -47,9 +37,9 @@ const Direct = () => {
     setNewMessages(chatLines);
   }, [chatLines]);
 
-  const startPrivateChat = useStartPrivateChat();
+  const createPrivateChat = useCreatePrivateChat();
 
-  const sendPrivateChat = useSendPrivateChat();
+  const send = useSendPrivateChatLine(chat.id);
 
   // const deleteChat = useDeleteChat({
   //   chatId: chat?.id || 0,
@@ -62,39 +52,41 @@ const Direct = () => {
   }
   function handleSendButton() {
     if (chat) {
-      if (chatExists == false && targetUser) {
-        startPrivateChat.mutate(targetUser.id);
-        if (startPrivateChat.isSuccess) {
-          sendPrivateChat.mutate({
-            privateChatId: chat?.id || "",
+      if (targetUser) {
+        createPrivateChat.mutate(targetUser.id);
+        if (createPrivateChat.isSuccess) {
+          send.mutate({
             content: messageText,
             replyingToId: null,
           });
-          if (sendPrivateChat.isSuccess && user) {
+          if (send.isSuccess && user) {
             let m: ChatLineDTO = {
               authorId: user.id,
-              chatId: 1,
+              privateChatId: "1",
+              groupChatId: null,
               content: messageText,
               date: new Date(Date.now()),
               id: 1,
+              replyingToId: null,
             };
             addMessage(m);
             setMessageText("");
           }
         }
       } else {
-        sendPrivateChat.mutate({
-          privateChatId: chat?.id,
+        send.mutate({
           content: messageText,
           replyingToId: null,
         });
-        if (sendPrivateChat.isSuccess && user) {
+        if (send.isSuccess && user) {
           let m: ChatLineDTO = {
             authorId: user.id,
-            chatId: 1,
+            privateChatId: "1",
+            groupChatId: null,
             content: messageText,
             date: new Date(Date.now()),
             id: 1,
+            replyingToId: null,
           };
           addMessage(m);
           setMessageText("");

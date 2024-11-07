@@ -241,6 +241,23 @@ namespace PicHub.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("AccountCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Title = "Personal"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Title = "Business"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Title = "Creator"
+                        });
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Block", b =>
@@ -282,8 +299,8 @@ namespace PicHub.Server.Migrations
                     b.Property<string>("PrivateChatId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ReplyingToId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ReplyingToId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
@@ -332,6 +349,23 @@ namespace PicHub.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Genders");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Title = "Not specified"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Title = "Male"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Title = "Female"
+                        });
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.GroupChat", b =>
@@ -472,6 +506,108 @@ namespace PicHub.Server.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ProfessionalCategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Title = "Artist"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Title = "Musician/band"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Title = "Blogger"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Title = "Clothing (Brand)"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Title = "Community"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Title = "Education"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Title = "Entrepreneur"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Title = "Health/beauty"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Title = "Editor"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Title = "Writer"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Title = "Personal blog"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Title = "Prodict/service"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Title = "Gamer"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Title = "Restaurant"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Title = "Beauty, cosmetic & personal care"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Title = "Grocery Store"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Title = "Photographer"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Title = "Shopping & retail"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Title = "Video creator"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Title = "Digital creator"
+                        });
                 });
 
             modelBuilder.Entity("PicHub.Server.Entities.Save", b =>
@@ -633,7 +769,7 @@ namespace PicHub.Server.Migrations
                         .WithMany("ChatLines")
                         .HasForeignKey("PrivateChatId");
 
-                    b.HasOne("PicHub.Server.Entities.AppUser", "ReplyingTo")
+                    b.HasOne("PicHub.Server.Entities.ChatLine", "ReplyingTo")
                         .WithMany()
                         .HasForeignKey("ReplyingToId");
 

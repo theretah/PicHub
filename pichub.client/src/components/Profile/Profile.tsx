@@ -3,13 +3,6 @@ import ProfileImage from "../ProfileImage/ProfileImage";
 import Layout from "../Layout/Layout";
 import { Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import useUserByUserName from "../../react-query/hooks/userHooks/useUserByUserName";
-import usePostsCount from "../../react-query/hooks/userHooks/usePostsCount";
-import useFollowersCount from "../../react-query/hooks/followHooks/useFollowersCount";
-import useFollowingsCount from "../../react-query/hooks/followHooks/useFollowingsCount";
-import useIsFollowing from "../../react-query/hooks/followHooks/useIsFollowing";
-import useFollow from "../../react-query/hooks/followHooks/useFollow";
-import useUnfollow from "../../react-query/hooks/followHooks/useUnfollow";
 import EditProfileButton from "./Buttons/EditProfileButton";
 import FollowButton from "./Buttons/FollowButton";
 import MessageButton from "./Buttons/MessageButton";
@@ -19,6 +12,18 @@ import ProfileUserNameButton from "./Buttons/ProfileUserNameButton";
 import TabsRow from "./Tabs/TabsRow";
 import StatsRow from "./Stats/StatsRow";
 import BackButton from "./Buttons/BackButton";
+import { useUserByUserName } from "../../react-query/hooks/userHooks";
+import {
+  usePostsByAuthorId,
+  usePostsCountByAuthor,
+} from "../../react-query/hooks/PostHooks";
+import {
+  useFollow,
+  useFollowersCount,
+  useFollowingsCount,
+  useIsFollowing,
+  useUnFollow,
+} from "../../react-query/hooks/FollowHooks";
 
 interface Props {
   userName: string;
@@ -32,7 +37,8 @@ const Profile = ({ userName, children, activeTab }: Props) => {
 
   const userIsPageOwner = userName == user?.userName;
 
-  const { data: postsCount } = usePostsCount(pageUser?.id || "", isSuccess);
+  const { data: posts } = usePostsByAuthorId(pageUser?.id || "");
+  const { data: postsCount } = usePostsCountByAuthor(pageUser?.id || "");
 
   const { data: isFollowing } = useIsFollowing(pageUser?.id || "", isSuccess);
   const [isFollowingState, setIsFollowingState] = useState<boolean>(
@@ -71,7 +77,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
     }
   }
 
-  const unFollow = useUnfollow();
+  const unFollow = useUnFollow();
   async function unFollowUser() {
     if (pageUser && followersCount != undefined) {
       unFollow.mutateAsync(pageUser.id);

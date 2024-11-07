@@ -1,45 +1,39 @@
 import axios from "axios";
 
-const axiosInstance = axios.create({ baseURL: "/api/follow/" });
+const axiosInstance = axios.create({ baseURL: "/api/follows/" });
 
 class FollowService {
-  follow = async (followingId: string) => {
-    return await axiosInstance.post(
-      `follow?followingId=${followingId}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-  };
+  private getAuthHeaders = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 
-  unFollow = async (followingId: string) => {
-    return await axiosInstance.delete(`unFollow?followingId=${followingId}`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
-  };
-
-  followersCount = async (userId: string) => {
+  followersCountAsync = async (userId: string) => {
     return await axiosInstance
-      .get<number>(`getFollowersCount?userId=${userId}`)
+      .get<number>(`${userId}/followers-count`)
       .then((res) => res.data);
   };
 
-  followingsCount = async (userId: string) => {
+  followingsCountAsync = async (userId: string) => {
     return await axiosInstance
-      .get<number>(`getFollowingsCount?userId=${userId}`)
+      .get<number>(`${userId}/followings-count`)
       .then((res) => res.data);
   };
 
-  isFollowing = async (followingId: string) => {
+  isFollowedAsync = async (userId: string) => {
     return await axiosInstance
-      .get<boolean>(`getIsFollowing?followingId=${followingId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
+      .get<boolean>(`is-followed/${userId}`, this.getAuthHeaders())
+      .then((res) => res.data);
+  };
+
+  followAsync = async (userId: string) => {
+    return await axiosInstance
+      .post(`${userId}`, {}, this.getAuthHeaders())
+      .then((res) => res.data);
+  };
+
+  unFollowAsync = async (userId: string) => {
+    return await axiosInstance
+      .delete(`${userId}`, this.getAuthHeaders())
       .then((res) => res.data);
   };
 }

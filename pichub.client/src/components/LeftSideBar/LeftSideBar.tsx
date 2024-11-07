@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import SearchButton from "./ActionButtons/SearchButton";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import ProfileImage from "../ProfileImage/ProfileImage";
 import MoreButton from "./ActionButtons/MoreButton";
 import HomeButton from "./Buttons/HomeButton";
 import ExploreButton from "./Buttons/ExploreButton";
@@ -36,10 +35,10 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       currentPage != "Messages"
   );
 
-  function logoutUser() {
-    logout();
-    navigate("/login");
-  }
+  // function logoutUser() {
+  //   logout();
+  //   navigate("/login");
+  // }
   function handleMorebutton() {
     setSettingsOpen(true);
     setSearchOpen(false);

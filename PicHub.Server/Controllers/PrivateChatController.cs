@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
-using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
 namespace PicHub.Server.Controllers
@@ -15,6 +14,21 @@ namespace PicHub.Server.Controllers
         public PrivateChatController(IUnitOfWork unit)
         {
             this.unit = unit;
+        }
+
+        [HttpGet("{user-id}")]
+        public async Task<IActionResult> GetAsync([FromRoute(Name = "user-id")] string userId)
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var chat = await unit.PrivateChats.GetByPredicateAsync(c =>
+                (c.User1Id == loggedInUserId && c.User2Id == userId)
+                || (c.User1Id == userId && c.User2Id == loggedInUserId)
+            );
+
+            return chat == null ? NotFound() : Ok(chat);
         }
 
         [HttpGet]
@@ -31,71 +45,8 @@ namespace PicHub.Server.Controllers
             return chats == null ? NoContent() : Ok(chats);
         }
 
-        [HttpGet("{user-id}")]
-        public async Task<IActionResult> GetPrivateChatAsync(
-            [FromRoute(Name = "user-id")] string userId
-        )
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var chat = await unit.PrivateChats.GetByPredicateAsync(c =>
-                (c.User1Id == loggedInUserId && c.User2Id == userId)
-                || (c.User1Id == userId && c.User2Id == loggedInUserId)
-            );
-
-            return chat == null ? NotFound() : Ok(chat);
-        }
-
-        [HttpGet("{private-chat-id}/chat-lines")]
-        public async Task<IActionResult> GetChatLinesAsync(
-            [FromRoute(Name = "private-chat-id")] string privateChatId
-        )
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
-                cl.PrivateChatId == privateChatId
-            );
-
-            return chatLines == null ? NoContent() : Ok(chatLines);
-        }
-
-        [HttpPost("{private-chat-id}/chat-lines")]
-        public async Task<IActionResult> SendChatLineAsync(
-            [FromRoute(Name = "private-chat-id")] string privateChatId,
-            CreateChatLineDTO createChatLineDto
-        )
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            try
-            {
-                await unit.ChatLines.AddAsync(
-                    new ChatLine
-                    {
-                        SenderId = loggedInUserId,
-                        PrivateChatId = privateChatId,
-                        Content = createChatLineDto.Content,
-                        ReplyingToId = createChatLineDto.ReplyingToId,
-                    }
-                );
-                await unit.CompleteAsync();
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not send message. " + ex.Message);
-            }
-        }
-
         [HttpPost("{reciever-id}")]
-        public async Task<IActionResult> StartPrivateChatAsync(
+        public async Task<IActionResult> CreateAsync(
             [FromRoute(Name = "reciever-id")] string recieverId
         )
         {
@@ -125,7 +76,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{private-chat-id}")]
-        public async Task<IActionResult> DeletePrivateChatAsync(
+        public async Task<IActionResult> DeleteAsync(
             [FromRoute(Name = "private-chat-id")] string privateChatId
         )
         {
@@ -135,6 +86,10 @@ namespace PicHub.Server.Controllers
 
             try
             {
+                var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
+                    cl.PrivateChatId == privateChatId
+                );
+                unit.ChatLines.RemoveRange(chatLines);
                 await unit.PrivateChats.RemoveByIdAsync(privateChatId);
                 await unit.CompleteAsync();
 

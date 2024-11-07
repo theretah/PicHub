@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using Pichub.Server.Utilities;
+using PicHub.Server.Utilities;
 
 namespace PicHub.Server.Controllers
 {
@@ -34,7 +34,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public IActionResult SearchByUserName([FromQuery(Name = "query")] string? query)
+        public IActionResult Search([FromQuery(Name = "query")] string? query)
         {
             var users = userManager.Users;
             if (!string.IsNullOrWhiteSpace(query))
@@ -51,7 +51,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAllUsers()
+        public IActionResult GetAll()
         {
             var users = userManager.Users;
             if (users.Any())
@@ -62,19 +62,8 @@ namespace PicHub.Server.Controllers
             return NotFound();
         }
 
-        [HttpGet("by-email/{email}")]
-        public async Task<IActionResult> GetUserByEmailAsync(string email)
-        {
-            var user = await userManager.FindByEmailAsync(email);
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return Ok(mapper.Map<UserDto>(user));
-        }
-
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetUserByIdAsync(string id)
+        public async Task<IActionResult> GetAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -84,8 +73,19 @@ namespace PicHub.Server.Controllers
             return Ok(mapper.Map<UserDto>(user));
         }
 
+        [HttpGet("by-email/{email}")]
+        public async Task<IActionResult> GetByEmailAsync(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(mapper.Map<UserDto>(user));
+        }
+
         [HttpGet("by-username/{username}")]
-        public async Task<IActionResult> GetUserByUserNameAsync(string username)
+        public async Task<IActionResult> GetByUserNameAsync(string username)
         {
             var user = await userManager.FindByNameAsync(username);
             if (user == null)
@@ -115,7 +115,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUserAsync(string id)
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user != null)
@@ -127,8 +127,8 @@ namespace PicHub.Server.Controllers
         }
 
         [Authorize]
-        [HttpPut]
-        public async Task<IActionResult> UpdateProfileAsync([FromForm] EditProfileDto model)
+        [HttpPatch]
+        public async Task<IActionResult> UpdateAsync([FromForm] EditProfileDto model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

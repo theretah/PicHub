@@ -14,7 +14,7 @@ namespace PicHub.IntegrationTests
     public class IntegrationTestsFixture : WebApplicationFactory<Program>
     {
         private const string ConnectionString =
-            "Server=.;Database=PichubTestDb;Trusted_Connection=True;Encrypt=false;";
+            "Server=.;Database=PicHubTestDb;Trusted_Connection=True;Encrypt=false;";
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {

@@ -3,14 +3,14 @@ import Layout from "../Layout/Layout";
 import { Link, Navigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import ChatRecord from "./ChatRecord";
-import useGetPrivateChats from "../../react-query/hooks/privateChatHooks/useGetPrivateChats";
+import { usePrivateChats } from "../../react-query/hooks/PrivateChatHooks";
 interface Props {
   children: ReactNode;
 }
 const MessagesLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useAuthStore();
 
-  const { data: chats } = useGetPrivateChats();
+  const { data: privateChats } = usePrivateChats();
 
   const [activeChat, setActiveChat] = useState<string>();
 
@@ -124,7 +124,7 @@ const MessagesLayout = ({ children }: Props) => {
                     borderRadius: 0,
                   }}
                 >
-                  {chats?.map((chat) => (
+                  {privateChats?.map((chat) => (
                     <ChatRecord
                       key={chat.id}
                       isActive={activeChat == chat.id}

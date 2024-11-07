@@ -23,7 +23,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     }
 
     await axios
-      .get(`/api/auth/getLoggedInUser`, {
+      .get(`/api/auth/loggedInUser`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -50,7 +50,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       const token = loginResponse.data.token;
       localStorage.setItem("token", token);
 
-      const userResponse = await axios.get("/api/auth/getLoggedInUser", {
+      const userResponse = await axios.get("/api/auth/loggedInUser", {
         headers: { Authorization: `Bearer ${token}` },
       });
 

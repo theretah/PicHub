@@ -38,7 +38,7 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_ReturnsAllUsers()
+        public void GetAll_ReturnsAllUsers()
         {
             // Arrange
             var users = new List<AppUser>
@@ -77,7 +77,7 @@ namespace PicHub.UnitTests
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
             // Act
-            var actionResult = controller.GetAllUsers();
+            var actionResult = controller.GetAll();
 
             // Assert
             var result = actionResult as OkObjectResult;
@@ -91,14 +91,14 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAllUsers_UsersEmpty_ReturnsNotFoundResult()
+        public void GetAll_UsersEmpty_ReturnsNotFoundResult()
         {
             // Arrange
             var users = new List<AppUser>();
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
             // Act
-            var actionResult = controller.GetAllUsers();
+            var actionResult = controller.GetAll();
 
             // Assert
             var result = actionResult as NotFoundResult;
@@ -148,7 +148,7 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = controller.SearchByUserName(query);
+            var actionResult = controller.Search(query);
 
             var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
@@ -198,7 +198,7 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = controller.SearchByUserName(query);
+            var actionResult = controller.Search(query);
 
             var result = actionResult as NotFoundResult;
             Assert.NotNull(result);

@@ -1,13 +1,13 @@
 {
   "Version": 1,
-  "Hash": "mr2Ys0KqX/hGaulSlive9Aqm1feR4vqVJ+cdVQ5IXE0=",
+  "Hash": "gi1ASIPI6HO7ptU1uMj2kyahlGHyKOZBq113+Nhktg8=",
   "Source": "PicHub.Server",
   "BasePath": "_content/PicHub.Server",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [
     {
-      "Identity": "C:\\Users\\taher\\Documents\\CSP2\\PicHub\\pichub.client\\pichub.client.esproj",
+      "Identity": "c:\\Users\\taher\\Documents\\CSP2\\PicHub\\pichub.client\\pichub.client.esproj",
       "Version": 2,
       "Source": "pichub.client",
       "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",

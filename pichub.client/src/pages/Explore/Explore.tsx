@@ -3,9 +3,9 @@ import Layout from "../../components/Layout/Layout";
 import { Link } from "react-router-dom";
 import ExploreSearchPanel from "../../components/SearchPanel/ExploreSearchPanel";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import usePosts from "../../react-query/hooks/postHooks/usePosts";
 import { PostDTO } from "../../entities/PostDTO";
-import useSearch from "../../react-query/hooks/userHooks/useSearch";
+import { usePosts } from "../../react-query/hooks/PostHooks";
+import { useSearch } from "../../react-query/hooks/userHooks";
 interface PostItemProps {
   post: PostDTO;
 }

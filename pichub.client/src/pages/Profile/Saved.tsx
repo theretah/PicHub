@@ -1,8 +1,8 @@
 import { Link, Navigate } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
-import useSavedPosts from "../../react-query/hooks/postHooks/useSavedPosts";
 import Profile from "../../components/Profile/Profile";
 import useAuthStore from "../../auth/authStore";
+import { useSavedPosts } from "../../react-query/hooks/PostHooks";
 
 const Saved = () => {
   const { user } = useAuthStore();

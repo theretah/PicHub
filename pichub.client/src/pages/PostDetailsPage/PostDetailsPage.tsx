@@ -3,13 +3,13 @@ import Layout from "../../components/Layout/Layout";
 import "./PostDetailsPage.css";
 import { Navigate, useParams } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
-import usePostById from "../../react-query/hooks/postHooks/usePostById";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import { usePostById } from "../../react-query/hooks/PostHooks";
 
 const PostDetailsPage = () => {
   const { id } = useParams();
   const { isAuthenticated } = useAuthStore();
-  const { data, error, isLoading } = usePostById(parseInt(id ? id : ""));
+  const { data, error, isLoading } = usePostById(parseInt(id ?? ""));
 
   if (isLoading)
     return (

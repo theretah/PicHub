@@ -6,7 +6,6 @@ namespace PicHub.UnitTests.ControllersAuthenticationTests
 {
     public class UnauthorizedAccessTests : IClassFixture<WebApplicationFactory<Program>>
     {
-        private readonly WebApplicationFactory<Program> factory;
         private readonly ITestOutputHelper testOutputHelper;
         private readonly HttpClient client;
 
@@ -21,7 +20,6 @@ namespace PicHub.UnitTests.ControllersAuthenticationTests
             ITestOutputHelper testOutputHelper
         )
         {
-            this.factory = factory;
             this.testOutputHelper = testOutputHelper;
             client = factory.CreateClient();
             client.BaseAddress = new Uri("https://localhost:4000/api/");
@@ -99,6 +97,44 @@ namespace PicHub.UnitTests.ControllersAuthenticationTests
         {
             testOutputHelper.WriteLine($"Testing authentication on DELETE url: {url}");
             var response = await client.DeleteAsync(url);
+            testOutputHelper.WriteLine($"Response code: {response.StatusCode}");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Theory]
+        [MemberData(
+            nameof(TestDataGenerator.HttpPut_Users_EditProfileAsync_EndpointData),
+            MemberType = typeof(TestDataGenerator)
+        )]
+        [MemberData(
+            nameof(TestDataGenerator.HttpPut_ChatLines_EditChatLineAsync_EndpointData),
+            MemberType = typeof(TestDataGenerator)
+        )]
+        public async Task HttpPut_NotAuthenticated_ReturnsUnauthorizedResult(
+            string url,
+            HttpContent data
+        )
+        {
+            testOutputHelper.WriteLine($"Testing authentication on PUT url: {url}");
+            var response = await client.PutAsync(url, data);
+            testOutputHelper.WriteLine($"Response code: {response.StatusCode}");
+
+            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        }
+
+        [Theory]
+        [MemberData(
+            nameof(TestDataGenerator.HttpPatch_Users_EditProfileAsync_EndpointData),
+            MemberType = typeof(TestDataGenerator)
+        )]
+        public async Task HttpPatch_NotAuthenticated_ReturnsUnauthorizedResult(
+            string url,
+            HttpContent data
+        )
+        {
+            testOutputHelper.WriteLine($"Testing authentication on PATCH url: {url}");
+            var response = await client.PatchAsync(url, data);
             testOutputHelper.WriteLine($"Response code: {response.StatusCode}");
 
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

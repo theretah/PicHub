@@ -67,7 +67,6 @@ public partial class Program
             );
         });
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddTransient<IAppUserRepository, AppUserRepository>();
         builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
         builder.Services.AddSingleton<IValidationService, ValidationService>();
         var mappingConfig = new MapperConfiguration(cfg =>

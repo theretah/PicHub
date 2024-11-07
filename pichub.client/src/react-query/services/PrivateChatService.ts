@@ -1,77 +1,46 @@
 import axios from "axios";
 import { PrivateChatDTO } from "../../entities/PrivateChatDTO";
-import { ChatLineDTO } from "../../entities/ChatLineDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/privateChat/`,
+  baseURL: `/api/private-chats/`,
 });
 
 class PrivateChatService {
-  start = async (recieverId: string) => {
-    return await axiosInstance
-      .post<number>(
-        `start?recieverId=${recieverId}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      )
-      .then((res) => res.data);
-  };
+  private getAuthHeaders = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 
-  delete = async (chatId: number) => {
-    return await axiosInstance.delete(`deleteChat?chatId=${chatId}`);
-  };
+  getAsync = async (userId: string) =>
+    await axiosInstance
+      .get<PrivateChatDTO>(`${userId}`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  exists = async (recieverId: string, senderId: string) => {
-    return await axiosInstance
-      .get<boolean>(`chatExists?recieverId=${recieverId}&senderId=${senderId}`)
-      .then((res) => res.data);
-  };
+  getPrivateChatsAsync = async () =>
+    await axiosInstance
+      .get<PrivateChatDTO[]>("", this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  get = async (recieverId: string, senderId: string) => {
-    return await axiosInstance
-      .get<PrivateChatDTO>(
-        `getChat?recieverId=${recieverId}&senderId=${senderId}`
-      )
-      .then((res) => res.data);
-  };
+  createAsync = async (recieverId: string) =>
+    await axiosInstance
+      .post<string>(`${recieverId}`, {}, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 
-  getAll = async () => {
-    return await axiosInstance
-      .get<PrivateChatDTO[]>(`getChats`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      })
-      .then((res) => res.data);
-  };
-
-  getChatLines = async (chatId: string) => {
-    return await axiosInstance
-      .get<ChatLineDTO[]>(`getChatLines?chatId=${chatId}`)
-      .then((res) => res.data);
-  };
-
-  send = async (
-    chatId: string,
-    content: string,
-    replyingToId: number | null
-  ) => {
-    return await axiosInstance.post(
-      `send?chatId=${chatId}&content=${content}&replyingToId=${replyingToId}`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-  };
-
-  unSend = async (chatLineId: number) => {
-    return await axiosInstance.delete(`unSend?chatLineId=${chatLineId}`);
-  };
+  deleteAsync = async (chatId: number) =>
+    await axiosInstance
+      .delete(`${chatId}`, this.getAuthHeaders())
+      .then((res) => res.data)
+      .catch((e) => {
+        throw new Error(e);
+      });
 }
 
 export default new PrivateChatService();

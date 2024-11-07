@@ -32,7 +32,7 @@ namespace PicHub.Server.Controllers
         }
 
         [Authorize]
-        [HttpGet()]
+        [HttpGet("loggedInUser")]
         public async Task<IActionResult> GetLoggedInUserAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -82,11 +82,7 @@ namespace PicHub.Server.Controllers
                         UserName = model.UserName,
                         Password = model.Password,
                     };
-                    return CreatedAtAction(
-                        nameof(LoginAsync),
-                        new { id = createdUser.Id },
-                        response
-                    );
+                    return CreatedAtAction(nameof(LoginAsync), response);
                 }
                 return BadRequest("Unable to login as registered user.");
             }
@@ -105,7 +101,7 @@ namespace PicHub.Server.Controllers
                 if (await userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var token = GenerateToken(user.Id);
-                    return Ok(new { token });
+                    return Created("auth", new { token });
                 }
                 return BadRequest("Failed to login with this password.");
             }

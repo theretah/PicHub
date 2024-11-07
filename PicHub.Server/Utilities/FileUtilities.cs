@@ -1,4 +1,4 @@
-namespace Pichub.Server.Utilities
+namespace PicHub.Server.Utilities
 {
     public static class FileUtilities
     {

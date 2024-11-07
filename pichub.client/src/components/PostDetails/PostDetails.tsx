@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import useUserById from "../../react-query/hooks/userHooks/useUserById";
-import useIsLiked from "../../react-query/hooks/postHooks/useIsLiked";
-import useIsSaved from "../../react-query/hooks/postHooks/useIsSaved";
-import useIsFollowing from "../../react-query/hooks/followHooks/useIsFollowing";
 import PostDetailsHorizontal from "./PostDetailsHorizontal";
 import PostDetailsVertical from "./PostDetailsVertical";
 import { PostDTO } from "../../entities/PostDTO";
 import LoadingIndicator from "../LoadingIndicator/LoadingIndicator";
 import useAuthStore from "../../auth/authStore";
-import useLike from "../../react-query/hooks/postHooks/useLike";
-import useSave from "../../react-query/hooks/postHooks/useSave";
-import useDisLike from "../../react-query/hooks/postHooks/useDisLike";
-import useUnSave from "../../react-query/hooks/postHooks/useUnSave";
-import useLikesCount from "../../react-query/hooks/postHooks/useLikesCount";
-import useFollow from "../../react-query/hooks/followHooks/useFollow";
+import { useUserById } from "../../react-query/hooks/userHooks";
+import {
+  useDisLikePost,
+  useIsLiked,
+  useIsSaved,
+  useLikePost,
+  useLikesCount,
+  useSavePost,
+  useUnSavePost,
+} from "../../react-query/hooks/PostHooks";
+import { useFollow, useIsFollowing } from "../../react-query/hooks/FollowHooks";
 
 interface Props {
   post: PostDTO;
@@ -60,8 +61,8 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     if (isSaved != undefined) setIsSavedState(isSaved);
   }, [isLiked, isSaved]);
 
-  const likeMutation = useLike();
-  const disLikeMutation = useDisLike();
+  const likeMutation = useLikePost();
+  const disLikeMutation = useDisLikePost();
   function handleLikeButton() {
     setIsLikedState(!isLikedState);
     if (isLikedState == true) {
@@ -89,8 +90,8 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     }
   }
 
-  const saveMutation = useSave();
-  const unSaveMutation = useUnSave();
+  const saveMutation = useSavePost();
+  const unSaveMutation = useUnSavePost();
   function handleSaveButton() {
     setIsSavedState(!isSavedState);
     if (isSavedState == true) {

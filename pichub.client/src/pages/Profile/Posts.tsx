@@ -1,8 +1,8 @@
 import { Link, Navigate, useParams } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import Profile from "../../components/Profile/Profile";
-import usePostsByAuthorUserName from "../../react-query/hooks/postHooks/usePostsByAuthorUserName";
 import useAuthStore from "../../auth/authStore";
+import { usePostsByAuthorId } from "../../react-query/hooks/PostHooks";
 
 const Posts = () => {
   const { userName } = useParams();
@@ -11,7 +11,7 @@ const Posts = () => {
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
-  const { data, error, isLoading } = usePostsByAuthorUserName(userName);
+  const { data, error, isLoading } = usePostsByAuthorId(user?.id || "");
 
   if (error) return <p className="text-light">{error.message}</p>;
 

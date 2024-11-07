@@ -1,5 +1,5 @@
+import { useUsers } from "../../react-query/hooks/userHooks";
 import HomeSuggestDetails from "../HomeSuggestDetails/HomeSuggestDetails";
-import useUsers from "../../react-query/hooks/userHooks/useUsers";
 
 const HomeSideBar = () => {
   const { data } = useUsers();

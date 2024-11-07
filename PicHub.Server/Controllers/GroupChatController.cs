@@ -1,6 +1,4 @@
 using System.Security.Claims;
-using System.Text.RegularExpressions;
-using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.DTOs;
@@ -19,8 +17,21 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
+        [HttpGet("{group-chat-id}")]
+        public async Task<IActionResult> GetAsync(
+            [FromRoute(Name = "group-chat-id")] string groupChatId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var groupChat = await unit.GroupChats.GetByIdAsync(groupChatId);
+            return groupChat == null ? NotFound() : Ok(groupChat);
+        }
+
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetGroupChatsAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -38,39 +49,8 @@ namespace PicHub.Server.Controllers
             return Ok(groupChats);
         }
 
-        [HttpGet("{group-chat-id}")]
-        public async Task<IActionResult> GetAsync(
-            [FromRoute(Name = "group-chat-id")] string groupChatId
-        )
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var groupChat = await unit.GroupChats.GetByIdAsync(groupChatId);
-            return groupChat == null ? NotFound() : Ok(groupChat);
-        }
-
-        [HttpGet("{group-chat-id}/chat-lines")]
-        public async Task<IActionResult> GetChatLinesAsync(
-            [FromRoute(Name = "group-chat-id")] string groupChatId
-        )
-        {
-            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (loggedInUserId == null)
-                return Unauthorized();
-
-            var chatLines = await unit.ChatLines.GetAllByPredicateAsync(cl =>
-                cl.GroupChatId == groupChatId
-            );
-            if (chatLines == null)
-                return NoContent();
-
-            return Ok(chatLines);
-        }
-
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreateGroupChatDTO dto)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateGroupChatDTO dto)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -96,37 +76,7 @@ namespace PicHub.Server.Controllers
             );
             await unit.CompleteAsync();
 
-            return Ok(id);
-        }
-
-        [HttpPost("{group-chat-id}/chat-lines")]
-        public async Task<IActionResult> SendChatLineAsync(
-            [FromRoute(Name = "group-chat-id")] string groupChatId,
-            CreateChatLineDTO dto
-        )
-        {
-            var senderId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (senderId == null)
-                return Unauthorized();
-
-            try
-            {
-                await unit.ChatLines.AddAsync(
-                    new ChatLine
-                    {
-                        SenderId = senderId,
-                        GroupChatId = groupChatId,
-                        Content = dto.Content,
-                        ReplyingToId = dto.ReplyingToId,
-                    }
-                );
-                await unit.CompleteAsync();
-                return Created();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Could not send message. " + ex.Message);
-            }
+            return Created();
         }
 
         [HttpPost("{group-chat-id}/members")]
@@ -148,7 +98,7 @@ namespace PicHub.Server.Controllers
                 );
                 await unit.CompleteAsync();
 
-                return Ok();
+                return Created();
             }
 
             return BadRequest("You are already a member.");
@@ -174,7 +124,7 @@ namespace PicHub.Server.Controllers
                 );
                 await unit.CompleteAsync();
 
-                return Ok();
+                return Created();
             }
 
             return BadRequest("Already a member!");

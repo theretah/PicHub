@@ -4,7 +4,7 @@ import { UserDTO } from "../../entities/UserDTO";
 import XIcon from "../../icons/XIcon";
 import { useState } from "react";
 import "./SelectRecord.css";
-import useFollowersCount from "../../react-query/hooks/followHooks/useFollowersCount";
+import { useFollowersCount } from "../../react-query/hooks/FollowHooks";
 interface Props {
   user: UserDTO;
 }

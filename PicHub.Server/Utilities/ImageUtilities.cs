@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Processing;
 
-namespace Pichub.Server.Utilities
+namespace PicHub.Server.Utilities
 {
     public static class ImageUtilities
     {
@@ -20,7 +20,13 @@ namespace Pichub.Server.Utilities
             image.Save(memoryStream, new PngEncoder());
             memoryStream.Position = 0;
 
-            var formFile = new FormFile(memoryStream, 0, memoryStream.Length, "profileImage", imageFile.FileName)
+            var formFile = new FormFile(
+                memoryStream,
+                0,
+                memoryStream.Length,
+                "profileImage",
+                imageFile.FileName
+            )
             {
                 Headers = new HeaderDictionary(),
                 ContentType = imageFile.ContentType,

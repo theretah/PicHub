@@ -8,13 +8,13 @@ namespace PicHub.UnitTests
 {
     public class JWTTokenGeneratorTests
     {
-        private readonly string UserId = "UserIdentification";
+        private const string UserId = "UserIdentification";
 
         private const string Issuer = "https://localhost:4000";
         private const string Audience = "https://localhost:4000";
         private const string Secret = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz";
 
-        private Mock<IConfiguration> Config = new Mock<IConfiguration>();
+        private readonly Mock<IConfiguration> Config = new Mock<IConfiguration>();
 
         public JWTTokenGeneratorTests()
         {
@@ -70,7 +70,7 @@ namespace PicHub.UnitTests
             string audience
         )
         {
-            //Arrange
+            // Arrange
             var mockConfiguration = new Mock<IConfiguration>();
             mockConfiguration.SetupGet(config => config["JwtConfig:Secret"]).Returns(secret);
             mockConfiguration.SetupGet(config => config["JwtConfig:ValidIssuer"]).Returns(issuer);
@@ -78,16 +78,16 @@ namespace PicHub.UnitTests
                 .SetupGet(config => config["JwtConfig:ValidAudiences"])
                 .Returns(audience);
 
-            //Act & Assert
-            var exception = Assert.Throws<ApplicationException>(
-                () =>
-                    JwtTokenGenerator.GenerateJwtToken(
-                        mockConfiguration.Object["JwtConfig:Secret"],
-                        mockConfiguration.Object["JwtConfig:ValidIssuer"],
-                        mockConfiguration.Object["JwtConfig:ValidAudiences"],
-                        UserId
-                    )
+            // Act
+            var token = JwtTokenGenerator.GenerateJwtToken(
+                mockConfiguration.Object["JwtConfig:Secret"],
+                mockConfiguration.Object["JwtConfig:ValidIssuer"],
+                mockConfiguration.Object["JwtConfig:ValidAudiences"],
+                UserId
             );
+
+            // Assert
+            var exception = Assert.Throws<ApplicationException>(() => token);
             Assert.Equal("Jwt config is not set.", exception.Message);
         }
     }

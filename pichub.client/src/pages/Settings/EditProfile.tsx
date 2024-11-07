@@ -6,7 +6,7 @@ import SelectProfilePictureModal from "../../components/SelectPictureModals/Sele
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SettingsLayout from "../../components/Settings/SettingsLayout";
 import { EditProfileDTO } from "../../entities/EditProfileDTO";
-import useUpdateProfile from "../../react-query/hooks/userHooks/useUpdateProfile";
+import { useEditProfile } from "../../react-query/hooks/userHooks";
 
 const EditProfile = () => {
   const { user } = useAuthStore();
@@ -39,7 +39,7 @@ const EditProfile = () => {
     setValue("ProfileImageFile", "");
   };
 
-  const { mutateAsync, isSuccess } = useUpdateProfile();
+  const { mutateAsync, isSuccess } = useEditProfile();
   const onSubmit: SubmitHandler<EditProfileDTO> = async (data) => {
     if (avatar) {
       const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";

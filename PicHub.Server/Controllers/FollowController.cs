@@ -1,7 +1,5 @@
 using System.Security.Claims;
-using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.Entities;
 
@@ -11,17 +9,15 @@ namespace PicHub.Server.Controllers
     [Route("api/follows")]
     public class FollowController : ControllerBase
     {
-        private readonly UserManager<AppUser> userManager;
         private readonly IUnitOfWork unit;
 
-        public FollowController(UserManager<AppUser> userManager, IUnitOfWork unit)
+        public FollowController(IUnitOfWork unit)
         {
             this.unit = unit;
-            this.userManager = userManager;
         }
 
         [HttpGet("{user-id}/followers-count")]
-        public async Task<ActionResult<int>> GetFollowersCountAsync(
+        public async Task<IActionResult> GetFollowersCountAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
@@ -30,7 +26,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{user-id}/followings-count")]
-        public async Task<ActionResult<int>> GetFollowingsCountAsync(
+        public async Task<IActionResult> GetFollowingsCountAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
@@ -39,7 +35,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("is-followed/{user-id}")]
-        public async Task<ActionResult<bool>> GetIsFollowedByLoggedInUserAsync(
+        public async Task<IActionResult> GetIsFollowedAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
@@ -55,7 +51,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPost("{user-id}")]
-        public async Task<IActionResult> FollowAsync([FromRoute(Name = "user-id")] string userId)
+        public async Task<IActionResult> CreateAsync([FromRoute(Name = "user-id")] string userId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -87,7 +83,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{user-id}")]
-        public async Task<IActionResult> UnFollowAsync(
+        public async Task<IActionResult> DeleteAsync(
             [FromRoute(Name = "user-id")] string followingId
         )
         {

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PicHub.IntegrationTests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd2f1f7bab2f06027a6f41562e8763bf7f637d17")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b701104c45f6ea75ab3255ea6671a3d288b65b4")]
 [assembly: System.Reflection.AssemblyProductAttribute("PicHub.IntegrationTests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PicHub.IntegrationTests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

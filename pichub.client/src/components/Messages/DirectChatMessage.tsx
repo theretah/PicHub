@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import DirectChatMessageButton from "./DirectChatMessageButton";
 import { ChatLineDTO } from "../../entities/ChatLineDTO";
 import useAuthStore from "../../auth/authStore";
-import useUnSend from "../../react-query/hooks/privateChatHooks/useUnSendPrivateChat";
+import { useDeleteChatLine } from "../../react-query/hooks/ChatLineHooks";
 
 interface Props {
   chatLine: ChatLineDTO;
@@ -41,10 +41,10 @@ const DirectChatMessage = ({ chatLine, senderId }: Props) => {
     };
   }, [divRef]);
 
-  const unSendMessage = useUnSend();
+  const deleteChatLine = useDeleteChatLine();
 
   function unSend() {
-    unSendMessage.mutate(chatLine.id);
+    deleteChatLine.mutate(chatLine.id);
     setIsDeleted(true);
   }
 

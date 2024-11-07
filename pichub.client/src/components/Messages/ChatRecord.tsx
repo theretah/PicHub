@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import useUserById from "../../react-query/hooks/userHooks/useUserById";
 import ProfileImage from "../ProfileImage/ProfileImage";
+import { useUserById } from "../../react-query/hooks/userHooks";
 
 interface Props {
   isMedium: boolean;

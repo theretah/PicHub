@@ -1,7 +1,7 @@
 import Layout from "../../components/Layout/Layout";
 import PostDetails from "../../components/PostDetails/PostDetails";
-import usePosts from "../../react-query/hooks/postHooks/usePosts";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import { usePosts } from "../../react-query/hooks/PostHooks";
 
 const ExploreReel = () => {
   const { data, isLoading } = usePosts();
