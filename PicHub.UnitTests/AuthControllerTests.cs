@@ -212,7 +212,7 @@ namespace PicHub.UnitTests
                 await controller.RegisterAsync(validRegisterDto);
 
             // Assert
-            Assert.Equal("LoginAsync", createdResult.ActionName);
+            Assert.Equal("login", createdResult.ActionName);
             var value = createdResult.Value as LoginDto;
             Assert.Equal(loginDto.UserName, value.UserName);
             Assert.Equal(loginDto.Password, value.Password);

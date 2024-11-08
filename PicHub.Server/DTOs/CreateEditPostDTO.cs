@@ -10,6 +10,6 @@ namespace PicHub.Server.DTOs
         [Required]
         public required IFormFile ImageFile { get; set; }
 
-        public bool TurnOffComments { get; set; }
+        public bool CommentsAllowed { get; set; }
     }
 }

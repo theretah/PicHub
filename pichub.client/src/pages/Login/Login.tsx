@@ -8,13 +8,13 @@ import { LoginDTO } from "../../entities/LoginDTO";
 const Login = () => {
   const { handleSubmit, register } = useForm<LoginDTO>();
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { loginAsync } = useAuthStore();
 
   const [error, setError] = useState<string>();
 
   const loginUser = useMutation({
     mutationFn: async (loginData: LoginDTO) => {
-      const response = await login(loginData);
+      const response = await loginAsync(loginData);
       if (response == "Login succeeded.") {
         navigate("/");
       } else {

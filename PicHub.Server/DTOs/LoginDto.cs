@@ -3,7 +3,7 @@ using PicHub.Server.ValidationAttributes;
 
 namespace PicHub.Server.DTOs
 {
-    public class LoginDto
+    public class LoginDTO
     {
         [Required(ErrorMessage = "Username is required")]
         [UserNameRegexValidation]

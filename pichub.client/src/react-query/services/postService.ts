@@ -89,10 +89,15 @@ class PostService {
         throw new Error(e);
       });
 
-  createAsync = async (data: CreateEditPostDTO) =>
+  createAsync = async (data: FormData) =>
     await axiosInstance
-      .post("", { data }, this.getAuthHeaders())
-      .then((res) => res.data)
+      .post("", data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((res) => res)
       .catch((e) => {
         throw new Error(e);
       });
@@ -113,9 +118,9 @@ class PostService {
         throw new Error(e);
       });
 
-  updateAsync = async (postId: number, patchOperations: PatchOperation[]) =>
+  updateAsync = async (postId: number, data: CreateEditPostDTO) =>
     await axiosInstance
-      .patch(`${postId}`, { data: patchOperations }, this.getAuthHeaders())
+      .patch(`${postId}`, { data }, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);

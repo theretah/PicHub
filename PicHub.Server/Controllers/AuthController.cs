@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -42,11 +41,11 @@ namespace PicHub.Server.Controllers
             if (user == null)
                 return NotFound();
 
-            return Ok(mapper.Map<UserDto>(user));
+            return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync(RegisterDto model)
+        public async Task<IActionResult> RegisterAsync(RegisterDTO model)
         {
             if (await userManager.FindByEmailAsync(model.Email) != null)
                 return BadRequest("User with this email address already exists.");
@@ -77,12 +76,12 @@ namespace PicHub.Server.Controllers
             if (!isPasswordValid)
                 return BadRequest("Invalid password.");
 
-            var response = new LoginDto { UserName = model.UserName, Password = model.Password };
+            var response = new LoginDTO { UserName = model.UserName, Password = model.Password };
             return CreatedAtAction("login", response);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(LoginDto model)
+        public async Task<IActionResult> LoginAsync(LoginDTO model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
             if (user == null)
@@ -123,6 +122,22 @@ namespace PicHub.Server.Controllers
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(securityToken);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccountAsync()
+        {
+            var loggedInUser = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUser == null)
+                return Unauthorized();
+
+            var user = await userManager.FindByIdAsync(loggedInUser);
+            if (user != null)
+            {
+                await userManager.DeleteAsync(user);
+                return NoContent();
+            }
+            return BadRequest("A problem occured while removing your acccount.");
         }
     }
 }

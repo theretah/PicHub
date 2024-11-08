@@ -3,7 +3,7 @@ using PicHub.Server.ValidationAttributes;
 
 namespace PicHub.Server.DTOs
 {
-    public class RegisterDto
+    public class RegisterDTO
     {
         [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email address.")]

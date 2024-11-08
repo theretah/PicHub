@@ -3,7 +3,7 @@ using PicHub.Server.ValidationAttributes;
 
 namespace PicHub.Server.DTOs
 {
-    public class UserDto
+    public class UserDTO
     {
         public required string Id { get; set; }
 

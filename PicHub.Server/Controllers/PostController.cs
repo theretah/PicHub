@@ -49,7 +49,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("by-author/{user-id}")]
-        public async Task<IActionResult> GetByAuthorAsync(
+        public async Task<IActionResult> GetAllByAuthorAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
@@ -67,10 +67,7 @@ namespace PicHub.Server.Controllers
         )
         {
             var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
-            if (posts.Any())
-                return Ok(posts.Count());
-
-            return Ok(0);
+            return Ok(posts.Count());
         }
 
         [HttpGet("{post-id}/likes-count")]
@@ -192,14 +189,14 @@ namespace PicHub.Server.Controllers
                     new Post
                     {
                         Caption = model.Caption,
-                        CommentsAllowed = !model.TurnOffComments,
+                        CommentsAllowed = model.CommentsAllowed,
                         AuthorId = loggedInUserId,
                         CreateDate = DateTime.Now,
                         PhotoContent = FileUtilities.FileToByteArray(imageFile),
                     }
                 );
                 await unit.CompleteAsync();
-                return Ok();
+                return Created();
             }
             catch (Exception ex)
             {

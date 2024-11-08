@@ -9,7 +9,7 @@ import { RegisterDTO } from "../../entities/RegisterDTO";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { loginAsync } = useAuthStore();
   const { register, handleSubmit } = useForm<RegisterDTO>();
   const [error, setError] = useState<string>();
 
@@ -22,7 +22,7 @@ const Register = () => {
             userName: registerData.userName,
             password: registerData.password,
           };
-          login(loginData);
+          loginAsync(loginData);
           navigate("/");
         })
         .catch((e) => {

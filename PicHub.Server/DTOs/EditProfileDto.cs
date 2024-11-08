@@ -3,7 +3,7 @@ using PicHub.Server.ValidationAttributes;
 
 namespace PicHub.Server.DTOs
 {
-    public class EditProfileDto
+    public class EditProfileDTO
     {
         public IFormFile? ProfileImageFile { get; set; }
 

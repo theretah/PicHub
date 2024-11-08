@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import SettingsLayout from "../../components/Settings/SettingsLayout";
 
 const Account = () => {
-  const { user, logout } = useAuthStore();
+  const { logout } = useAuthStore();
   const navigate = useNavigate();
   function deleteAccount() {
-    axios.delete(`/api/auth/delete?id=${user?.id}`);
+    axios.delete("/api/auth/", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
     logout();
     navigate("/login");
   }

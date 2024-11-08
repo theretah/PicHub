@@ -47,7 +47,7 @@ namespace PicHub.Server.Controllers
             var users = await usersQuery.OrderBy(u => u.UserName).ToListAsync();
 
             if (users.Any())
-                return Ok(users);
+                return Ok(mapper.Map<UserDTO[]>(users));
 
             return NotFound();
         }
@@ -58,7 +58,7 @@ namespace PicHub.Server.Controllers
             var users = userManager.Users;
             if (users.Any())
             {
-                var mapped = mapper.Map<IEnumerable<UserDto>>(users);
+                var mapped = mapper.Map<IEnumerable<UserDTO>>(users);
                 return Ok(mapped);
             }
             return NotFound();
@@ -72,7 +72,7 @@ namespace PicHub.Server.Controllers
             {
                 return NotFound();
             }
-            return Ok(mapper.Map<UserDto>(user));
+            return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("by-email/{email}")]
@@ -83,7 +83,7 @@ namespace PicHub.Server.Controllers
             {
                 return NotFound();
             }
-            return Ok(mapper.Map<UserDto>(user));
+            return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("by-username/{username}")]
@@ -94,7 +94,7 @@ namespace PicHub.Server.Controllers
             {
                 return NotFound();
             }
-            return Ok(mapper.Map<UserDto>(user));
+            return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("last-registered")]
@@ -106,7 +106,7 @@ namespace PicHub.Server.Controllers
                     .Users.OrderByDescending(u => u.RegistrationDate)
                     .Take(5)
                     .ToListAsync();
-                return Ok(mapper.Map<IEnumerable<UserDto>>(lastRegisteredUsers));
+                return Ok(mapper.Map<IEnumerable<UserDTO>>(lastRegisteredUsers));
             }
             catch (Exception ex)
             {
@@ -141,7 +141,7 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPatch]
-        public async Task<IActionResult> UpdateAsync([FromForm] EditProfileDto model)
+        public async Task<IActionResult> UpdateAsync([FromForm] EditProfileDTO model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)

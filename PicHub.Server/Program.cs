@@ -71,7 +71,7 @@ public partial class Program
         builder.Services.AddSingleton<IValidationService, ValidationService>();
         var mappingConfig = new MapperConfiguration(cfg =>
         {
-            cfg.CreateMap<AppUser, UserDto>();
+            cfg.CreateMap<AppUser, UserDTO>();
         });
         builder.Services.AddSingleton(mappingConfig.CreateMapper());
         builder.Services.AddDbContext<PicHubContext>(

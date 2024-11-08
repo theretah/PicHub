@@ -111,7 +111,10 @@ namespace PicHub.UnitTests
         [InlineData("someuser", 1)]
         [InlineData("the", 2)]
         [InlineData("us", 3)]
-        public void Search_PatternMatches_ReturnsMatchedUsers(string query, int resultsCount)
+        public async Task SearchAsync_PatternMatches_ReturnsMatchedUsers(
+            string query,
+            int resultsCount
+        )
         {
             var users = new List<AppUser>
             {
@@ -148,7 +151,7 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = controller.Search(query);
+            var actionResult = await controller.SearchAsync(query);
 
             var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
@@ -161,7 +164,7 @@ namespace PicHub.UnitTests
         [Theory]
         [InlineData("us_3r")]
         [InlineData("useer")]
-        public void Search_PatternDoesNotMatch_ReturnsNotFound(string query)
+        public async Task Search_PatternDoesNotMatch_ReturnsNotFound(string query)
         {
             var users = new List<AppUser>
             {
@@ -198,7 +201,7 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = controller.Search(query);
+            var actionResult = await controller.SearchAsync(query);
 
             var result = actionResult as NotFoundResult;
             Assert.NotNull(result);

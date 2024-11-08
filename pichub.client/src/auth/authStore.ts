@@ -2,17 +2,19 @@ import { create } from "zustand";
 import axios from "axios";
 import { UserDTO } from "../entities/UserDTO";
 import { LoginDTO } from "../entities/LoginDTO";
+import { RegisterDTO } from "../entities/RegisterDTO";
 
 interface AuthStore {
   isAuthenticated: boolean;
   user: UserDTO | null;
   fetchUser: () => Promise<void>;
-  login: (loginData: LoginDTO) => Promise<string>;
+  loginAsync: (loginData: LoginDTO) => Promise<string>;
   logout: () => void;
 }
 
 const useAuthStore = create<AuthStore>((set) => ({
   isAuthenticated: !!localStorage.getItem("token"),
+
   user: JSON.parse(localStorage.getItem("user") || "null"),
 
   fetchUser: async () => {
@@ -44,7 +46,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       });
   },
 
-  login: async (loginData: LoginDTO) => {
+  loginAsync: async (loginData: LoginDTO) => {
     try {
       const loginResponse = await axios.post(`/api/auth/login`, loginData);
       const token = loginResponse.data.token;

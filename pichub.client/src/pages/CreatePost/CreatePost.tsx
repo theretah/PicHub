@@ -9,12 +9,8 @@ import useAuthStore from "../../auth/authStore";
 import ProfileImage from "../../components/ProfileImage/ProfileImage";
 import { base64ToBlob } from "../../utils/Base64ToBlob";
 import SelectPostPictureModal from "../../components/SelectPictureModals/SelectPostPictureModal";
-
-interface CreatePostProps {
-  Caption: string;
-  TurnOffComments: string;
-  ImageFile: File;
-}
+import { useCreatePost } from "../../react-query/hooks/PostHooks";
+import { CreateEditPostDTO } from "../../entities/CreateEditPostDTO";
 
 const CreatePost = () => {
   const { isAuthenticated, user, fetchUser } = useAuthStore();
@@ -36,7 +32,7 @@ const CreatePost = () => {
 
   const [isSmallScreen, setIsSmallScreen] = useState(false);
 
-  const { register, handleSubmit } = useForm<CreatePostProps>();
+  const { register, handleSubmit } = useForm<CreateEditPostDTO>();
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,34 +48,40 @@ const CreatePost = () => {
     };
   }, []);
 
-  const addPost = useMutation({
-    mutationFn: async (post: CreatePostProps) => {
-      const formData = new FormData();
-      formData.append("ImageFile", post.ImageFile);
-      formData.append("Caption", post.Caption);
-      formData.append("TurnOffComments", post.TurnOffComments);
+  // const addPost = useMutation({
+  //   mutationFn: async (post: CreatePostProps) => {
+  //     const formData = new FormData();
+  //     formData.append("ImageFile", post.ImageFile);
+  //     formData.append("Caption", post.Caption);
+  //     formData.append("TurnOffComments", post.TurnOffComments);
 
-      axios
-        .post(`/api/post/create`, formData, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        })
-        .then((res) => {
-          if (res.status == 200) navigate("/");
-        })
-        .catch((error) => {
-          throw new Error(error);
-        });
-    },
-  });
+  //     axios
+  //       .post(`/api/posts`, formData, {
+  //         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  //       })
+  //       .then((res) => {
+  //         if (res.status == 200) navigate("/");
+  //       })
+  //       .catch((error) => {
+  //         throw new Error(error);
+  //       });
+  //   },
+  // });
 
-  const onSubmit: SubmitHandler<CreatePostProps> = async (data) => {
+  const createPost = useCreatePost();
+  const onSubmit: SubmitHandler<CreateEditPostDTO> = async (data) => {
     if (avatar) {
       const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
       const blob = base64ToBlob(avatar, mimeType);
       const file = new File([blob], "avatar.png", { type: mimeType });
-      data.ImageFile = file;
+      data.imageFile = file;
     }
-    await addPost.mutate(data);
+    try {
+      const response = await createPost.mutateAsync(data);
+      if (response.status == 200) navigate("/");
+    } catch (error) {
+      console.error("Failed to create post:", error);
+    }
   };
 
   if (!isAuthenticated) {
@@ -171,7 +173,7 @@ const CreatePost = () => {
               <div className="overflow-y-auto mt-2" style={{ height: 265 }}>
                 <textarea
                   id="caption"
-                  {...register("Caption", { required: false })}
+                  {...register("caption", { required: false })}
                   className="form-control h-100 border-0 text-light bg-gray"
                   placeholder="Write a caption..."
                 ></textarea>
@@ -193,14 +195,15 @@ const CreatePost = () => {
                     className="form-check-label"
                     htmlFor="flexSwitchCheckDefault"
                   >
-                    Turn off commenting
+                    Comments are allowed
                   </label>
                   <input
                     className="form-check-input"
                     type="checkbox"
                     role="switch"
                     id="flexSwitchCheckDefault"
-                    {...register("TurnOffComments")}
+                    {...register("commentsAllowed")}
+                    defaultChecked={true}
                   />
                 </div>
                 <p className="text-gray" style={{ fontSize: 12 }}>
