@@ -159,13 +159,13 @@ namespace PicHub.UnitTests
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
             Assert.Equal(
-                "There was some problem registering the user.",
+                "A problem occured while registering the user.",
                 badRequestResult.Value.ToString()
             );
         }
 
         [Fact]
-        public async Task Register_PasswordInvalid_ReturnsBadRequest()
+        public async Task Register_InvalidPassword_ReturnsBadRequest()
         {
             // Arrange
             userManagerMock
@@ -185,6 +185,37 @@ namespace PicHub.UnitTests
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
             Assert.Equal("Invalid password.", badRequestResult.Value.ToString());
+        }
+
+        [Fact]
+        public async Task Register_RedirectsToLogin()
+        {
+            // Arrange
+            userManagerMock
+                .Setup(u => u.CreateAsync(It.IsAny<AppUser>(), "Password@1234"))
+                .ReturnsAsync(IdentityResult.Success);
+            userManagerMock
+                .SetupSequence(u => u.FindByNameAsync(It.IsAny<string>()))
+                .ReturnsAsync(() => null)
+                .ReturnsAsync(() => user);
+            userManagerMock
+                .Setup(u => u.CheckPasswordAsync(user, It.IsAny<string>()))
+                .ReturnsAsync(() => true);
+            var loginDto = new LoginDto
+            {
+                Password = validRegisterDto.Password,
+                UserName = validRegisterDto.UserName,
+            };
+
+            // Act
+            var createdResult = (CreatedAtActionResult)
+                await controller.RegisterAsync(validRegisterDto);
+
+            // Assert
+            Assert.Equal("LoginAsync", createdResult.ActionName);
+            var value = createdResult.Value as LoginDto;
+            Assert.Equal(loginDto.UserName, value.UserName);
+            Assert.Equal(loginDto.Password, value.Password);
         }
     }
 }

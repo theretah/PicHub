@@ -55,7 +55,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       });
 
       set({ isAuthenticated: true, user: userResponse.data });
-      return "Login successful.";
+      return "Login succeeded.";
     } catch (e: any) {
       set({ isAuthenticated: false, user: null });
       return e.response.data;

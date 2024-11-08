@@ -58,16 +58,19 @@ namespace PicHub.Server.Controllers
             if (posts.Any())
                 return Ok(posts);
 
-            return NotFound();
+            return NoContent();
         }
 
         [HttpGet("by-author/{user-id}/count")]
-        public async Task<IActionResult> GetCountByAuthorAsync(
+        public async Task<ActionResult<int>> GetCountByAuthorAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
             var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
-            return Ok(posts.Count());
+            if (posts.Any())
+                return Ok(posts.Count());
+
+            return Ok(0);
         }
 
         [HttpGet("{post-id}/likes-count")]

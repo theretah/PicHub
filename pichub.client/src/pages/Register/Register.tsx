@@ -5,25 +5,16 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
 import { useState } from "react";
 import { LoginDTO } from "../../entities/LoginDTO";
-
-interface RegisterData {
-  email: string;
-  fullName: string | null;
-  userName: string;
-  password: string;
-  accountCategoryId: number;
-  professionalCategoryId: number | null;
-  genderId: number;
-}
+import { RegisterDTO } from "../../entities/RegisterDTO";
 
 const Register = () => {
   const navigate = useNavigate();
   const { login } = useAuthStore();
-  const { register, handleSubmit } = useForm<RegisterData>();
+  const { register, handleSubmit } = useForm<RegisterDTO>();
   const [error, setError] = useState<string>();
 
   const registerUser = useMutation({
-    mutationFn: async (registerData: RegisterData) => {
+    mutationFn: async (registerData: RegisterDTO) => {
       axios
         .post("/api/auth/register", registerData)
         .then(() => {
@@ -40,11 +31,7 @@ const Register = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
-    console.log(data);
-    data.accountCategoryId = 1;
-    data.professionalCategoryId = null;
-    data.genderId = 1;
+  const onSubmit: SubmitHandler<RegisterDTO> = async (data) => {
     await registerUser.mutate(data);
   };
 
@@ -114,7 +101,7 @@ const Register = () => {
               <button className="btn btn-primary w-100" type="submit">
                 Register
               </button>
-              <h5>Reza@16562181</h5>
+              <h5>Password@1234</h5>
             </div>
           </form>
           <div className="border py-3 px-5 text-bg-white">

@@ -35,10 +35,10 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       currentPage != "Messages"
   );
 
-  // function logoutUser() {
-  //   logout();
-  //   navigate("/login");
-  // }
+  function logoutUser() {
+    logout();
+    navigate("/login");
+  }
   function handleMorebutton() {
     setSettingsOpen(true);
     setSearchOpen(false);

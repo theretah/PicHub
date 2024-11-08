@@ -34,18 +34,20 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public IActionResult Search([FromQuery(Name = "query")] string? query)
+        public async Task<IActionResult> SearchAsync([FromQuery(Name = "query")] string? query)
         {
-            var users = userManager.Users;
+            var usersQuery = userManager.Users.AsQueryable();
             if (!string.IsNullOrWhiteSpace(query))
             {
-                users = users.Where(u =>
-                    u.UserName.Contains(query.Trim(), StringComparison.OrdinalIgnoreCase)
+                usersQuery = usersQuery.Where(u =>
+                    u.UserName.Trim().ToLower().Contains(query.Trim().ToLower())
                 );
             }
 
+            var users = await usersQuery.OrderBy(u => u.UserName).ToListAsync();
+
             if (users.Any())
-                return Ok(users.OrderBy(u => u.UserName));
+                return Ok(users);
 
             return NotFound();
         }
@@ -124,6 +126,17 @@ namespace PicHub.Server.Controllers
                 return Ok(new { success = true });
             }
             return BadRequest("A problem occured while removing the user.");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAllAsync()
+        {
+            var users = await userManager.Users.ToListAsync();
+            foreach (var user in users)
+            {
+                await userManager.DeleteAsync(user);
+            }
+            return NoContent();
         }
 
         [Authorize]

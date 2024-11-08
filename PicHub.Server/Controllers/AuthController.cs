@@ -31,7 +31,6 @@ namespace PicHub.Server.Controllers
             this.userManager = userManager;
         }
 
-        [Authorize]
         [HttpGet("loggedInUser")]
         public async Task<IActionResult> GetLoggedInUserAsync()
         {
@@ -72,30 +71,29 @@ namespace PicHub.Server.Controllers
 
             var createdUser = await userManager.FindByNameAsync(model.UserName);
             if (createdUser == null)
-                return BadRequest("There was some problem registering the user.");
+                return BadRequest("A problem occured while registering the user.");
 
             var isPasswordValid = await userManager.CheckPasswordAsync(createdUser, model.Password);
             if (!isPasswordValid)
                 return BadRequest("Invalid password.");
 
             var response = new LoginDto { UserName = model.UserName, Password = model.Password };
-            return CreatedAtAction(nameof(LoginAsync), response);
+            return CreatedAtAction("login", response);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginDto model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
-            if (user != null)
+            if (user == null)
+                return NotFound("User with this username was not found.");
+
+            if (await userManager.CheckPasswordAsync(user, model.Password))
             {
-                if (await userManager.CheckPasswordAsync(user, model.Password))
-                {
-                    var token = GenerateToken(user.Id);
-                    return Created("auth", new { token });
-                }
-                return BadRequest("Failed to login with this password.");
+                var token = GenerateToken(user.Id);
+                return Ok(new { token });
             }
-            return BadRequest("User with this username does not exist.");
+            return BadRequest("Failed to login with this password.");
         }
 
         private string GenerateToken(string userId)

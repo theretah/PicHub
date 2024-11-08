@@ -37,8 +37,10 @@ const Profile = ({ userName, children, activeTab }: Props) => {
 
   const userIsPageOwner = userName == user?.userName;
 
-  const { data: posts } = usePostsByAuthorId(pageUser?.id || "");
-  const { data: postsCount } = usePostsCountByAuthor(pageUser?.id || "");
+  const { data: postsCount } = usePostsCountByAuthor(
+    pageUser?.id || "",
+    isSuccess
+  );
 
   const { data: isFollowing } = useIsFollowing(pageUser?.id || "", isSuccess);
   const [isFollowingState, setIsFollowingState] = useState<boolean>(

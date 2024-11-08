@@ -15,7 +15,7 @@ const Login = () => {
   const loginUser = useMutation({
     mutationFn: async (loginData: LoginDTO) => {
       const response = await login(loginData);
-      if (response == "Login successful.") {
+      if (response == "Login succeeded.") {
         navigate("/");
       } else {
         setError(response);
@@ -69,7 +69,7 @@ const Login = () => {
             </div>
             <div className="mb-3">
               <button className="btn w-100">Forgot password?</button>
-              <h5>Reza@16562181</h5>
+              <h5>Password@1234</h5>
             </div>
           </form>
 

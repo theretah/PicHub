@@ -18,10 +18,10 @@ namespace PicHub.Server.DTOs
         public required string Password { get; set; }
 
         [MaxLength(50)]
-        public required string? FullName { get; set; }
+        public string? FullName { get; set; }
 
-        public required int AccountCategoryId { get; set; }
-        public required int? ProfessionalCategoryId { get; set; }
-        public required int GenderId { get; set; }
+        public required int AccountCategoryId { get; set; } = 1;
+        public int? ProfessionalCategoryId { get; set; } = null;
+        public required int GenderId { get; set; } = 1;
     }
 }

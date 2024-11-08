@@ -33,7 +33,7 @@ class PostService {
         throw new Error(e);
       });
 
-  getByAuthorAsync = async (userId: string) =>
+  getAllByAuthorAsync = async (userId: string) =>
     await axiosInstance
       .get<PostDTO[]>(`by-author/${userId}`)
       .then((res) => res.data)

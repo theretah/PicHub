@@ -60,7 +60,7 @@ export const usePosts = () => {
 export const usePostsByAuthorId = (authorId: string) => {
   return useQuery<PostDTO[], Error>({
     queryKey: ["postsByAuthor", authorId],
-    queryFn: async () => await PostService.getByAuthorAsync(authorId),
+    queryFn: async () => await PostService.getAllByAuthorAsync(authorId),
   });
 };
 
@@ -83,9 +83,10 @@ export const useUnSavePost = () => {
   });
 };
 
-export const usePostsCountByAuthor = (userId: string) => {
+export const usePostsCountByAuthor = (userId: string, enabled: boolean) => {
   return useQuery<number, Error>({
     queryKey: ["savedPosts", userId],
     queryFn: async () => await PostService.getCountByAuthorAsync(userId),
+    enabled: enabled,
   });
 };
