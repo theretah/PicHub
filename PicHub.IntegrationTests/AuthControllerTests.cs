@@ -20,7 +20,7 @@ namespace PicHub.IntegrationTests
             client.BaseAddress = new Uri("https://localhost:4000");
             var username = "username1";
             var password = "Password@1234";
-            var registerDto = new RegisterDto
+            var registerDto = new RegisterDTO
             {
                 UserName = username,
                 Email = "user1@gmail.com",
@@ -44,7 +44,7 @@ namespace PicHub.IntegrationTests
                 .Should()
                 .Be("application/json; charset=utf-8");
             var responseContent = await response.Content.ReadAsStringAsync();
-            var registerResponse = JsonSerializer.Deserialize<LoginDto>(
+            var registerResponse = JsonSerializer.Deserialize<LoginDTO>(
                 responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );

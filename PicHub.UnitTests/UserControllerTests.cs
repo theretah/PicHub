@@ -31,7 +31,7 @@ namespace PicHub.UnitTests
             );
             var config = new MapperConfiguration(c =>
             {
-                c.CreateMap<AppUser, UserDto>();
+                c.CreateMap<AppUser, UserDTO>();
             });
             var mapper = config.CreateMapper();
             controller = new UserController(userManagerMock.Object, null, null, mapper);
@@ -83,7 +83,7 @@ namespace PicHub.UnitTests
             var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
 
-            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDto>>(result.Value);
+            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(result.Value);
             Assert.Equal(3, returnResult.Count());
             Assert.Contains(returnResult, u => u.UserName == "username1");
             Assert.Contains(returnResult, u => u.UserName == "username2");
@@ -156,7 +156,7 @@ namespace PicHub.UnitTests
             var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
 
-            var returnResult = Assert.IsAssignableFrom<IQueryable<AppUser>>(result.Value);
+            var returnResult = Assert.IsAssignableFrom<UserDTO[]>(result.Value);
             Assert.Contains(returnResult, u => u.UserName.Contains(query));
             Assert.Equal(resultsCount, returnResult.Count());
         }

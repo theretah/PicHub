@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
 using PicHub.Server.Utilities;
 
@@ -24,10 +26,13 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GenerateJwtToken_ValidConfig_TokenIsNotNull()
+        public void GenerateJwtToken_ValidConfig_UserIdIsEqualToClaimNameIdentifier()
         {
+            //Arrange
+            var handler = new JwtSecurityTokenHandler();
+
             // Act
-            var token = JwtTokenGenerator.GenerateJwtToken(
+            var token = GenerateJwtToken(
                 Config.Object["JwtConfig:Secret"],
                 Config.Object["JwtConfig:ValidIssuer"],
                 Config.Object["JwtConfig:ValidAudiences"],
@@ -36,24 +41,7 @@ namespace PicHub.UnitTests
 
             //Assert
             Assert.NotNull(token);
-        }
-
-        [Fact]
-        public void GenerateJwtToken_ValidConfig_UserIdIsEqualToClaimNameIdentifier()
-        {
-            //Arrange
-            var handler = new JwtSecurityTokenHandler();
-
-            // Act
-            var token = JwtTokenGenerator.GenerateJwtToken(
-                Config.Object["JwtConfig:Secret"],
-                Config.Object["JwtConfig:ValidIssuer"],
-                Config.Object["JwtConfig:ValidAudiences"],
-                UserId
-            );
             var jwtToken = handler.ReadJwtToken(token);
-
-            //Assert
             Assert.Equal(
                 UserId,
                 jwtToken.Claims.First(claim => claim.Type == ClaimTypes.NameIdentifier).Value
@@ -70,25 +58,38 @@ namespace PicHub.UnitTests
             string audience
         )
         {
-            // Arrange
-            var mockConfiguration = new Mock<IConfiguration>();
-            mockConfiguration.SetupGet(config => config["JwtConfig:Secret"]).Returns(secret);
-            mockConfiguration.SetupGet(config => config["JwtConfig:ValidIssuer"]).Returns(issuer);
-            mockConfiguration
-                .SetupGet(config => config["JwtConfig:ValidAudiences"])
-                .Returns(audience);
+            // Act & Assert
+            var exception = Assert.Throws<ApplicationException>(
+                () => GenerateJwtToken(secret, issuer, audience, UserId)
+            );
+            Assert.Equal("Jwt config is not set.", exception.Message);
+        }
 
-            // Act
-            var token = JwtTokenGenerator.GenerateJwtToken(
-                mockConfiguration.Object["JwtConfig:Secret"],
-                mockConfiguration.Object["JwtConfig:ValidIssuer"],
-                mockConfiguration.Object["JwtConfig:ValidAudiences"],
-                UserId
+        private static string GenerateJwtToken(
+            string? secret,
+            string? validIssuer,
+            string? validAudience,
+            string userId
+        )
+        {
+            if (secret is null || validIssuer is null || validAudience is null)
+            {
+                throw new ApplicationException("Jwt config is not set.");
+            }
+            var claims = new[] { new Claim(ClaimTypes.NameIdentifier, userId) };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: validIssuer,
+                audience: validAudience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddDays(1),
+                signingCredentials: creds
             );
 
-            // Assert
-            var exception = Assert.Throws<ApplicationException>(() => token);
-            Assert.Equal("Jwt config is not set.", exception.Message);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

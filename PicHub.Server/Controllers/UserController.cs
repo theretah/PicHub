@@ -44,7 +44,7 @@ namespace PicHub.Server.Controllers
                 );
             }
 
-            var users = await usersQuery.OrderBy(u => u.UserName).ToListAsync();
+            var users = usersQuery.OrderBy(u => u.UserName).ToList();
 
             if (users.Any())
                 return Ok(mapper.Map<UserDTO[]>(users));

@@ -13,7 +13,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
             {
                 new object[]
                 {
-                    "group-chats/1/chat-lines",
+                    "chat-lines/group-chats/1",
                     new StringContent(
                         System.Text.Json.JsonSerializer.Serialize(
                             new CreateChatLineDTO { Content = string.Empty, ReplyingToId = null }
@@ -50,7 +50,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
             {
                 new object[]
                 {
-                    "private-chats/1/chat-lines",
+                    "chat-lines/private-chats/1",
                     new StringContent(
                         System.Text.Json.JsonSerializer.Serialize(
                             new CreateChatLineDTO { Content = string.Empty, ReplyingToId = null }
@@ -73,7 +73,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                             {
                                 Caption = string.Empty,
                                 ImageFile = null,
-                                TurnOffComments = false,
+                                CommentsAllowed = false,
                             }
                         ),
                         Encoding.UTF8,
@@ -82,7 +82,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                 },
             };
 
-        public static IEnumerable<object[]> HttpPut_ChatLines_EditChatLineAsync_EndpointData =>
+        public static IEnumerable<object[]> HttpPatch_ChatLines_EditChatLineAsync_EndpointData =>
             new List<object[]>
             {
                 new object[]
@@ -96,7 +96,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                 },
             };
 
-        public static IEnumerable<object[]> HttpPut_Users_EditProfileAsync_EndpointData =>
+        public static IEnumerable<object[]> HttpPatch_Users_EditProfileAsync_EndpointData =>
             new List<object[]>
             {
                 new object[]
@@ -104,7 +104,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                     "users",
                     new StringContent(
                         System.Text.Json.JsonSerializer.Serialize(
-                            new EditProfileDto
+                            new EditProfileDTO
                             {
                                 Bio = string.Empty,
                                 FullName = string.Empty,
@@ -118,7 +118,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                     ),
                 },
             };
-        public static IEnumerable<object[]> HttpPatch_Users_EditProfileAsync_EndpointData
+        public static IEnumerable<object[]> HttpPatch_Posts_UpdatePostAsync_EndpointData
         {
             get
             {

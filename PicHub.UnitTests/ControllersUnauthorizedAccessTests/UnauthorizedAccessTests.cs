@@ -26,17 +26,17 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
         }
 
         [Theory]
-        [InlineData("auth")]
+        [InlineData("auth/loggedInUser")]
         [InlineData("blocks")]
         [InlineData($"follows/is-followed/{userId}")]
         [InlineData("group-chats")]
         [InlineData($"group-chats/{groupChatId}")]
-        [InlineData($"group-chats/{groupChatId}/chat-lines")]
+        [InlineData($"chat-lines/group-chats/{groupChatId}")]
         [InlineData("private-chats")]
         [InlineData($"private-chats/{userId}")]
-        [InlineData($"private-chats/{userId}/chat-lines")]
-        [InlineData($"posts/{postId}/saves")]
-        [InlineData($"posts/{postId}/likes")]
+        [InlineData($"chat-lines/private-chats/{userId}")]
+        [InlineData($"posts/{postId}/is-saved")]
+        [InlineData($"posts/{postId}/is-liked")]
         [InlineData($"posts/likes")]
         [InlineData($"posts/saves")]
         public async Task HttpGet_NotAuthenticated_ReturnsUnauthorizedResult(string url)
@@ -104,26 +104,13 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
 
         [Theory]
         [MemberData(
-            nameof(TestDataGenerator.HttpPut_Users_EditProfileAsync_EndpointData),
+            nameof(TestDataGenerator.HttpPatch_ChatLines_EditChatLineAsync_EndpointData),
             MemberType = typeof(TestDataGenerator)
         )]
         [MemberData(
-            nameof(TestDataGenerator.HttpPut_ChatLines_EditChatLineAsync_EndpointData),
+            nameof(TestDataGenerator.HttpPatch_Users_EditProfileAsync_EndpointData),
             MemberType = typeof(TestDataGenerator)
         )]
-        public async Task HttpPut_NotAuthenticated_ReturnsUnauthorizedResult(
-            string url,
-            HttpContent data
-        )
-        {
-            testOutputHelper.WriteLine($"Testing authentication on PUT url: {url}");
-            var response = await client.PutAsync(url, data);
-            testOutputHelper.WriteLine($"Response code: {response.StatusCode}");
-
-            Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
-        }
-
-        [Theory]
         [MemberData(
             nameof(TestDataGenerator.HttpPatch_Users_EditProfileAsync_EndpointData),
             MemberType = typeof(TestDataGenerator)

@@ -16,7 +16,7 @@ namespace PicHub.UnitTests
         private readonly Mock<IUserStore<AppUser>> userStoreMock;
         private readonly Mock<UserManager<AppUser>> userManagerMock;
         private readonly AppUser user;
-        private readonly RegisterDto validRegisterDto;
+        private readonly RegisterDTO validRegisterDto;
 
         private const string Issuer = "https://localhost:4000";
         private const string Audience = "https://localhost:4000";
@@ -63,7 +63,7 @@ namespace PicHub.UnitTests
             );
             var config = new MapperConfiguration(c =>
             {
-                c.CreateMap<AppUser, UserDto>();
+                c.CreateMap<AppUser, UserDTO>();
             });
             var mapper = config.CreateMapper();
             controller = new AuthController(mapper, Config.Object, userManagerMock.Object);
@@ -78,7 +78,7 @@ namespace PicHub.UnitTests
 
             // Act
             var actionResult = await controller.RegisterAsync(
-                new RegisterDto
+                new RegisterDTO
                 {
                     UserName = string.Empty,
                     Email = email,
@@ -107,7 +107,7 @@ namespace PicHub.UnitTests
 
             // Act
             var actionResult = await controller.RegisterAsync(
-                new RegisterDto
+                new RegisterDTO
                 {
                     UserName = userName,
                     Email = string.Empty,
@@ -201,7 +201,7 @@ namespace PicHub.UnitTests
             userManagerMock
                 .Setup(u => u.CheckPasswordAsync(user, It.IsAny<string>()))
                 .ReturnsAsync(() => true);
-            var loginDto = new LoginDto
+            var loginDto = new LoginDTO
             {
                 Password = validRegisterDto.Password,
                 UserName = validRegisterDto.UserName,
@@ -213,7 +213,7 @@ namespace PicHub.UnitTests
 
             // Assert
             Assert.Equal("login", createdResult.ActionName);
-            var value = createdResult.Value as LoginDto;
+            var value = createdResult.Value as LoginDTO;
             Assert.Equal(loginDto.UserName, value.UserName);
             Assert.Equal(loginDto.Password, value.Password);
         }
