@@ -8,6 +8,6 @@ namespace PicHub.Server.Entities
         public required string UserId { get; set; }
         public AppUser? User { get; set; }
 
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; set; } = DateTime.Now;
     }
 }

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Layout from "../../components/Layout/Layout";
 import "./CreatePost.css";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Navigate, useNavigate } from "react-router-dom";
 import useAuthStore from "../../auth/authStore";
@@ -68,7 +66,7 @@ const CreatePost = () => {
   //   },
   // });
 
-  const createPost = useCreatePost();
+  const createPostMutation = useCreatePost();
   const onSubmit: SubmitHandler<CreateEditPostDTO> = async (data) => {
     if (avatar) {
       const mimeType = avatar.match(/data:(.*);base64,/)?.[1] || "image/png";
@@ -77,7 +75,7 @@ const CreatePost = () => {
       data.imageFile = file;
     }
     try {
-      const response = await createPost.mutateAsync(data);
+      const response = await createPostMutation.mutateAsync(data);
       if (response.status == 200) navigate("/");
     } catch (error) {
       console.error("Failed to create post:", error);

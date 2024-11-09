@@ -6,11 +6,11 @@ const axiosInstance = axios.create({
   baseURL: `/api/posts/`,
 });
 
-interface PatchOperation {
-  op: "replace" | "add" | "remove";
-  path: string;
-  value?: any;
-}
+// interface PatchOperation {
+//   op: "replace" | "add" | "remove";
+//   path: string;
+//   value?: any;
+// }
 
 class PostService {
   private getAuthHeaders = () => ({
@@ -78,6 +78,7 @@ class PostService {
       .get<PostDTO[]>(`saves`, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
+        console.log(e);
         throw new Error(e);
       });
 

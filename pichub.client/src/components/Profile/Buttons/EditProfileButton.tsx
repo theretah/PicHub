@@ -8,7 +8,7 @@ const EditProfileButton = ({ isBiggerThanMedium }: Props) => {
       className={`btn btn-secondary py-1 ${
         isBiggerThanMedium ? "mx-2" : "me-2"
       }`}
-      to={"/settings/editprofile"}
+      to={"/settings/edit-profile"}
     >
       Edit Profile
     </Link>

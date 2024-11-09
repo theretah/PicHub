@@ -7,7 +7,7 @@ interface Props {
 const SettingsButton = ({ dimension }: Props) => {
   return (
     <Link
-      to={"/settings/editprofile"}
+      to={"/settings/edit-profile"}
       className="btn btn-dark text-light p-1 ms-2"
     >
       <SettingsIcon dimension={dimension} />

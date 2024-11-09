@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom";
 import Profile from "../../components/Profile/Profile";
 
 const ProfileReels = () => {
-  const { userName } = useParams();
+  const { username } = useParams();
   return (
-    <Profile userName={userName || ""} activeTab="reels">
+    <Profile username={username || ""} activeTab="reels">
       <div>Reels</div>
     </Profile>
   );

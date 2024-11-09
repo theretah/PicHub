@@ -2,7 +2,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { UserDTO } from "../entities/UserDTO";
 import { LoginDTO } from "../entities/LoginDTO";
-import { RegisterDTO } from "../entities/RegisterDTO";
 
 interface AuthStore {
   isAuthenticated: boolean;

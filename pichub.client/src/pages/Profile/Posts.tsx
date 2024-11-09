@@ -5,8 +5,8 @@ import useAuthStore from "../../auth/authStore";
 import { usePostsByAuthorId } from "../../react-query/hooks/PostHooks";
 
 const Posts = () => {
-  const { userName } = useParams();
-  if (!userName) return <Navigate to={"/"} />;
+  const { username } = useParams();
+  if (!username) return <Navigate to={"/"} />;
 
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) return <Navigate to={"/login"} />;
@@ -18,7 +18,7 @@ const Posts = () => {
   const squareSize = 75;
 
   return (
-    <Profile userName={userName || ""} activeTab="posts">
+    <Profile username={username || ""} activeTab="posts">
       {isLoading && <LoadingIndicator />}
       {data?.length != 0 ? (
         data?.map((post) => (
@@ -33,10 +33,10 @@ const Posts = () => {
             </Link>
           </div>
         ))
-      ) : user?.userName == userName ? (
+      ) : user?.userName == username ? (
         <div className="d-flex justify-content-center align-items-center mt-5">
           <div className="w-100 text-center">
-            <Link to={"/createPost"} type="button" className="btn mt-1 py-1">
+            <Link to={"/create-post"} type="button" className="btn mt-1 py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={squareSize}
@@ -55,7 +55,7 @@ const Posts = () => {
       ) : (
         <div className="d-flex justify-content-center align-items-center mt-5">
           <div className="w-100 text-center">
-            <Link to={"/createPost"} type="button" className="btn mt-1 py-1">
+            <Link to={"/create-post"} type="button" className="btn mt-1 py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={squareSize}

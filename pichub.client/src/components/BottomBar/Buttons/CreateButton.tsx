@@ -8,7 +8,7 @@ const CreateButton = ({ currentPage, dimension }: Props) => {
     <BottomBarButton
       activePage={currentPage}
       buttonText="Create"
-      to="/createPost"
+      to="/create-post"
     >
       {currentPage === "Create" ? (
         <CreateFillIcon dimension={dimension} />

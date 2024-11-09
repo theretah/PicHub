@@ -9,7 +9,7 @@ const CreateButton = ({ currentPage, showFullButton, dimension }: Props) => {
       showFullButton={showFullButton}
       activePage={currentPage}
       buttonText="Create"
-      to="/createPost"
+      to="/create-post"
     >
       {currentPage === "Create" ? (
         <CreateFillIcon dimension={dimension} />

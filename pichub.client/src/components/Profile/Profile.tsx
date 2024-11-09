@@ -13,10 +13,7 @@ import TabsRow from "./Tabs/TabsRow";
 import StatsRow from "./Stats/StatsRow";
 import BackButton from "./Buttons/BackButton";
 import { useUserByUserName } from "../../react-query/hooks/userHooks";
-import {
-  usePostsByAuthorId,
-  usePostsCountByAuthor,
-} from "../../react-query/hooks/PostHooks";
+import { usePostsCountByAuthor } from "../../react-query/hooks/PostHooks";
 import {
   useFollow,
   useFollowersCount,
@@ -26,16 +23,16 @@ import {
 } from "../../react-query/hooks/FollowHooks";
 
 interface Props {
-  userName: string;
+  username: string;
   children: ReactNode;
   activeTab: string;
 }
-const Profile = ({ userName, children, activeTab }: Props) => {
+const Profile = ({ username, children, activeTab }: Props) => {
   const { user, isAuthenticated } = useAuthStore();
 
-  const { data: pageUser, isSuccess } = useUserByUserName(userName);
+  const { data: pageUser, isSuccess } = useUserByUserName(username);
 
-  const userIsPageOwner = userName == user?.userName;
+  const userIsPageOwner = username == user?.userName;
 
   const { data: postsCount } = usePostsCountByAuthor(
     pageUser?.id || "",

@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import PostService from "../services/PostService";
 import { PostDTO } from "../../entities/PostDTO";
 import { CreateEditPostDTO } from "../../entities/CreateEditPostDTO";
-import { Navigate } from "react-router-dom";
+import { AxiosError } from "axios";
 
 export const usePosts = () => {
   return useQuery<PostDTO[], Error>({
@@ -27,7 +27,7 @@ export const usePostsByAuthorId = (authorId: string) => {
 
 export const usePostsCountByAuthor = (userId: string, enabled: boolean) => {
   return useQuery<number, Error>({
-    queryKey: ["savedPosts", userId],
+    queryKey: ["postsCount"],
     queryFn: async () => await PostService.getCountByAuthorAsync(userId),
     enabled: enabled,
   });
@@ -56,16 +56,16 @@ export const useIsLiked = (postId: number, enabled: boolean) => {
   });
 };
 
-export const useSavedPosts = (userId: string) => {
-  return useQuery<PostDTO[], Error>({
-    queryKey: ["savedPosts", userId],
+export const useSavedPosts = () => {
+  return useQuery<PostDTO[], AxiosError>({
+    queryKey: ["savedPosts"],
     queryFn: async () => await PostService.getSavedPostsAsync(),
   });
 };
 
-export const useLikedPosts = (userId: string) => {
+export const useLikedPosts = () => {
   return useQuery<PostDTO[], Error>({
-    queryKey: ["likedPosts", userId],
+    queryKey: ["likedPosts"],
     queryFn: async () => await PostService.getLikedPostsAsync(),
   });
 };

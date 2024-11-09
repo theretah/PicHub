@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -155,18 +156,18 @@ namespace PicHub.Server.Controllers
 
             try
             {
-                var postIds = new List<int>();
+                var posts = new List<Post>();
 
                 var savesByUserId = await unit.Saves.GetSavesByUserId(loggedInUserId);
-                if (!savesByUserId.Any())
-                    return NotFound();
-
-                foreach (var save in savesByUserId)
+                if (savesByUserId.Any())
                 {
-                    postIds.Add(save.PostId);
+                    foreach (var save in savesByUserId)
+                    {
+                        posts.Add(await unit.Posts.GetByIdAsync(save.PostId));
+                    }
+                    return Ok(posts);
                 }
-
-                return Ok(await unit.Posts.GetAllByPredicateAsync(p => postIds.Contains(p.Id)));
+                return NoContent();
             }
             catch (Exception ex)
             {
