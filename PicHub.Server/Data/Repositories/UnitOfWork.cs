@@ -23,6 +23,9 @@ namespace CMSReactDotNet.Server.Data.Repositories
             ChatLines = new ChatLineRepository(context);
             Seens = new SeenRepository(context);
             GroupChatUsers = new GroupChatUserRepository(context);
+
+            AccountCategoryRepository = new AccountCategoryRepository(context);
+            ProfessionalCategoryRepository = new ProfessionalCategoryRepository(context);
         }
 
         public IPostRepository Posts { get; private set; }
@@ -38,6 +41,10 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public ISeenRepository Seens { get; private set; }
 
         public IGroupChatUserRepository GroupChatUsers { get; private set; }
+
+        public IAccountCategoryRepository AccountCategoryRepository { get; private set; }
+
+        public IProfessionalCategoryRepository ProfessionalCategoryRepository { get; private set; }
 
         public int Complete()
         {

@@ -34,9 +34,10 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> SearchAsync([FromQuery(Name = "query")] string? query)
+        public IActionResult Search([FromQuery(Name = "query")] string? query)
         {
             var usersQuery = userManager.Users.AsQueryable();
+
             if (!string.IsNullOrWhiteSpace(query))
             {
                 usersQuery = usersQuery.Where(u =>

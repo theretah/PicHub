@@ -5,7 +5,6 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using PicHub.Server.Data;
 using PicHub.Server.DTOs;
-using PicHub.Server.Entities;
 
 namespace PicHub.IntegrationTests
 {

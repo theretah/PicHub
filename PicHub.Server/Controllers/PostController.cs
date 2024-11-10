@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using AutoMapper.Configuration.Annotations;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -258,6 +257,9 @@ namespace PicHub.Server.Controllers
             if (post == null)
                 return NotFound();
 
+            if (patchDoc == null)
+                return BadRequest();
+
             patchDoc.ApplyTo(post, ModelState);
             if (!TryValidateModel(post))
                 return BadRequest(ModelState);
@@ -265,7 +267,7 @@ namespace PicHub.Server.Controllers
             unit.Posts.Update(post);
             await unit.CompleteAsync();
 
-            return NoContent();
+            return Ok(post);
         }
 
         [HttpDelete("{post-id}/saves")]

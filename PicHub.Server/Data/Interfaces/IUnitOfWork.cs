@@ -16,6 +16,9 @@
 
         ISeenRepository Seens { get; }
 
+        IAccountCategoryRepository AccountCategoryRepository { get; }
+        IProfessionalCategoryRepository ProfessionalCategoryRepository { get; }
+
         Task<int> CompleteAsync();
         int Complete();
     }

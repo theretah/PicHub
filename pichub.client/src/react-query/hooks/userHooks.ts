@@ -27,7 +27,7 @@ export const useUserById = (userId: string) => {
 export const useSearch = (searchQuery: string | null) => {
   return useQuery({
     queryKey: ["search", searchQuery],
-    queryFn: async () => await UserService.searchAsync(searchQuery),
+    queryFn: async () => await UserService.search(searchQuery),
   });
 };
 

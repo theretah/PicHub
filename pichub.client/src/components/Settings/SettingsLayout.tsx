@@ -54,7 +54,7 @@ const SettingsLayout = ({ children }: Props) => {
               </svg>
             </SettingsNavbarButton>
             <SettingsNavbarButton
-              to="/settings/accountprivacy"
+              to="/settings/account-privacy"
               text="Account privacy"
             >
               <svg

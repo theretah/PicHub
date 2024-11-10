@@ -16,8 +16,8 @@ class UserService {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 
-  searchAsync = async (searchQuery: string | null) =>
-    await axiosInstance
+  search = (searchQuery: string | null) =>
+    axiosInstance
       .get<UserDTO[]>(`search?query=${searchQuery}`)
       .then((res) => res.data)
       .catch((e) => {

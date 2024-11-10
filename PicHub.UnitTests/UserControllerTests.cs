@@ -101,8 +101,7 @@ namespace PicHub.UnitTests
             var actionResult = controller.GetAll();
 
             // Assert
-            var result = actionResult as NotFoundResult;
-            Assert.NotNull(result);
+            Assert.IsType<NotFoundResult>(actionResult);
         }
 
         [Theory]
@@ -111,10 +110,7 @@ namespace PicHub.UnitTests
         [InlineData("someuser", 1)]
         [InlineData("the", 2)]
         [InlineData("us", 3)]
-        public async Task SearchAsync_PatternMatches_ReturnsMatchedUsers(
-            string query,
-            int resultsCount
-        )
+        public void Search_PatternMatches_ReturnsMatchedUsers(string query, int resultsCount)
         {
             var users = new List<AppUser>
             {
@@ -151,7 +147,7 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = await controller.SearchAsync(query);
+            var actionResult = controller.Search(query);
 
             var result = actionResult as OkObjectResult;
             Assert.NotNull(result);
@@ -164,7 +160,7 @@ namespace PicHub.UnitTests
         [Theory]
         [InlineData("us_3r")]
         [InlineData("useer")]
-        public async Task Search_PatternDoesNotMatch_ReturnsNotFound(string query)
+        public void Search_PatternDoesNotMatch_ReturnsNotFound(string query)
         {
             var users = new List<AppUser>
             {
@@ -201,10 +197,9 @@ namespace PicHub.UnitTests
             };
             userManagerMock.Setup(um => um.Users).Returns(() => users.AsQueryable());
 
-            var actionResult = await controller.SearchAsync(query);
+            var actionResult = controller.Search(query);
 
-            var result = actionResult as NotFoundResult;
-            Assert.NotNull(result);
+            Assert.IsType<NotFoundResult>(actionResult);
         }
     }
 }

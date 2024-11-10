@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using PicHub.Server.Data;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
@@ -30,11 +31,13 @@ public partial class Program
                 );
             })
             .AddNewtonsoftJson(o =>
+            {
                 o.SerializerSettings.ReferenceLoopHandling = Newtonsoft
                     .Json
                     .ReferenceLoopHandling
-                    .Ignore
-            );
+                    .Ignore;
+                o.SerializerSettings.ContractResolver = new DefaultContractResolver();
+            });
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {

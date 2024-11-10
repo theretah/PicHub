@@ -1,41 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper.Configuration.Annotations;
+using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using PicHub.Server.Data;
 
 namespace PicHub.Server.Controllers
 {
     [ApiController]
-    [Route("api/categories")]
+    [Route("api")]
     public class CategoryController : ControllerBase
     {
-        private readonly PicHubContext context;
+        private readonly IUnitOfWork unit;
 
-        public CategoryController(PicHubContext context)
+        public CategoryController(IUnitOfWork unit)
         {
-            this.context = context;
+            this.unit = unit;
         }
 
-        [HttpGet("account")]
+        [HttpGet("account-categories")]
         public async Task<IActionResult> GetAccountCategories()
         {
-            var accountCategories = await context.AccountCategories.ToListAsync();
-            if (accountCategories.Any())
-                return Ok(accountCategories);
-            return NotFound();
+            var accountCategories = await unit.AccountCategoryRepository.GetAllAsync();
+            return accountCategories.Any() ? Ok(accountCategories) : NotFound();
         }
 
-        [HttpGet("professional")]
+        [HttpGet("professional-categories")]
         public async Task<IActionResult> GetProfessionalCategories()
         {
-            var professionalCategories = await context.ProfessionalCategories.ToListAsync();
-            if (professionalCategories.Any())
-                return Ok(professionalCategories);
-            return NotFound();
+            var professionalCategories = await unit.ProfessionalCategoryRepository.GetAllAsync();
+            return professionalCategories.Any() ? Ok(professionalCategories) : NotFound();
         }
     }
 }
