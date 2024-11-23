@@ -3,6 +3,7 @@ using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PicHub.Server.DTOs;
@@ -34,7 +35,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("search")]
-        public IActionResult Search([FromQuery(Name = "query")] string? query)
+        public ActionResult<IEnumerable<UserDTO>> Search([FromQuery(Name = "query")] string? query)
         {
             var usersQuery = userManager.Users.AsQueryable();
 
@@ -54,7 +55,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public ActionResult<IEnumerable<UserDTO>> GetAll()
         {
             var users = userManager.Users;
             if (users.Any())
@@ -66,40 +67,37 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(string id)
+        public async Task<ActionResult<UserDTO>> GetAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
+
             return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("by-email/{email}")]
-        public async Task<IActionResult> GetByEmailAsync(string email)
+        public async Task<ActionResult<UserDTO>> GetByEmailAsync(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
             if (user == null)
-            {
                 return NotFound();
-            }
+
             return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("by-username/{username}")]
-        public async Task<IActionResult> GetByUserNameAsync(string username)
+        public async Task<ActionResult<UserDTO>> GetByUserNameAsync(string username)
         {
             var user = await userManager.FindByNameAsync(username);
             if (user == null)
-            {
                 return NotFound();
-            }
+
             return Ok(mapper.Map<UserDTO>(user));
         }
 
         [HttpGet("last-registered")]
-        public async Task<IActionResult> GetLastRegisteredUsersAsync()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetLastRegisteredUsersAsync()
         {
             try
             {
@@ -121,12 +119,11 @@ namespace PicHub.Server.Controllers
         public async Task<IActionResult> DeleteAsync(string id)
         {
             var user = await userManager.FindByIdAsync(id);
-            if (user != null)
-            {
-                await userManager.DeleteAsync(user);
-                return Ok(new { success = true });
-            }
-            return BadRequest("A problem occured while removing the user.");
+            if (user == null)
+                return NotFound();
+
+            await userManager.DeleteAsync(user);
+            return Ok(new { success = true });
         }
 
         [HttpDelete]
@@ -140,9 +137,8 @@ namespace PicHub.Server.Controllers
             return NoContent();
         }
 
-        [Authorize]
         [HttpPatch]
-        public async Task<IActionResult> UpdateAsync([FromForm] EditProfileDTO model)
+        public async Task<IActionResult> UpdateAsync([FromBody] JsonPatchDocument<AppUser> patchDoc)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -150,39 +146,35 @@ namespace PicHub.Server.Controllers
 
             var user = await userManager.FindByIdAsync(loggedInUserId);
             if (user == null)
-            {
                 return Unauthorized();
-            }
 
-            var existingUser = await userManager.FindByNameAsync(model.UserName);
-            if (existingUser != null && existingUser != user)
-                return BadRequest("User with this username already exists. Try another username.");
-
-            if (model.ProfileImageFile != null)
+            foreach (var operation in patchDoc.Operations)
             {
-                var imageFile = ImageUtilities.CompressImage(model.ProfileImageFile, 150);
-                user.ProfileImageUrl = FileUtilities.FileToByteArray(imageFile);
-            }
-            else
-            {
-                user.ProfileImageUrl = null;
+                if (operation.path.Equals("/username", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (operation.op == "replace" || operation.op == "add")
+                    {
+                        var newUserName = operation.value as string;
+                        var existingUser = await userManager.FindByNameAsync(newUserName);
+                        if (existingUser != null && existingUser.Id != user.Id)
+                            return BadRequest(
+                                "User with this username already exists. Try another username."
+                            );
+                    }
+                }
             }
 
-            user.FullName = model.FullName;
-            user.UserName = model.UserName;
-            user.GenderId = model.GenderId;
-            user.Bio = model.Bio;
+            if (patchDoc == null)
+                return BadRequest();
+
+            patchDoc.ApplyTo(user, ModelState);
+            if (!TryValidateModel(user))
+                return BadRequest(ModelState);
+
             try
             {
                 var result = await userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return Ok();
-                }
-                else
-                {
-                    return BadRequest(result.Errors);
-                }
+                return result.Succeeded ? Ok() : BadRequest(result.Errors);
             }
             catch (Exception e)
             {

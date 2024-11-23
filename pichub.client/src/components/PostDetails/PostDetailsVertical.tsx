@@ -12,7 +12,7 @@ import PostModal from "./PostModal";
 const PostDetailsVertical = ({
   author,
   post,
-  isFollowing,
+  isFollowed,
   isLiked,
   isSaved,
   handleLikeButton,
@@ -48,7 +48,7 @@ const PostDetailsVertical = ({
                   {author?.userName}
                 </Link>
                 {author?.id != user?.id &&
-                  (isFollowing ? (
+                  (isFollowed ? (
                     <>
                       <span>&nbsp;•&nbsp;</span>
                       <div
@@ -134,10 +134,10 @@ const PostDetailsVertical = ({
 
         <p className="card-title fw-bold mt-2">{likesCount} likes</p>
         <Link
-          to={`/${author.userName}`}
+          to={`/${author?.userName}`}
           className="card-title fw-bold d-inline text-decoration-none"
         >
-          {author.userName}{" "}
+          {author?.userName}{" "}
         </Link>
         {isCaptionExpanded == true ? (
           post.caption

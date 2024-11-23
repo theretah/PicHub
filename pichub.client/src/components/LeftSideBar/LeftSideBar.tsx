@@ -18,6 +18,7 @@ interface Props {
 
 const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
   const { logout, user, fetchUser, isAuthenticated } = useAuthStore();
+
   useEffect(() => {
     fetchUser();
   }, [isAuthenticated]);
@@ -155,7 +156,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
       </ul>
       <div className="mt-auto">
         <MoreButton
-          isOpen={false}
+          isOpen={settingsOpen}
           handleButton={handleMorebutton}
           activePage={currentPage}
           showFullButton={showFullButton && currentPage != "Messages"}
@@ -164,7 +165,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
             setShowFullButton(true);
           }}
         />
-        {/* <button className="btn btn-dark w-100" onClick={logoutUser}>
+        <button className="btn btn-dark w-100" onClick={logoutUser}>
           <div className="row">
             <div className={`${showFullButton ? "col-3" : "col"} px-0`}>
               <svg
@@ -191,7 +192,7 @@ const LeftSideBar = ({ currentPage, leftBarWidth }: Props) => {
               </div>
             )}
           </div>
-        </button> */}
+        </button>
       </div>
     </div>
   );

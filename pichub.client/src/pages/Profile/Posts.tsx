@@ -3,25 +3,28 @@ import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator
 import Profile from "../../components/Profile/Profile";
 import useAuthStore from "../../auth/authStore";
 import { usePostsByAuthorId } from "../../react-query/hooks/PostHooks";
+import { useUserByUserName } from "../../react-query/hooks/userHooks";
 
 const Posts = () => {
-  const { username } = useParams();
-  if (!username) return <Navigate to={"/"} />;
+  const { userName } = useParams();
+  if (userName == undefined) return <Navigate to={"/"} />;
 
   const { isAuthenticated, user } = useAuthStore();
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
-  const { data, error, isLoading } = usePostsByAuthorId(user?.id || "");
-
-  if (error) return <p className="text-light">{error.message}</p>;
+  const { data: pageUser } = useUserByUserName(userName, !!userName);
+  const { data: posts, isLoading } = usePostsByAuthorId(
+    pageUser?.id || "",
+    !!pageUser
+  );
 
   const squareSize = 75;
 
   return (
-    <Profile username={username || ""} activeTab="posts">
+    <Profile userName={userName} activeTab="posts">
       {isLoading && <LoadingIndicator />}
-      {data?.length != 0 ? (
-        data?.map((post) => (
+      {posts ? (
+        posts?.map((post) => (
           <div className="col-4" style={{ padding: 0.65 }} key={post.id}>
             <Link to={`/post/${post.id}`}>
               <img
@@ -33,7 +36,7 @@ const Posts = () => {
             </Link>
           </div>
         ))
-      ) : user?.userName == username ? (
+      ) : user?.userName == userName ? (
         <div className="d-flex justify-content-center align-items-center mt-5">
           <div className="w-100 text-center">
             <Link to={"/create-post"} type="button" className="btn mt-1 py-1">

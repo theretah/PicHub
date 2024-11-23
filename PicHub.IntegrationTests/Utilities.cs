@@ -8,7 +8,9 @@ namespace PicHub.IntegrationTests
     {
         private static void SeedDatabase(PicHubContext context)
         {
-            var id = Guid.NewGuid().ToString();
+            var id = "userIdentification";
+            var id2 = "userIdentification2";
+            var id3 = "userIdentification3";
             var user = new AppUser(
                 userName: "username1",
                 fullName: "Full name 1",
@@ -20,7 +22,32 @@ namespace PicHub.IntegrationTests
                 professionalCategoryId: null
             );
             user.Id = id;
-            context.AppUsers.Add(user);
+
+            var user2 = new AppUser(
+                userName: "username2",
+                fullName: "Full name 2",
+                email: "user2@gmail.com",
+                phoneNumber: string.Empty,
+                isPrivate: false,
+                genderId: 1,
+                accountCategoryId: 1,
+                professionalCategoryId: null
+            );
+            user2.Id = id2;
+
+            var user3 = new AppUser(
+                userName: "username3",
+                fullName: "Full name 3",
+                email: "user3@gmail.com",
+                phoneNumber: string.Empty,
+                isPrivate: false,
+                genderId: 1,
+                accountCategoryId: 1,
+                professionalCategoryId: null
+            );
+            user3.Id = id3;
+
+            context.AppUsers.AddRange(user, user2, user3);
             context.SaveChanges();
 
             context.Posts.Add(
@@ -33,6 +60,9 @@ namespace PicHub.IntegrationTests
                     CreateDate = DateTime.Now,
                 }
             );
+            context.SaveChanges();
+
+            context.Blocks.Add(new Block { BlockerId = id, BlockedId = id3 });
             context.SaveChanges();
         }
 

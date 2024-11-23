@@ -2,8 +2,9 @@ export interface ChatLineDTO {
   id: number;
   privateChatId: string | null;
   groupChatId: string | null;
-  authorId: string;
-  content: string;
+  senderId: string;
   replyingToId: number | null;
-  date: Date;
+  content: string;
+  createdAt: Date;
+  lastUpdatedAt: Date | null;
 }

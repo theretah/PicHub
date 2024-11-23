@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 import Profile from "../../components/Profile/Profile";
 import useAuthStore from "../../auth/authStore";
-import { usePosts, useSavedPosts } from "../../react-query/hooks/PostHooks";
+import { useSavedPosts } from "../../react-query/hooks/PostHooks";
 
 const Saved = () => {
   const { user } = useAuthStore();
@@ -13,7 +13,7 @@ const Saved = () => {
   console.log(data);
 
   return (
-    <Profile username={user.userName} activeTab="saved">
+    <Profile userName={user.userName} activeTab="saved">
       {isLoading && <LoadingIndicator />}
       {data &&
         data.map((post) => (

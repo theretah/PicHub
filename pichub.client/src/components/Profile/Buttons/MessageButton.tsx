@@ -4,10 +4,7 @@ interface Props {
 }
 const MessageButton = ({ userName }: Props) => {
   return (
-    <Link
-      to={`/messages/direct/${userName}`}
-      className="btn btn-secondary py-1"
-    >
+    <Link to={`/chats/direct/${userName}`} className="btn btn-secondary py-1">
       Message
     </Link>
   );

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.DTOs;
@@ -10,14 +11,16 @@ namespace PicHub.Server.Controllers
     public class ChatLineController : ControllerBase
     {
         private readonly IUnitOfWork unit;
+        private readonly IMapper mapper;
 
-        public ChatLineController(IUnitOfWork unit)
+        public ChatLineController(IUnitOfWork unit, IMapper mapper)
         {
+            this.mapper = mapper;
             this.unit = unit;
         }
 
-        [HttpGet("group-chats/{group-chat-id}")]
-        public async Task<IActionResult> GetGroupChatLinesAsync(
+        [HttpGet("from-group-chat/{group-chat-id}")]
+        public async Task<ActionResult<IEnumerable<ChatLineDTO>>> GetGroupChatLinesAsync(
             [FromRoute(Name = "group-chat-id")] string groupChatId
         )
         {
@@ -29,14 +32,13 @@ namespace PicHub.Server.Controllers
                 cl.GroupChatId == groupChatId
             );
 
-            if (chatLines == null)
-                return NoContent();
-
-            return Ok(chatLines);
+            return chatLines.Any()
+                ? Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines))
+                : NotFound();
         }
 
-        [HttpGet("private-chats/{private-chat-id}")]
-        public async Task<IActionResult> GetPrivateChatLinesAsync(
+        [HttpGet("from-private-chat/{private-chat-id}")]
+        public async Task<ActionResult<IEnumerable<ChatLineDTO>>> GetPrivateChatLinesAsync(
             [FromRoute(Name = "private-chat-id")] string privateChatId
         )
         {
@@ -48,14 +50,13 @@ namespace PicHub.Server.Controllers
                 cl.PrivateChatId == privateChatId
             );
 
-            if (chatLines == null)
-                return NoContent();
-
-            return Ok(chatLines);
+            return chatLines.Any()
+                ? Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines))
+                : NotFound();
         }
 
-        [HttpPost("group-chats/{group-chat-id}/")]
-        public async Task<IActionResult> SendGroupChatLineAsync(
+        [HttpPost("from-group-chat/{group-chat-id}/")]
+        public async Task<ActionResult> SendGroupChatLineAsync(
             [FromRoute(Name = "group-chat-id")] string groupChatId,
             [FromBody] CreateChatLineDTO dto
         )
@@ -76,8 +77,8 @@ namespace PicHub.Server.Controllers
             }
         }
 
-        [HttpPost("private-chats/{private-chat-id}/")]
-        public async Task<IActionResult> SendPrivateChatLineAsync(
+        [HttpPost("from-private-chat/{private-chat-id}/")]
+        public async Task<ActionResult> SendPrivateChatLineAsync(
             [FromRoute(Name = "private-chat-id")] string privateChatId,
             [FromBody] CreateChatLineDTO dto
         )
@@ -99,7 +100,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPatch("{chat-line-id}")]
-        public async Task<IActionResult> UpdateAsync(
+        public async Task<ActionResult> UpdateAsync(
             [FromRoute(Name = "chat-line-id")] int chatLineId,
             [FromBody] string newContent
         )
@@ -129,7 +130,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{chat-line-id}")]
-        public async Task<IActionResult> DeleteAsync(
+        public async Task<ActionResult> DeleteAsync(
             [FromRoute(Name = "chat-line-id")] int chatLineId
         )
         {

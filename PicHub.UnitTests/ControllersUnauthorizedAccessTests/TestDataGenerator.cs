@@ -103,15 +103,11 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                 {
                     "users",
                     new StringContent(
-                        System.Text.Json.JsonSerializer.Serialize(
-                            new EditProfileDTO
-                            {
-                                Bio = string.Empty,
-                                FullName = string.Empty,
-                                UserName = "username",
-                                GenderId = 0,
-                                ProfileImageFile = null,
-                            }
+                        JsonConvert.SerializeObject(
+                            new JsonPatchDocument<AppUser>().Replace(
+                                dto => dto.UserName,
+                                "newUserName"
+                            )
                         ),
                         Encoding.UTF8,
                         "application/json"

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/blocks/`,
+  baseURL: "/api/blocks/",
 });
 
 class BlockService {

@@ -1,16 +1,18 @@
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
+using PicHub.Server.Controllers;
 using PicHub.Server.Data;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
@@ -29,14 +31,19 @@ public partial class Program
                 o.Conventions.Add(
                     new RouteTokenTransformerConvention(new SlugifyParameterTransformer())
                 );
+                o.ModelBinderProviders.Insert(0, new SimpleTypeModelBinderProvider());
             })
+            .AddJsonOptions(o =>
+                o.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            )
             .AddNewtonsoftJson(o =>
             {
                 o.SerializerSettings.ReferenceLoopHandling = Newtonsoft
                     .Json
                     .ReferenceLoopHandling
                     .Ignore;
-                o.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                o.SerializerSettings.ContractResolver =
+                    new Newtonsoft.Json.Serialization.DefaultContractResolver();
             });
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
@@ -70,11 +77,13 @@ public partial class Program
             );
         });
         builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddSingleton<IMemoryCache, MemoryCache>();
         builder.Services.AddSingleton<IValidationService, ValidationService>();
         var mappingConfig = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<AppUser, UserDTO>();
+            cfg.CreateMap<Post, PostDTO>();
+            cfg.CreateMap<PrivateChat, PrivateChatDTO>();
+            cfg.CreateMap<ChatLine, ChatLineDTO>();
         });
         builder.Services.AddSingleton(mappingConfig.CreateMapper());
         builder.Services.AddDbContext<PicHubContext>(

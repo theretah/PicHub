@@ -494,3 +494,5 @@ C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\Pi
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\PicHub.IntegrationTests.genruntimeconfig.cache
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\obj\Debug\net8.0\ref\PicHub.IntegrationTests.dll
 C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\bin\Debug\net8.0\FluentAssertions.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\bin\Debug\net8.0\Castle.Core.dll
+C:\Users\taher\Documents\CSP2\PicHub\PicHub.IntegrationTests\bin\Debug\net8.0\Moq.dll

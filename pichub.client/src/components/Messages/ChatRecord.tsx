@@ -9,11 +9,11 @@ interface Props {
   setActive: () => void;
 }
 const ChatRecord = ({ isMedium, userId, isActive, setActive }: Props) => {
-  const { data: targetUser } = useUserById(userId);
+  const { data: targetUser } = useUserById(userId, userId != null);
 
   return (
     <Link
-      to={`/messages/direct/${targetUser?.userName}`}
+      to={`/chats/direct/${targetUser?.userName}`}
       className={`list-group-item list-group-item-action list-group-item-dark-custom border-0 ${
         isActive ? "active" : ""
       }`}

@@ -1,24 +1,30 @@
-using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PicHub.Server.Data;
 using PicHub.Server.Entities;
+using PicHub.Server.Utilities;
+using Xunit.Abstractions;
 
 namespace PicHub.IntegrationTests
 {
     public class PostControllerTests : IClassFixture<IntegrationTestsFixture>
     {
         private readonly IntegrationTestsFixture fixture;
+        private readonly ITestOutputHelper testOutputHelper;
         private readonly HttpClient client;
 
-        public PostControllerTests(IntegrationTestsFixture fixture)
+        public PostControllerTests(
+            IntegrationTestsFixture fixture,
+            ITestOutputHelper testOutputHelper
+        )
         {
             this.fixture = fixture;
+            this.testOutputHelper = testOutputHelper;
             client = fixture.CreateClient();
             client.BaseAddress = new Uri("https://localhost:4000");
             var token = fixture.GenerateToken("userIdentification");
@@ -29,7 +35,7 @@ namespace PicHub.IntegrationTests
         }
 
         [Fact]
-        public async Task Update_NewCaption_UpdatesCaptionField()
+        public async Task Update_UpdatesAndReturnsCorrectResponse()
         {
             // Arrange
             int postId = 1;
@@ -39,10 +45,10 @@ namespace PicHub.IntegrationTests
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             // Act
-            var actionResult = await client.PatchAsync($"/api/posts/{postId}", data);
+            var response = await client.PatchAsync($"/api/posts/{postId}", data);
 
             // Assert
-            Assert.Equal(HttpStatusCode.OK, actionResult.StatusCode);
+            response.EnsureSuccessStatusCode();
             var updatedPostResponse = await client.GetAsync($"/api/posts/{postId}");
             var updatedPost = System.Text.Json.JsonSerializer.Deserialize<Post>(
                 await updatedPostResponse.Content.ReadAsStringAsync(),
@@ -50,6 +56,56 @@ namespace PicHub.IntegrationTests
             );
             Assert.NotNull(updatedPost);
             Assert.Equal("New Caption", updatedPost.Caption);
+
+            // Database cleanup
+            var scope = fixture.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<PicHubContext>();
+            Utilities.Cleanup(db);
+        }
+
+        [Fact]
+        public async Task Create_AddsToDbAndReturnsCorrectResponse()
+        {
+            // Arrange
+            var base64String = ImageUtilities.SamplePngBytes();
+            var imageContent = Convert.FromBase64String(base64String);
+            using var memoryStream = new MemoryStream(imageContent);
+            var imageFile = new FormFile(
+                memoryStream,
+                0,
+                memoryStream.Length,
+                "ImageFile",
+                "testImage.png"
+            )
+            {
+                Headers = new HeaderDictionary(),
+                ContentType = "image/png",
+            };
+
+            var content = new MultipartFormDataContent
+            {
+                { new StreamContent(imageFile.OpenReadStream()), "ImageFile", imageFile.FileName },
+                { new StringContent("Some caption"), "Caption" },
+                { new StringContent("true"), "CommentsAllowed" },
+            };
+
+            // Act
+            var response = await client.PostAsync("/api/posts", content);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            testOutputHelper.WriteLine($"Response string: {responseContent}");
+
+            var postCreatedRes = System.Text.Json.JsonSerializer.Deserialize<Post>(
+                responseContent,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+            Assert.NotNull(postCreatedRes);
+            var entity = await client.GetAsync($"/api/posts/{postCreatedRes.Id}");
+            Assert.NotNull(entity);
+            Assert.Equal("Some caption", postCreatedRes.Caption);
+            Assert.True(postCreatedRes.CommentsAllowed);
 
             // Database cleanup
             var scope = fixture.Services.CreateScope();

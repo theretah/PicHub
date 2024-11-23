@@ -1,6 +1,6 @@
 import Layout from "../../components/Layout/Layout";
-import PostDetails from "../../components/PostDetails/PostDetails";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
+import PostDetails from "../../components/PostDetails/PostDetails";
 import { usePosts } from "../../react-query/hooks/PostHooks";
 
 const ExploreReel = () => {

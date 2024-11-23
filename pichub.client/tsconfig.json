@@ -22,6 +22,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "src/react-query/hooks/privateChatHooks/.tsx"],
+  "include": ["src", "src/react-query/hooks/privateChatHooks/.tsx", "services"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

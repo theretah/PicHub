@@ -11,91 +11,47 @@ import {
   usePrivateChatLines,
   useSendPrivateChatLine,
 } from "../../react-query/hooks/ChatLineHooks";
-import { useCreatePrivateChat } from "../../react-query/hooks/PrivateChatHooks";
+import {
+  useCreatePrivateChat,
+  useDeletePrivateChat,
+  usePrivateChat,
+} from "../../react-query/hooks/PrivateChatHooks";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { CreateChatLineDTO } from "../../entities/CreateChatLineDTO";
 
 const Direct = () => {
   const { user, isAuthenticated } = useAuthStore();
   if (!isAuthenticated) return <Navigate to={"/login"} />;
 
-  const { username } = useParams<string>();
-  const [messageText, setMessageText] = useState<string>("");
+  const { userName } = useParams();
 
   const {
     data: targetUser,
     isLoading,
     error,
-  } = useUserByUserName(username || "");
+  } = useUserByUserName(userName || "", !!userName);
+  const { data: privateChat, isSuccess } = usePrivateChat(targetUser?.id || "");
+  const { data: chatLines } = usePrivateChatLines(
+    privateChat?.id || "",
+    isSuccess
+  );
 
-  const { data: chat } = useSendPrivateChatLine(targetUser?.id || "");
+  const { register, handleSubmit, setValue } = useForm<CreateChatLineDTO>();
 
-  const { data: chatLines } = usePrivateChatLines(chat?.id || "");
-
-  const [newMessages, setNewMessages] = useState<ChatLineDTO[] | undefined>([]);
-
-  useEffect(() => {
-    console.log(chatLines);
-    setNewMessages(chatLines);
-  }, [chatLines]);
+  const [messageText, setMessageText] = useState<string>("");
+  const [newMessages, setNewMessages] = useState<ChatLineDTO[] | null>(
+    chatLines || []
+  );
+  const [isSmallScreen, setIsSmallScreen] = useState(false);
 
   const createPrivateChat = useCreatePrivateChat();
+  const sendChatLine = useSendPrivateChatLine(privateChat?.id || "");
+  const deleteChat = useDeletePrivateChat(privateChat?.id || "");
 
-  const send = useSendPrivateChatLine(chat.id);
+  useEffect(() => {
+    if (chatLines) setNewMessages(chatLines);
+  }, [chatLines]);
 
-  // const deleteChat = useDeleteChat({
-  //   chatId: chat?.id || 0,
-  // });
-
-  function addMessage(message: ChatLineDTO) {
-    setNewMessages(
-      (prevMessages) => prevMessages && [...prevMessages, message]
-    );
-  }
-  function handleSendButton() {
-    if (chat) {
-      if (targetUser) {
-        createPrivateChat.mutate(targetUser.id);
-        if (createPrivateChat.isSuccess) {
-          send.mutate({
-            content: messageText,
-            replyingToId: null,
-          });
-          if (send.isSuccess && user) {
-            let m: ChatLineDTO = {
-              authorId: user.id,
-              privateChatId: "1",
-              groupChatId: null,
-              content: messageText,
-              date: new Date(Date.now()),
-              id: 1,
-              replyingToId: null,
-            };
-            addMessage(m);
-            setMessageText("");
-          }
-        }
-      } else {
-        send.mutate({
-          content: messageText,
-          replyingToId: null,
-        });
-        if (send.isSuccess && user) {
-          let m: ChatLineDTO = {
-            authorId: user.id,
-            privateChatId: "1",
-            groupChatId: null,
-            content: messageText,
-            date: new Date(Date.now()),
-            id: 1,
-            replyingToId: null,
-          };
-          addMessage(m);
-          setMessageText("");
-        }
-      }
-    }
-  }
-
-  const [isSmallScreen, setIsSmallScreen] = useState(false);
   useEffect(() => {
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= 768);
@@ -110,7 +66,45 @@ const Direct = () => {
     };
   }, [window.innerWidth]);
 
-  if (isLoading) return <LoadingIndicator />;
+  function addMessage(message: ChatLineDTO) {
+    setNewMessages(
+      (prevMessages) => prevMessages && [...prevMessages, message]
+    );
+  }
+  async function handleDeleteChatLine() {
+    await deleteChat.mutateAsync();
+  }
+
+  if (false) handleDeleteChatLine();
+
+  const onSubmit: SubmitHandler<CreateChatLineDTO> = async (data) => {
+    if (user && targetUser && privateChat) {
+      let m: ChatLineDTO = {
+        id: 1,
+        privateChatId: privateChat.id,
+        groupChatId: null,
+        senderId: user.id,
+        replyingToId: data.replyingToId || null,
+        content: data.content,
+        createdAt: new Date(Date.now()),
+        lastUpdatedAt: null,
+      };
+      if (!privateChat) {
+        await createPrivateChat.mutateAsync(targetUser.id);
+      }
+
+      await sendChatLine.mutateAsync({
+        content: messageText,
+        replyingToId: null,
+      });
+
+      addMessage(m);
+      setMessageText("");
+      setValue("content", "");
+    }
+  };
+
+  if (isLoading || !targetUser) return <LoadingIndicator />;
   if (error) return <p className="text-light">{error.message}</p>;
 
   return (
@@ -173,18 +167,18 @@ const Direct = () => {
           </div>
         </div>
         <div
-          className=" overflow-y-auto"
+          className="overflow-y-auto"
           style={{ height: isSmallScreen ? "78vh" : "83vh" }}
         >
-          {newMessages && user && targetUser && newMessages?.length > 0 ? (
-            newMessages.map((message) => (
+          {newMessages && newMessages.length != 0 ? (
+            newMessages?.map((message) => (
               // messages && user && targetUser && messages?.length > 0 ? (
               //   messages.map((message) => (
               <DirectChatMessage
                 key={message.id}
                 chatLine={message}
                 senderId={
-                  message.authorId == user?.id ? user.id : targetUser.id
+                  message.senderId == user?.id ? user.id : targetUser.id
                 }
               />
             ))
@@ -207,7 +201,10 @@ const Direct = () => {
           )}
         </div>
         <div className="row p-2 ">
-          <div className="input-group border border-gray rounded-pill">
+          <form
+            className="input-group border border-gray rounded-pill"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <button className="btn text-light p-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -223,10 +220,11 @@ const Direct = () => {
             </button>
             <input
               id="messageText"
+              {...register("content", { required: true })}
               type="text"
               className="form-control text-bg-dark border-0"
               placeholder="Message..."
-              value={messageText}
+              // value={messageText}
               onChange={(event) => setMessageText(event.target.value)}
               autoComplete="off"
             />
@@ -272,11 +270,11 @@ const Direct = () => {
                 </button>
               </>
             ) : (
-              <button onClick={handleSendButton} className="btn text-primary">
+              <button type="submit" className="btn text-primary">
                 Send
               </button>
             )}
-          </div>
+          </form>
         </div>
       </div>
     </MessagesLayout>

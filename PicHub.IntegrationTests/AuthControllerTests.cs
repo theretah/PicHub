@@ -1,4 +1,5 @@
-using System.Net.Http.Json;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
@@ -8,22 +9,29 @@ using PicHub.Server.DTOs;
 
 namespace PicHub.IntegrationTests
 {
-    public class AuthControllerTests(IntegrationTestsFixture factory)
-        : IClassFixture<IntegrationTestsFixture>
+    public class AuthControllerTests : IClassFixture<IntegrationTestsFixture>
     {
+        private readonly IntegrationTestsFixture fixture;
+        private readonly HttpClient client;
+
+        public AuthControllerTests(IntegrationTestsFixture fixture)
+        {
+            this.fixture = fixture;
+            client = fixture.CreateClient();
+            client.BaseAddress = new Uri("https://localhost:4000");
+        }
+
         [Fact]
-        public async Task Register_ReturnsSuccessAndCorrectContentType()
+        public async Task Register_LoginsAndReturnsSuccessAndCorrectContentType()
         {
             // Arrange
-            var client = factory.CreateClient();
-            client.BaseAddress = new Uri("https://localhost:4000");
-            var username = "username1";
+            var username = "registered_user";
             var password = "Password@1234";
             var registerDto = new RegisterDTO
             {
                 UserName = username,
-                Email = "user1@gmail.com",
-                FullName = "",
+                Email = "registered_user@gmail.com",
+                FullName = "Registered User",
                 Password = password,
                 AccountCategoryId = 1,
                 ProfessionalCategoryId = null,
@@ -47,11 +55,41 @@ namespace PicHub.IntegrationTests
                 responseContent,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );
+            registerResponse.Should().NotBeNull();
             registerResponse.UserName.Should().Be(username);
             registerResponse.Password.Should().Be(password);
 
+            var loginJson = JsonSerializer.Serialize(registerResponse);
+            var loginData = new StringContent(loginJson, Encoding.UTF8, "application/json");
+            var loginReponse = await client.PostAsync("/api/auth/login", loginData);
+            loginReponse.Should().NotBeNull();
+
             // Database Cleanup
-            var scope = factory.Services.CreateScope();
+            var scope = fixture.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<PicHubContext>();
+            Utilities.Cleanup(db);
+        }
+
+        [Fact]
+        public async Task DeleteAccount_DeletesUserAndReturnsCorrectResponse()
+        {
+            // Arrange
+            var token = fixture.GenerateToken("userIdentification");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+                "bearer",
+                token
+            );
+
+            // Act
+            var response = await client.DeleteAsync("/api/auth");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var deletedUserResponse = await client.GetAsync("/api/users/userIdentication");
+            Assert.Equal(HttpStatusCode.NotFound, deletedUserResponse.StatusCode);
+
+            // Database Cleanup
+            var scope = fixture.Services.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<PicHubContext>();
             Utilities.Cleanup(db);
         }

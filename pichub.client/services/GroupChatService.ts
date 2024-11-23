@@ -1,9 +1,9 @@
 import axios from "axios";
-import { GroupChatDTO } from "../../entities/GroupChatDTO";
-import { CreateGroupChatDTO } from "../../entities/CreateGroupChatDTO";
+import { GroupChatDTO } from "../src/entities/GroupChatDTO";
+import { CreateGroupChatDTO } from "../src/entities/CreateGroupChatDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/group-chats/`,
+  baseURL: "/api/group-chats/",
 });
 
 class GroupChatService {
@@ -29,7 +29,7 @@ class GroupChatService {
 
   createAsync = async (data: CreateGroupChatDTO) =>
     await axiosInstance
-      .post("", { data }, this.getAuthHeaders())
+      .post("", data, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);

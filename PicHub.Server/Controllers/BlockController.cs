@@ -16,6 +16,22 @@ namespace PicHub.Server.Controllers
             this.unit = unit;
         }
 
+        [HttpGet("{blocked-user-id}")]
+        public async Task<ActionResult<bool>> ExistsAsync(
+            [FromRoute(Name = "blocked-user-id")] string blockedUserId
+        )
+        {
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (loggedInUserId == null)
+                return Unauthorized();
+
+            var blockedUsers = await unit.Blocks.ExistsByPredicateAsync(b =>
+                b.BlockerId == loggedInUserId && b.BlockedId == blockedUserId
+            );
+
+            return Ok(blockedUsers);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetBlockedUsersAsync()
         {
@@ -27,10 +43,7 @@ namespace PicHub.Server.Controllers
                 b.BlockerId == loggedInUserId
             );
 
-            if (blockedUsers.Any())
-                return Ok(blockedUsers);
-            else
-                return NotFound();
+            return blockedUsers.Any() ? Ok(blockedUsers) : NotFound();
         }
 
         [HttpPost("{user-id}")]
@@ -58,10 +71,15 @@ namespace PicHub.Server.Controllers
             var block = await unit.Blocks.GetByPredicateAsync(b =>
                 b.BlockedId == userId && b.BlockerId == loggedInUserId
             );
-            unit.Blocks.Remove(block);
-            await unit.CompleteAsync();
 
-            return NoContent();
+            if (block != null)
+            {
+                unit.Blocks.Remove(block);
+                await unit.CompleteAsync();
+                return NoContent();
+            }
+
+            return NotFound();
         }
     }
 }

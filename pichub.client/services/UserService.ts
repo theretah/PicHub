@@ -1,8 +1,8 @@
 import axios from "axios";
-import { UserDTO } from "../../entities/UserDTO";
+import { UserDTO } from "../src/entities/UserDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/users/`,
+  baseURL: "/api/users/",
 });
 
 // interface PatchOperation {

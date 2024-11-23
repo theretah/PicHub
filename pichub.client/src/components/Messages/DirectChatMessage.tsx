@@ -80,7 +80,9 @@ const DirectChatMessage = ({ chatLine, senderId }: Props) => {
           >
             <div
               className={` p-1 text-light ${
-                sentByUser ? "rounded-start" : "rounded-end"
+                sentByUser
+                  ? "rounded-start-5 rounded-end-4"
+                  : "rounded-start-4 rounded-end-5"
               }`}
               style={
                 sentByUser
@@ -91,7 +93,7 @@ const DirectChatMessage = ({ chatLine, senderId }: Props) => {
                   : { backgroundColor: "#343a40" }
               }
             >
-              <div className="card-body p-0">
+              <div className="card-body p-1">
                 <span style={{ fontSize: 17 }}>{chatLine.content}</span>
               </div>
             </div>

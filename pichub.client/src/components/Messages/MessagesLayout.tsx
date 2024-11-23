@@ -10,7 +10,11 @@ interface Props {
 const MessagesLayout = ({ children }: Props) => {
   const { isAuthenticated, user } = useAuthStore();
 
-  const { data: privateChats } = usePrivateChats();
+  const { data: privateChats, isSuccess } = usePrivateChats();
+
+  useEffect(() => {
+    if (privateChats) console.log(privateChats);
+  }, [privateChats]);
 
   const [activeChat, setActiveChat] = useState<string>();
 
@@ -20,6 +24,7 @@ const MessagesLayout = ({ children }: Props) => {
     window.innerWidth >= xl ? 200 : window.innerWidth < md ? 0 : 65;
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [inboxWidth, setInboxWidth] = useState(initialInboxWidth);
+
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
@@ -124,17 +129,20 @@ const MessagesLayout = ({ children }: Props) => {
                     borderRadius: 0,
                   }}
                 >
-                  {privateChats?.map((chat) => (
-                    <ChatRecord
-                      key={chat.id}
-                      isActive={activeChat == chat.id}
-                      setActive={() => setActiveChat(chat.id)}
-                      userId={
-                        chat.user1Id == user?.id ? chat.user2Id : chat.user1Id
-                      }
-                      isMedium={windowWidth <= 1100}
-                    />
-                  ))}
+                  {isSuccess &&
+                    privateChats?.map((privateChat) => (
+                      <ChatRecord
+                        key={privateChat.id}
+                        isActive={activeChat == privateChat.id}
+                        setActive={() => setActiveChat(privateChat.id)}
+                        userId={
+                          privateChat.user1Id == user?.id
+                            ? privateChat.user2Id
+                            : privateChat.user1Id
+                        }
+                        isMedium={windowWidth <= 1100}
+                      />
+                    ))}
                 </ul>
               </div>
             </div>

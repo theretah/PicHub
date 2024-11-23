@@ -10,8 +10,11 @@ const SearchPanel = ({ isOpen }: Props) => {
   const translate = "translate(53px, -184px)";
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  const [searchQueryState, setSearchQueryState] = useState<string>("");
-  const { data: searchResult } = useSearch(searchQueryState);
+  const [searchQueryState, setSearchQueryState] = useState<string | null>(null);
+  const { data: searchResult } = useSearch(
+    searchQueryState,
+    searchQueryState != null
+  );
 
   function handleSearch(e: ChangeEvent<HTMLInputElement>) {
     setSearchQueryState(e.target.value);

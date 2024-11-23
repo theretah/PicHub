@@ -1,8 +1,8 @@
 import axios from "axios";
-import { ChatLineDTO } from "../../entities/ChatLineDTO";
-import { CreateChatLineDTO } from "../../entities/CreateChatLineDTO";
+import { ChatLineDTO } from "../src/entities/ChatLineDTO";
+import { CreateChatLineDTO } from "../src/entities/CreateChatLineDTO";
 
-const axiosInstance = axios.create({ baseURL: "api/chat-lines" });
+const axiosInstance = axios.create({ baseURL: "/api/chat-lines/" });
 
 class ChatLineService {
   private getAuthHeaders = () => ({
@@ -11,7 +11,10 @@ class ChatLineService {
 
   getGroupChatLinesAsync = async (groupChatId: string) =>
     await axiosInstance
-      .get<ChatLineDTO[]>(`group-chats/${groupChatId}`, this.getAuthHeaders())
+      .get<ChatLineDTO[]>(
+        `from-group-chat/${groupChatId}`,
+        this.getAuthHeaders()
+      )
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
@@ -19,11 +22,14 @@ class ChatLineService {
 
   getPrivateChatLinesAsync = async (privateChatId: string) =>
     await axiosInstance
-      .get<ChatLineDTO[]>(
-        `private-chats/${privateChatId}`,
+      .get<ChatLineDTO[] | null>(
+        `from-private-chat/${privateChatId}`,
         this.getAuthHeaders()
       )
-      .then((res) => res.data)
+      .then((res) => {
+        console.log(res.data);
+        return res.data;
+      })
       .catch((e) => {
         throw new Error(e);
       });
@@ -33,7 +39,7 @@ class ChatLineService {
     data: CreateChatLineDTO
   ) =>
     await axiosInstance
-      .post(`group-chats/${groupChatId}`, { data }, this.getAuthHeaders())
+      .post(`from-group-chat/${groupChatId}`, data, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
@@ -44,7 +50,7 @@ class ChatLineService {
     data: CreateChatLineDTO
   ) =>
     await axiosInstance
-      .post(`private-chats/${privateChatId}`, { data }, this.getAuthHeaders())
+      .post(`from-private-chat/${privateChatId}`, data, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);

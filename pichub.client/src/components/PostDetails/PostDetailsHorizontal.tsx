@@ -12,7 +12,7 @@ import PostModal from "./PostModal";
 const PostDetailsHorizontal = ({
   author,
   post,
-  isFollowing,
+  isFollowed,
   isLiked,
   isSaved,
   handleLikeButton,
@@ -59,7 +59,7 @@ const PostDetailsHorizontal = ({
                       {author?.userName}
                     </Link>
                     {author?.id != user?.id &&
-                      (isFollowing ? (
+                      (isFollowed ? (
                         <>
                           <span>&nbsp;•&nbsp;</span>
                           <div
@@ -155,7 +155,7 @@ const PostDetailsHorizontal = ({
                 <p className="text-gray p-0">3 hours ago</p>
                 {post.commentsAllowed && (
                   <div className="d-flex">
-                    <ProfileImage user={post.author} widthHeight={35} />
+                    <ProfileImage user={author} widthHeight={35} />
                     <input
                       id="commentText"
                       value={commentText}

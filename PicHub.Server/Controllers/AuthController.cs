@@ -31,7 +31,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("loggedInUser")]
-        public async Task<IActionResult> GetLoggedInUserAsync()
+        public async Task<ActionResult<UserDTO>> GetLoggedInUserAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -55,7 +55,7 @@ namespace PicHub.Server.Controllers
 
             var user = new AppUser(
                 userName: model.UserName,
-                fullName: model.FullName ?? string.Empty,
+                fullName: model.FullName,
                 email: model.Email,
                 phoneNumber: string.Empty,
                 isPrivate: false,

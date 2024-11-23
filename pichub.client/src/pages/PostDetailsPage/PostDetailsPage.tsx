@@ -9,7 +9,11 @@ import { usePostById } from "../../react-query/hooks/PostHooks";
 const PostDetailsPage = () => {
   const { id } = useParams();
   const { isAuthenticated } = useAuthStore();
-  const { data, error, isLoading } = usePostById(parseInt(id ?? ""));
+  const { data, error, isLoading } = usePostById(
+    parseInt(id ?? ""),
+    id != undefined && id != null
+  );
+  console.log(JSON.stringify(data));
 
   if (isLoading)
     return (

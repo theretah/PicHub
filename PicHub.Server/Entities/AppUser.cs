@@ -7,7 +7,7 @@ namespace PicHub.Server.Entities
     {
         public AppUser(
             string userName,
-            string fullName,
+            string? fullName,
             string email,
             string phoneNumber,
             bool isPrivate,

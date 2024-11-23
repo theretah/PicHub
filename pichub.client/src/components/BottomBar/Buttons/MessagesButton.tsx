@@ -8,7 +8,7 @@ const MessagesButton = ({ currentPage, dimension }: Props) => {
     <BottomBarButton
       activePage={currentPage}
       buttonText="Messages"
-      to="/messages/inbox"
+      to="/chats/inbox"
     >
       {currentPage === "Messages" ? (
         <SendFillIcon dimension={dimension} />

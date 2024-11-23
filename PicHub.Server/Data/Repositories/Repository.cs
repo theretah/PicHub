@@ -47,7 +47,7 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public async Task<T> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
         {
-            return await set.Where(predicate).SingleAsync();
+            return await set.Where(predicate).SingleOrDefaultAsync();
         }
 
         public async Task<T> GetByIdAsync(int id)

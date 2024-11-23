@@ -9,7 +9,7 @@ const MessagesButton = ({ currentPage, showFullButton, dimension }: Props) => {
       showFullButton={showFullButton}
       activePage={currentPage}
       buttonText="Messages"
-      to="/messages/inbox"
+      to="/chats/inbox"
     >
       {currentPage === "Messages" ? (
         <SendFillIcon dimension={dimension} />

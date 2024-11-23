@@ -1,8 +1,8 @@
 import axios from "axios";
-import { PrivateChatDTO } from "../../entities/PrivateChatDTO";
+import { PrivateChatDTO } from "../src/entities/PrivateChatDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/private-chats/`,
+  baseURL: "/api/private-chats/",
 });
 
 class PrivateChatService {
@@ -12,7 +12,7 @@ class PrivateChatService {
 
   getAsync = async (userId: string) =>
     await axiosInstance
-      .get<PrivateChatDTO>(`${userId}`, this.getAuthHeaders())
+      .get<PrivateChatDTO>(userId, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
@@ -28,15 +28,15 @@ class PrivateChatService {
 
   createAsync = async (recieverId: string) =>
     await axiosInstance
-      .post<string>(`${recieverId}`, {}, this.getAuthHeaders())
+      .post<string>(recieverId, {}, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
       });
 
-  deleteAsync = async (chatId: number) =>
+  deleteAsync = async (chatId: string) =>
     await axiosInstance
-      .delete(`${chatId}`, this.getAuthHeaders())
+      .delete(chatId, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);

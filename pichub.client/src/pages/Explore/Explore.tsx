@@ -34,8 +34,9 @@ function ExplorePostsPanel() {
 
   return (
     <div className="row p-1">
-      {data &&
-        data.map((post) => <ExplorePostItem key={post.id} post={post} />)}
+      {data?.map((post) => (
+        <ExplorePostItem key={post.id} post={post} />
+      ))}
     </div>
   );
 }
@@ -45,8 +46,11 @@ export default function Explore() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [searchQueryState, setSearchQueryState] = useState<string>("");
-  const { data: searchResult } = useSearch(searchQueryState);
+  const [searchQueryState, setSearchQueryState] = useState<string | null>(null);
+  const { data: searchResult } = useSearch(
+    searchQueryState,
+    searchQueryState != null
+  );
 
   function handleSearch(e: ChangeEvent<HTMLInputElement>) {
     setSearchQueryState(e.target.value);

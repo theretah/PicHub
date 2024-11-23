@@ -1,9 +1,9 @@
 import axios from "axios";
-import { PostDTO } from "../../entities/PostDTO";
-import { CreateEditPostDTO } from "../../entities/CreateEditPostDTO";
+import { PostDTO } from "../src/entities/PostDTO";
+import { CreateEditPostDTO } from "../src/entities/CreateEditPostDTO";
 
 const axiosInstance = axios.create({
-  baseURL: `/api/posts/`,
+  baseURL: "/api/posts/",
 });
 
 // interface PatchOperation {
@@ -19,39 +19,45 @@ class PostService {
 
   getAllAsync = async () =>
     await axiosInstance
-      .get<PostDTO[]>("")
-      .then((res) => res.data)
+      .get<PostDTO[] | null>("/")
+      .then((res) => {
+        return res.data;
+      })
       .catch((e) => {
         throw new Error(e);
       });
 
   getAsync = async (id: number) =>
     await axiosInstance
-      .get<PostDTO>(`${id}`)
+      .get<PostDTO | null>(`${id}`)
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
       });
 
-  getAllByAuthorAsync = async (userId: string) =>
+  getAllByAuthorAsync = async (authorId: string) =>
     await axiosInstance
-      .get<PostDTO[]>(`by-author/${userId}`)
+      .get<PostDTO[] | null>(`by-author/${authorId}`)
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
       });
 
-  getCountByAuthorAsync = async (userId: string) =>
-    await axiosInstance
-      .get<number>(`by-author/${userId}/count`)
+  getCountByAuthorAsync = async (authorId: string) => {
+    if (!authorId) {
+      throw new Error("Author ID is required.");
+    }
+    return await axiosInstance
+      .get<number>(`by-author/${authorId}/count`)
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
       });
+  };
 
   getLikesCountAsync = async (postId: number) =>
     await axiosInstance
-      .get(`${postId}/likes-count`)
+      .get<number | undefined>(`${postId}/likes-count`)
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
@@ -121,7 +127,7 @@ class PostService {
 
   updateAsync = async (postId: number, data: CreateEditPostDTO) =>
     await axiosInstance
-      .patch(`${postId}`, { data }, this.getAuthHeaders())
+      .patch(`${postId}`, data, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);

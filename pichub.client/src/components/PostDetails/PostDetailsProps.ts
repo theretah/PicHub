@@ -4,8 +4,8 @@ import { UserDTO } from "../../entities/UserDTO";
 export interface PostDetailsProps {
   post: PostDTO;
 
-  author: UserDTO;
-  isFollowing: boolean;
+  author: UserDTO | null;
+  isFollowed: boolean;
 
   isSaved: boolean;
   handleSaveButton: () => void;

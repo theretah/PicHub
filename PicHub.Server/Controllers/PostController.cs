@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
@@ -14,51 +15,42 @@ namespace PicHub.Server.Controllers
     public class PostController : ControllerBase
     {
         private readonly IUnitOfWork unit;
+        private readonly IMapper mapper;
 
-        public PostController(IUnitOfWork unit)
+        public PostController(IUnitOfWork unit, IMapper mapper)
         {
             this.unit = unit;
+            this.mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllAsync()
         {
             var posts = await unit.Posts.GetAllAsync();
 
-            if (posts.Any())
-                return Ok(posts.OrderByDescending(p => p.CreateDate).ToList());
-
-            return NoContent();
+            return posts.Any()
+                ? Ok(
+                    mapper.Map<IEnumerable<PostDTO>>(
+                        posts.OrderByDescending(p => p.CreateDate).ToList()
+                    )
+                )
+                : NoContent();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetAsync(int id)
+        public async Task<ActionResult<PostDTO>> GetAsync(int id)
         {
-            try
-            {
-                var post = await unit.Posts.GetByIdAsync(id);
-                if (post != null)
-                    return Ok(post);
-
-                return NotFound();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var post = await unit.Posts.GetByIdAsync(id);
+            return (post != null) ? Ok(mapper.Map<PostDTO>(post)) : NotFound();
         }
 
         [HttpGet("by-author/{user-id}")]
-        public async Task<IActionResult> GetAllByAuthorAsync(
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetAllByAuthorAsync(
             [FromRoute(Name = "user-id")] string userId
         )
         {
             var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
-
-            if (posts.Any())
-                return Ok(posts);
-
-            return NoContent();
+            return posts.Any() ? Ok(mapper.Map<IEnumerable<PostDTO>>(posts)) : NotFound();
         }
 
         [HttpGet("by-author/{user-id}/count")]
@@ -71,7 +63,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{post-id}/likes-count")]
-        public async Task<IActionResult> GetLikesCountAsync(
+        public async Task<ActionResult<int>> GetLikesCountAsync(
             [FromRoute(Name = "post-id")] int postId
         )
         {
@@ -79,7 +71,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{post-id}/is-saved")]
-        public async Task<IActionResult> IsSavedAsync([FromRoute(Name = "post-id")] int postId)
+        public async Task<ActionResult<bool>> IsSavedAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -99,7 +91,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("{post-id}/is-liked")]
-        public async Task<IActionResult> IsLikedAsync([FromRoute(Name = "post-id")] int postId)
+        public async Task<ActionResult<bool>> IsLikedAsync([FromRoute(Name = "post-id")] int postId)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -119,7 +111,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("likes")]
-        public async Task<IActionResult> GetLikedPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetLikedPostsAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -137,8 +129,8 @@ namespace PicHub.Server.Controllers
                 {
                     postIds.Add(like.PostId);
                 }
-
-                return Ok(await unit.Posts.GetAllByPredicateAsync(p => postIds.Contains(p.Id)));
+                var posts = await unit.Posts.GetAllByPredicateAsync(p => postIds.Contains(p.Id));
+                return Ok(mapper.Map<IEnumerable<PostDTO>>(posts));
             }
             catch (Exception ex)
             {
@@ -147,7 +139,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpGet("saves")]
-        public async Task<IActionResult> GetSavedPostsAsync()
+        public async Task<ActionResult<IEnumerable<PostDTO>>> GetSavedPostsAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -164,7 +156,7 @@ namespace PicHub.Server.Controllers
                     {
                         posts.Add(await unit.Posts.GetByIdAsync(save.PostId));
                     }
-                    return Ok(posts);
+                    return Ok(mapper.Map<IEnumerable<PostDTO>>(posts));
                 }
                 return NoContent();
             }
@@ -176,32 +168,33 @@ namespace PicHub.Server.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync(CreateEditPostDTO model)
+        public async Task<ActionResult<PostDTO>> CreateAsync(CreateEditPostDTO model)
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
 
+            FormFile imageFile;
             try
             {
-                var imageFile = ImageUtilities.CompressImage(model.ImageFile, 1080);
-                await unit.Posts.AddAsync(
-                    new Post
-                    {
-                        Caption = model.Caption,
-                        CommentsAllowed = model.CommentsAllowed,
-                        AuthorId = loggedInUserId,
-                        CreateDate = DateTime.Now,
-                        PhotoContent = FileUtilities.FileToByteArray(imageFile),
-                    }
-                );
-                await unit.CompleteAsync();
-                return Created();
+                imageFile = ImageUtilities.CompressImage(model.ImageFile, "imageContent", 1080);
             }
             catch (Exception ex)
             {
-                return BadRequest("Failed to add the post. " + ex.Message);
+                return BadRequest("Failed to compress image for the post. " + ex.Message);
             }
+            var post = new Post
+            {
+                Caption = model.Caption,
+                CommentsAllowed = model.CommentsAllowed,
+                AuthorId = loggedInUserId,
+                CreateDate = DateTime.Now,
+                PhotoContent = FileUtilities.FileToByteArray(imageFile),
+            };
+            await unit.Posts.AddAsync(post);
+            await unit.CompleteAsync();
+
+            return Ok(mapper.Map<Post>(post));
         }
 
         [HttpPost("{post-id}/saves")]
@@ -244,7 +237,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPatch("{post-id}")]
-        public async Task<IActionResult> UpdateAsync(
+        public async Task<ActionResult<PostDTO>> UpdateAsync(
             [FromRoute(Name = "post-id")] int postId,
             [FromBody] JsonPatchDocument<Post> patchDoc
         )
@@ -267,7 +260,7 @@ namespace PicHub.Server.Controllers
             unit.Posts.Update(post);
             await unit.CompleteAsync();
 
-            return Ok(post);
+            return Ok(mapper.Map<PostDTO>(post));
         }
 
         [HttpDelete("{post-id}/saves")]

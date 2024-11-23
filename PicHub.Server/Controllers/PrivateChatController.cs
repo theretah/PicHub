@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.Entities;
@@ -10,29 +11,33 @@ namespace PicHub.Server.Controllers
     public class PrivateChatController : ControllerBase
     {
         private readonly IUnitOfWork unit;
+        private readonly IMapper mapper;
 
-        public PrivateChatController(IUnitOfWork unit)
+        public PrivateChatController(IUnitOfWork unit, IMapper mapper)
         {
+            this.mapper = mapper;
             this.unit = unit;
         }
 
         [HttpGet("{user-id}")]
-        public async Task<IActionResult> GetAsync([FromRoute(Name = "user-id")] string userId)
+        public async Task<ActionResult<PrivateChatDTO>> GetAsync(
+            [FromRoute(Name = "user-id")] string userId
+        )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
 
-            var chat = await unit.PrivateChats.GetByPredicateAsync(c =>
+            var privateChat = await unit.PrivateChats.GetByPredicateAsync(c =>
                 (c.User1Id == loggedInUserId && c.User2Id == userId)
                 || (c.User1Id == userId && c.User2Id == loggedInUserId)
             );
 
-            return chat == null ? NotFound() : Ok(chat);
+            return privateChat == null ? NotFound() : Ok(mapper.Map<PrivateChatDTO>(privateChat));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPrivateChatsAsync()
+        public async Task<ActionResult<IEnumerable<PrivateChatDTO>>> GetPrivateChatsAsync()
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
@@ -42,11 +47,11 @@ namespace PicHub.Server.Controllers
                 c.User1Id == loggedInUserId || c.User2Id == loggedInUserId
             );
 
-            return chats == null ? NoContent() : Ok(chats);
+            return chats == null ? NotFound() : Ok(mapper.Map<IEnumerable<PrivateChatDTO>>(chats));
         }
 
         [HttpPost("{reciever-id}")]
-        public async Task<IActionResult> CreateAsync(
+        public async Task<ActionResult<string>> CreateAsync(
             [FromRoute(Name = "reciever-id")] string recieverId
         )
         {
@@ -76,7 +81,7 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpDelete("{private-chat-id}")]
-        public async Task<IActionResult> DeleteAsync(
+        public async Task<ActionResult> DeleteAsync(
             [FromRoute(Name = "private-chat-id")] string privateChatId
         )
         {

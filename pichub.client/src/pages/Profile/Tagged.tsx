@@ -2,9 +2,9 @@ import { useParams } from "react-router-dom";
 import Profile from "../../components/Profile/Profile";
 
 const Tagged = () => {
-  const { username } = useParams();
+  const { userName } = useParams();
   return (
-    <Profile username={username || ""} activeTab="tagged">
+    <Profile userName={userName || ""} activeTab="tagged">
       <div>Tagged</div>
     </Profile>
   );
