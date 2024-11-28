@@ -13,7 +13,6 @@ const PostDetailsPage = () => {
     parseInt(id ?? ""),
     id != undefined && id != null
   );
-  console.log(JSON.stringify(data));
 
   if (isLoading)
     return (

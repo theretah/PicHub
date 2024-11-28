@@ -26,10 +26,7 @@ class ChatLineService {
         `from-private-chat/${privateChatId}`,
         this.getAuthHeaders()
       )
-      .then((res) => {
-        console.log(res.data);
-        return res.data;
-      })
+      .then((res) => res.data)
       .catch((e) => {
         throw new Error(e);
       });

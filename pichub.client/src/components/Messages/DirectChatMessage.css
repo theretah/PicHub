@@ -1,0 +1,35 @@
+:root {
+  --five: 1.5rem;
+  --one: 0.375rem;
+}
+
+.byUserAndFirst {
+  border-radius: var(--five) var(--five) var(--one) var(--five) !important;
+}
+
+.byUserAndMiddle {
+  border-radius: var(--five) var(--one) var(--one) var(--five) !important;
+}
+
+.byUserAndLast {
+  border-radius: var(--five) var(--one) 0 var(--five) !important;
+}
+
+.notByUserAndFirst {
+  border-radius: var(--five) var(--five) var(--five) var(--one) !important;
+}
+
+.notByUserAndMiddle {
+  border-radius: var(--one) var(--five) var(--five) var(--one) !important;
+}
+
+.notByUserAndLast {
+  border-radius: var(--one) var(--five) var(--five) 0 !important;
+}
+
+.byUser {
+  border-radius: var(--five) var(--five) 0 var(--five) !important;
+}
+.notByUser {
+  border-radius: var(--five) var(--five) var(--five) 0 !important;
+}

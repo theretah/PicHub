@@ -84,7 +84,6 @@ class PostService {
       .get<PostDTO[]>(`saves`, this.getAuthHeaders())
       .then((res) => res.data)
       .catch((e) => {
-        console.log(e);
         throw new Error(e);
       });
 

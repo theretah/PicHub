@@ -43,7 +43,7 @@ namespace PicHub.Server.Controllers
                 b.BlockerId == loggedInUserId
             );
 
-            return blockedUsers.Any() ? Ok(blockedUsers) : NotFound();
+            return Ok(blockedUsers);
         }
 
         [HttpPost("{user-id}")]
@@ -71,15 +71,12 @@ namespace PicHub.Server.Controllers
             var block = await unit.Blocks.GetByPredicateAsync(b =>
                 b.BlockedId == userId && b.BlockerId == loggedInUserId
             );
+            if (block == null)
+                return NotFound();
 
-            if (block != null)
-            {
-                unit.Blocks.Remove(block);
-                await unit.CompleteAsync();
-                return NoContent();
-            }
-
-            return NotFound();
+            unit.Blocks.Remove(block);
+            await unit.CompleteAsync();
+            return NoContent();
         }
     }
 }

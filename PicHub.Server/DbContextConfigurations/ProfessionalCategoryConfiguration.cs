@@ -21,7 +21,7 @@ namespace PicHub.Server.DbContextConfigurations
                 new ProfessionalCategory { Id = 9, Title = "Editor" },
                 new ProfessionalCategory { Id = 10, Title = "Writer" },
                 new ProfessionalCategory { Id = 11, Title = "Personal blog" },
-                new ProfessionalCategory { Id = 12, Title = "Prodict/service" },
+                new ProfessionalCategory { Id = 12, Title = "Product/service" },
                 new ProfessionalCategory { Id = 13, Title = "Gamer" },
                 new ProfessionalCategory { Id = 14, Title = "Restaurant" },
                 new ProfessionalCategory { Id = 15, Title = "Beauty, cosmetic & personal care" },

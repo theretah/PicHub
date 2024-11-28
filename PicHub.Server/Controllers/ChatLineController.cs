@@ -32,9 +32,7 @@ namespace PicHub.Server.Controllers
                 cl.GroupChatId == groupChatId
             );
 
-            return chatLines.Any()
-                ? Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines))
-                : NotFound();
+            return Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines));
         }
 
         [HttpGet("from-private-chat/{private-chat-id}")]
@@ -50,9 +48,7 @@ namespace PicHub.Server.Controllers
                 cl.PrivateChatId == privateChatId
             );
 
-            return chatLines.Any()
-                ? Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines))
-                : NotFound();
+            return Ok(mapper.Map<IEnumerable<ChatLineDTO>>(chatLines));
         }
 
         [HttpPost("from-group-chat/{group-chat-id}/")]

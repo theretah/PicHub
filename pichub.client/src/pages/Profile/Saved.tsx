@@ -10,7 +10,6 @@ const Saved = () => {
 
   const { data, error, isLoading } = useSavedPosts();
   if (error) return <p className="text-light">{error.message}</p>;
-  console.log(data);
 
   return (
     <Profile userName={user.userName} activeTab="saved">

@@ -33,7 +33,7 @@ const Profile = ({ userName, children, activeTab }: Props) => {
   const { data: pageUser, isSuccess } = useUserByUserName(userName, !!userName);
   const { data: postsCount } = usePostsCountByAuthor(
     pageUser?.id || "",
-    !!pageUser
+    isSuccess
   );
   const { data: isFollowing } = useIsFollowed(pageUser?.id || "", isSuccess);
   const { data: followingsCount } = useFollowingsCount(
@@ -306,12 +306,14 @@ const Profile = ({ userName, children, activeTab }: Props) => {
             </div>
           )}
         </div>
-        <StatsRow
-          followersCount={followersCountState}
-          followingsCount={followingsCountState}
-          postsCount={postsCount || 0}
-          windowWidth={windowWidth}
-        />
+        {postsCount != undefined && (
+          <StatsRow
+            followersCount={followersCountState}
+            followingsCount={followingsCountState}
+            postsCount={postsCount}
+            windowWidth={windowWidth}
+          />
+        )}
         <TabsRow
           windowWidth={windowWidth}
           activeTab={activeTab}

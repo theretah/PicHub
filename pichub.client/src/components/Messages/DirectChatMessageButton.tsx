@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ChatLineDTO } from "../../entities/ChatLineDTO";
 
 interface BtnProps {
+  chatLine: ChatLineDTO;
   sentByUser: boolean;
   handleUnSendButton: () => void;
 }
 
 const DirectChatMessageButton = ({
+  chatLine,
   sentByUser,
   handleUnSendButton,
 }: BtnProps) => {
+  const date = new Date(chatLine.createdAt);
+
   const [isOpen, setIsOpen] = useState(false);
   const [isDropup, setIsDropup] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -81,7 +86,16 @@ const DirectChatMessageButton = ({
       >
         <li>
           <h6 className="dropdown-header text-gray" style={{ fontSize: 13 }}>
-            Jan 11, 2024, 10:21PM
+            {date.toLocaleString("default", {
+              month: "long",
+              day: "numeric",
+            }) +
+              ", " +
+              date.toLocaleString("en-US", {
+                hour: "numeric",
+                hour12: true,
+                minute: "2-digit",
+              })}
           </h6>
         </li>
         <hr className="p-0 my-1" />

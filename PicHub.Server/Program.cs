@@ -5,6 +5,7 @@ using AutoMapper;
 using CMSReactDotNet.Server.Data.IRepositories;
 using CMSReactDotNet.Server.Data.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
@@ -160,6 +161,21 @@ public partial class Program
         app.MapControllers();
 
         app.MapFallbackToFile("/index.html");
+
+        app.MapGet(
+            "/api/account-categories",
+            async (IUnitOfWork unit) =>
+            {
+                return Results.Ok(await unit.AccountCategoryRepository.GetAllAsync());
+            }
+        );
+        app.MapGet(
+            "/api/professional-categories",
+            async (IUnitOfWork unit) =>
+            {
+                return Results.Ok(await unit.ProfessionalCategoryRepository.GetAllAsync());
+            }
+        );
 
         app.Run();
     }

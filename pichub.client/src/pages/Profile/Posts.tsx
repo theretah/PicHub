@@ -23,7 +23,7 @@ const Posts = () => {
   return (
     <Profile userName={userName} activeTab="posts">
       {isLoading && <LoadingIndicator />}
-      {posts ? (
+      {posts?.length && posts?.length > 0 ? (
         posts?.map((post) => (
           <div className="col-4" style={{ padding: 0.65 }} key={post.id}>
             <Link to={`/post/${post.id}`}>
@@ -58,7 +58,7 @@ const Posts = () => {
       ) : (
         <div className="d-flex justify-content-center align-items-center mt-5">
           <div className="w-100 text-center">
-            <Link to={"/create-post"} type="button" className="btn mt-1 py-1">
+            <div className=" mt-1 py-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width={squareSize}
@@ -71,7 +71,7 @@ const Posts = () => {
                 <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0" />
               </svg>
               <h2 className="text-light mt-2 fw-bold">No Posts Yet</h2>
-            </Link>
+            </div>
           </div>
         </div>
       )}

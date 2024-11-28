@@ -75,7 +75,48 @@ const Direct = () => {
     await deleteChat.mutateAsync();
   }
 
-  if (false) handleDeleteChatLine();
+  function preProcessChatLines(chatLines: ChatLineDTO[]) {
+    if (chatLines) {
+      return chatLines.map((currentChat, i) => {
+        const nextChat = chatLines[i + 1];
+        const prevChat = chatLines[i - 1];
+
+        const prevDate = new Date(prevChat?.createdAt);
+        const currentDate = new Date(currentChat.createdAt);
+        const nextDate = new Date(nextChat?.createdAt);
+
+        const isFirstEver = !prevChat;
+        const isLastEver = !nextChat;
+
+        const isLast =
+          (nextChat && nextChat.senderId != currentChat.senderId) ||
+          (nextChat && nextDate.getDay() != currentDate.getDay());
+
+        const isFirst =
+          (prevChat && prevChat.senderId != currentChat.senderId) ||
+          (prevChat && prevDate.getDay() != currentDate.getDay());
+
+        const isAlone =
+          (isFirstEver && isLastEver) ||
+          (isFirst && isLastEver) ||
+          (isFirst && isLastEver) ||
+          (isFirst && isLast);
+
+        const showDate = prevChat
+          ? currentDate.getDay() != prevDate.getDay() || i == 0
+          : true;
+
+        return {
+          ...currentChat,
+          showDate,
+          isFirst,
+          isLast,
+          isAlone,
+        };
+      });
+    }
+  }
+  const preProcessedChatLines = preProcessChatLines(newMessages || []);
 
   const onSubmit: SubmitHandler<CreateChatLineDTO> = async (data) => {
     if (user && targetUser && privateChat) {
@@ -167,11 +208,13 @@ const Direct = () => {
           </div>
         </div>
         <div
-          className="overflow-y-auto"
-          style={{ height: isSmallScreen ? "78vh" : "83vh" }}
+          className="overflow-y-auto pe-2"
+          style={{
+            height: isSmallScreen ? "78vh" : "83vh",
+          }}
         >
-          {newMessages && newMessages.length != 0 ? (
-            newMessages?.map((message) => (
+          {preProcessedChatLines && preProcessedChatLines.length != 0 ? (
+            preProcessedChatLines?.map((message) => (
               // messages && user && targetUser && messages?.length > 0 ? (
               //   messages.map((message) => (
               <DirectChatMessage
@@ -180,6 +223,10 @@ const Direct = () => {
                 senderId={
                   message.senderId == user?.id ? user.id : targetUser.id
                 }
+                showDate={message.showDate}
+                isFirst={message.isFirst}
+                isLast={message.isLast}
+                isAlone={message.isAlone}
               />
             ))
           ) : (

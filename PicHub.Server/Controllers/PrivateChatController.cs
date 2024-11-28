@@ -47,7 +47,7 @@ namespace PicHub.Server.Controllers
                 c.User1Id == loggedInUserId || c.User2Id == loggedInUserId
             );
 
-            return chats == null ? NotFound() : Ok(mapper.Map<IEnumerable<PrivateChatDTO>>(chats));
+            return Ok(mapper.Map<IEnumerable<PrivateChatDTO>>(chats));
         }
 
         [HttpPost("{reciever-id}")]

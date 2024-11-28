@@ -104,13 +104,6 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
     };
   }, [window.innerWidth]);
 
-  // console.log("authorId: " + post?.authorId);
-  // console.log("author: " + author);
-  // console.log("isLikedState: " + isLikedState);
-  // console.log("isSavedState: " + isSavedState);
-  // console.log("isFollowed: " + isFollowed);
-  // console.log("post: " + post);
-
   if (!author || !post) return <LoadingIndicator />;
 
   return isAuthenticated ? (
@@ -149,11 +142,17 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
           post={post}
           isFollowed={false}
           isSaved={false}
-          handleSaveButton={() => console.log("Unauthorized")}
+          handleSaveButton={() => {
+            throw new Error("Unauthorized");
+          }}
           isLiked={false}
-          handleLikeButton={() => console.log("Unauthorized")}
+          handleLikeButton={() => {
+            throw new Error("Unauthorized");
+          }}
           likesCount={likesCountState}
-          handleFollowButton={() => console.log("Unauthorized")}
+          handleFollowButton={() => {
+            throw new Error("Unauthorized");
+          }}
         />
       ) : (
         <PostDetailsHorizontal
@@ -161,11 +160,17 @@ const PostDetails = ({ post, onlyVertical }: Props) => {
           post={post}
           isFollowed={false}
           isSaved={false}
-          handleSaveButton={() => console.log("Unauthorized")}
+          handleSaveButton={() => {
+            throw new Error("Unauthorized");
+          }}
           isLiked={false}
-          handleLikeButton={() => console.log("Unauthorized")}
+          handleLikeButton={() => {
+            throw new Error("Unauthorized");
+          }}
           likesCount={likesCountState}
-          handleFollowButton={() => console.log("Unauthorized")}
+          handleFollowButton={() => {
+            throw new Error("Unauthorized");
+          }}
         />
       )}
     </div>

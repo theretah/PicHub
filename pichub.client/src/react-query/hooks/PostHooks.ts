@@ -27,14 +27,8 @@ export const usePostsByAuthorId = (authorId: string, enabled: boolean) =>
 export const usePostsCountByAuthor = (authorId: string, enabled: boolean) =>
   useQuery<number, AxiosError>({
     queryKey: ["postsCount", authorId],
-    queryFn: async () => {
-      if (!!authorId) throw new Error("Author id is required.");
-      else {
-        console.log(authorId);
-        return await PostService.getCountByAuthorAsync(authorId);
-      }
-    },
-    enabled: enabled && !!authorId,
+    queryFn: async () => await PostService.getCountByAuthorAsync(authorId),
+    enabled: enabled,
   });
 
 export const useLikesCount = (postId: number, enabled: boolean) =>

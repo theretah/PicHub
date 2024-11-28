@@ -50,16 +50,16 @@ namespace PicHub.Server.Controllers
         )
         {
             var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
-            return posts.Any() ? Ok(mapper.Map<IEnumerable<PostDTO>>(posts)) : NotFound();
+            return Ok(mapper.Map<IEnumerable<PostDTO>>(posts));
         }
 
-        [HttpGet("by-author/{user-id}/count")]
+        [HttpGet("by-author/{author-id}/count")]
         public async Task<ActionResult<int>> GetCountByAuthorAsync(
-            [FromRoute(Name = "user-id")] string userId
+            [FromRoute(Name = "author-id")] string authorId
         )
         {
-            var posts = await unit.Posts.GetAllByAuthorIdAsync(userId);
-            return Ok(posts.Count());
+            var posts = await unit.Posts.GetAllByAuthorIdAsync(authorId);
+            return Ok(posts.Any() ? posts.Count() : 0);
         }
 
         [HttpGet("{post-id}/likes-count")]
@@ -123,7 +123,7 @@ namespace PicHub.Server.Controllers
 
                 var likesByUserId = await unit.Likes.GetLikesByUserId(loggedInUserId);
                 if (!likesByUserId.Any())
-                    return NotFound();
+                    return Ok();
 
                 foreach (var like in likesByUserId)
                 {

@@ -12,10 +12,6 @@ const MessagesLayout = ({ children }: Props) => {
 
   const { data: privateChats, isSuccess } = usePrivateChats();
 
-  useEffect(() => {
-    if (privateChats) console.log(privateChats);
-  }, [privateChats]);
-
   const [activeChat, setActiveChat] = useState<string>();
 
   const md = 768;

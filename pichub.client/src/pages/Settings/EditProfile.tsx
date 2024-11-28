@@ -53,9 +53,7 @@ const EditProfile = () => {
     formData.append("Bio", data.Bio || "");
     formData.append("ProfileImageFile", data.ProfileImageFile || "");
     formData.append("Gender", data.Gender.toString() || "0");
-    for (const pair of formData.entries()) {
-      console.log("EditProfile.tsx: " + pair[0], pair[1]);
-    }
+
     await mutateAsync(formData);
   };
 

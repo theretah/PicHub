@@ -48,22 +48,16 @@ namespace PicHub.Server.Controllers
 
             var users = usersQuery.OrderBy(u => u.UserName).ToList();
 
-            if (users.Any())
-                return Ok(mapper.Map<UserDTO[]>(users));
-
-            return NotFound();
+            return Ok(mapper.Map<UserDTO[]>(users));
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAll()
         {
             var users = userManager.Users;
-            if (users.Any())
-            {
-                var mapped = mapper.Map<IEnumerable<UserDTO>>(users);
-                return Ok(mapped);
-            }
-            return NotFound();
+
+            var mapped = mapper.Map<IEnumerable<UserDTO>>(users);
+            return Ok(mapped);
         }
 
         [HttpGet("{id}")]
