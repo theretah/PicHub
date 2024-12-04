@@ -1,8 +1,10 @@
 using System.Security.Claims;
 using AutoMapper;
-using CMSReactDotNet.Server.Data.IRepositories;
+using CMSReactDotNet.Server.Data.UnitOfWork;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.DTOs;
+using PicHub.Server.Entities;
 
 namespace PicHub.Server.Controllers
 {
@@ -96,14 +98,17 @@ namespace PicHub.Server.Controllers
         }
 
         [HttpPatch("{chat-line-id}")]
-        public async Task<ActionResult> UpdateAsync(
+        public async Task<ActionResult<ChatLineDTO>> UpdateAsync(
             [FromRoute(Name = "chat-line-id")] int chatLineId,
-            [FromBody] string newContent
+            [FromBody] JsonPatchDocument<ChatLine> patchDoc
         )
         {
             var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (loggedInUserId == null)
                 return Unauthorized();
+
+            if (patchDoc == null)
+                return BadRequest();
 
             try
             {
@@ -111,13 +116,14 @@ namespace PicHub.Server.Controllers
                 if (chatLine.SenderId != loggedInUserId)
                     return Forbid();
 
-                chatLine.Content = newContent;
-                chatLine.LastUpdatedAt = DateTime.Now;
+                patchDoc.ApplyTo(chatLine, ModelState);
+                if (!TryValidateModel(chatLine))
+                    return BadRequest(ModelState);
 
                 unit.ChatLines.Update(chatLine);
                 await unit.CompleteAsync();
 
-                return Ok();
+                return Ok(mapper.Map<ChatLineDTO>(chatLine));
             }
             catch (Exception e)
             {

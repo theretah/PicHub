@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
-namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
+namespace PicHub.IntegrationTests.ControllersUnauthorizedAccessTests
 {
     public static class TestDataGenerator
     {
@@ -13,7 +13,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
             {
                 new object[]
                 {
-                    "chat-lines/group-chats/1",
+                    "chat-lines/from-group-chat/1",
                     new StringContent(
                         System.Text.Json.JsonSerializer.Serialize(
                             new CreateChatLineDTO { Content = string.Empty, ReplyingToId = null }
@@ -50,7 +50,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
             {
                 new object[]
                 {
-                    "chat-lines/private-chats/1",
+                    "chat-lines/from-private-chat/1",
                     new StringContent(
                         System.Text.Json.JsonSerializer.Serialize(
                             new CreateChatLineDTO { Content = string.Empty, ReplyingToId = null }
@@ -89,7 +89,12 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                 {
                     "chat-lines/1",
                     new StringContent(
-                        System.Text.Json.JsonSerializer.Serialize(string.Empty),
+                        JsonConvert.SerializeObject(
+                            new JsonPatchDocument<ChatLine>().Replace(
+                                dto => dto.Content,
+                                "replaced chat"
+                            )
+                        ),
                         Encoding.UTF8,
                         "application/json"
                     ),
@@ -122,7 +127,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
                 {
                     new object[]
                     {
-                        $"posts/1",
+                        "posts/1",
                         new StringContent(
                             JsonConvert.SerializeObject(
                                 new JsonPatchDocument<Post>().Replace(

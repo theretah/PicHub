@@ -1,11 +1,12 @@
 using System.Security.Claims;
-using CMSReactDotNet.Server.Data.IRepositories;
+using AutoMapper;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PicHub.Server.Controllers;
+using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
 
 namespace PicHub.UnitTests
@@ -17,8 +18,14 @@ namespace PicHub.UnitTests
 
         public PostControllerTests()
         {
+            var config = new MapperConfiguration(c =>
+            {
+                c.CreateMap<Post, PostDTO>();
+            });
+            var mapper = config.CreateMapper();
+
             unitOfWorkMock = new Mock<IUnitOfWork>();
-            controller = new PostController(unitOfWorkMock.Object);
+            controller = new PostController(unitOfWorkMock.Object, mapper);
 
             var claims = new List<Claim>
             {
@@ -46,7 +53,7 @@ namespace PicHub.UnitTests
                 new Post
                 {
                     AuthorId = "1",
-                    PhotoContent = new byte[] { },
+                    PhotoContent = [],
                     Caption = string.Empty,
                     CommentsAllowed = true,
                     CreateDate = DateTime.Now,
@@ -74,7 +81,7 @@ namespace PicHub.UnitTests
             var actionResult = await controller.GetAllAsync();
 
             // Assert
-            Assert.IsType<OkObjectResult>(actionResult);
+            Assert.IsType<OkObjectResult>(actionResult.Result);
             Assert.Equal(4, posts.Count());
         }
 
@@ -89,7 +96,7 @@ namespace PicHub.UnitTests
             var actionResult = await controller.GetAllAsync();
 
             // Assert
-            Assert.IsType<NoContentResult>(actionResult);
+            Assert.IsType<OkObjectResult>(actionResult.Result);
             Assert.Empty(posts);
         }
 
@@ -104,7 +111,7 @@ namespace PicHub.UnitTests
             var actionResult = await controller.UpdateAsync(postId, new JsonPatchDocument<Post>());
 
             // Assert
-            Assert.IsType<NotFoundResult>(actionResult);
+            Assert.IsType<NotFoundResult>(actionResult.Result);
         }
 
         [Fact]
@@ -131,7 +138,7 @@ namespace PicHub.UnitTests
             var actionResult = await controller.UpdateAsync(postId, null);
 
             // Assert
-            Assert.IsType<BadRequestResult>(actionResult);
+            Assert.IsType<BadRequestResult>(actionResult.Result);
         }
     }
 }

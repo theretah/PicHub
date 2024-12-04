@@ -1,7 +1,9 @@
 ﻿using CMSReactDotNet.Server.Data.IRepositories;
+using CMSReactDotNet.Server.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 using PicHub.Server.Data;
 
-namespace CMSReactDotNet.Server.Data.Repositories
+namespace CMSReactDotNet.Server.Data.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -10,6 +12,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public UnitOfWork(PicHubContext context)
         {
             this.context = context;
+
+            AppUsers = new AppUserRepository(context);
 
             Posts = new PostRepository(context);
             Saves = new SaveRepository(context);
@@ -46,6 +50,8 @@ namespace CMSReactDotNet.Server.Data.Repositories
 
         public IProfessionalCategoryRepository ProfessionalCategoryRepository { get; private set; }
 
+        public IAppUserRepository AppUsers { get; private set; }
+
         public int Complete()
         {
             return context.SaveChanges();
@@ -59,6 +65,16 @@ namespace CMSReactDotNet.Server.Data.Repositories
         public void Dispose()
         {
             context.Dispose();
+        }
+
+        public bool EnsureCreated()
+        {
+            return context.Database.EnsureCreated();
+        }
+
+        public bool EnsureDeleted()
+        {
+            return context.Database.EnsureDeleted();
         }
     }
 }

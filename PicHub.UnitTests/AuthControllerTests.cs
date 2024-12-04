@@ -184,6 +184,7 @@ namespace PicHub.UnitTests
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(actionResult);
+            Assert.NotNull(badRequestResult);
             Assert.Equal("Invalid password.", badRequestResult.Value.ToString());
         }
 

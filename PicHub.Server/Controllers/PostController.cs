@@ -1,6 +1,6 @@
 using System.Security.Claims;
 using AutoMapper;
-using CMSReactDotNet.Server.Data.IRepositories;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -28,13 +28,11 @@ namespace PicHub.Server.Controllers
         {
             var posts = await unit.Posts.GetAllAsync();
 
-            return posts.Any()
-                ? Ok(
-                    mapper.Map<IEnumerable<PostDTO>>(
-                        posts.OrderByDescending(p => p.CreateDate).ToList()
-                    )
+            return Ok(
+                mapper.Map<IEnumerable<PostDTO>>(
+                    posts.OrderByDescending(p => p.CreateDate).ToList()
                 )
-                : NoContent();
+            );
         }
 
         [HttpGet("{id}")]
@@ -156,9 +154,8 @@ namespace PicHub.Server.Controllers
                     {
                         posts.Add(await unit.Posts.GetByIdAsync(save.PostId));
                     }
-                    return Ok(mapper.Map<IEnumerable<PostDTO>>(posts));
                 }
-                return NoContent();
+                return Ok(mapper.Map<IEnumerable<PostDTO>>(posts));
             }
             catch (Exception ex)
             {

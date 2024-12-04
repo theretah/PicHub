@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using CMSReactDotNet.Server.Data.IRepositories;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 using PicHub.Server.Entities;
 

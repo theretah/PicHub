@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -38,7 +39,7 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAll_ReturnsAllUsers()
+        public void GetAll_ReturnsAllUsersAndOkResult()
         {
             // Arrange
             var users = new List<AppUser>
@@ -80,10 +81,9 @@ namespace PicHub.UnitTests
             var actionResult = controller.GetAll();
 
             // Assert
-            var result = actionResult as OkObjectResult;
-            Assert.NotNull(result);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
 
-            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(result.Value);
+            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(okResult.Value);
             Assert.Equal(3, returnResult.Count());
             Assert.Contains(returnResult, u => u.UserName == "username1");
             Assert.Contains(returnResult, u => u.UserName == "username2");
@@ -91,7 +91,7 @@ namespace PicHub.UnitTests
         }
 
         [Fact]
-        public void GetAll_UsersEmpty_ReturnsNotFoundResult()
+        public void GetAll_UsersEmpty_ReturnsOkResult()
         {
             // Arrange
             var users = new List<AppUser>();
@@ -101,7 +101,9 @@ namespace PicHub.UnitTests
             var actionResult = controller.GetAll();
 
             // Assert
-            Assert.IsType<NotFoundResult>(actionResult);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(okResult.Value);
+            Assert.Empty(returnResult);
         }
 
         [Theory]
@@ -149,10 +151,10 @@ namespace PicHub.UnitTests
 
             var actionResult = controller.Search(query);
 
-            var result = actionResult as OkObjectResult;
-            Assert.NotNull(result);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            // Assert.IsAssignableFrom<OkObjectResult>(actionResult);
 
-            var returnResult = Assert.IsAssignableFrom<UserDTO[]>(result.Value);
+            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(okResult.Value);
             Assert.Contains(returnResult, u => u.UserName.Contains(query));
             Assert.Equal(resultsCount, returnResult.Count());
         }
@@ -199,7 +201,9 @@ namespace PicHub.UnitTests
 
             var actionResult = controller.Search(query);
 
-            Assert.IsType<NotFoundResult>(actionResult);
+            var okResult = Assert.IsType<OkObjectResult>(actionResult.Result);
+            var returnResult = Assert.IsAssignableFrom<IEnumerable<UserDTO>>(okResult.Value);
+            Assert.Empty(returnResult);
         }
     }
 }

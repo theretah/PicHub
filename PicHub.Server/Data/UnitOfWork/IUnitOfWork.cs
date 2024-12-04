@@ -1,7 +1,11 @@
-﻿namespace CMSReactDotNet.Server.Data.IRepositories
+﻿using CMSReactDotNet.Server.Data.IRepositories;
+
+namespace CMSReactDotNet.Server.Data.UnitOfWork
 {
     public interface IUnitOfWork : IDisposable
     {
+        IAppUserRepository AppUsers { get; }
+
         IPostRepository Posts { get; }
         ISaveRepository Saves { get; }
         ILikeRepository Likes { get; }
@@ -21,5 +25,7 @@
 
         Task<int> CompleteAsync();
         int Complete();
+        bool EnsureCreated();
+        bool EnsureDeleted();
     }
 }

@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using PicHub.Server.Data;
@@ -45,8 +46,8 @@ namespace PicHub.IntegrationTests
 
             // Database cleanup
             var scope = fixture.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<PicHubContext>();
-            Utilities.Cleanup(db);
+            var db = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+            await Utilities.CleanupAsync(db);
         }
 
         [Fact]
@@ -65,8 +66,8 @@ namespace PicHub.IntegrationTests
 
             // Database cleanup
             var scope = fixture.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<PicHubContext>();
-            Utilities.Cleanup(db);
+            var db = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
+            await Utilities.CleanupAsync(db);
         }
     }
 }

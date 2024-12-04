@@ -16,10 +16,12 @@ namespace CMSReactDotNet.Server.Data.IRepositories
 
         Task AddAsync(T entity);
         Task AddRangeAsync(IEnumerable<T> entities);
+        Task AddRangeAsync(params T[] entities);
 
         Task RemoveByIdAsync(int id);
         Task RemoveByIdAsync(string id);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
+        int ExecuteDelete();
     }
 }

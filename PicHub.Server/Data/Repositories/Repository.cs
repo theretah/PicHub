@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using CMSReactDotNet.Server.Data.IRepositories;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,11 @@ namespace CMSReactDotNet.Server.Data.Repositories
         }
 
         public async Task AddRangeAsync(IEnumerable<T> entities)
+        {
+            await set.AddRangeAsync(entities);
+        }
+
+        public async Task AddRangeAsync(params T[] entities)
         {
             await set.AddRangeAsync(entities);
         }
@@ -100,6 +106,18 @@ namespace CMSReactDotNet.Server.Data.Repositories
                 await set.FindAsync(id)
                 ?? throw new NullReferenceException("Entity with this identifier was not found.");
             set.Remove(entity);
+        }
+
+        public int ExecuteDelete()
+        {
+            int count = 0;
+            foreach (var entity in set)
+            {
+                set.Remove(entity);
+                count++;
+            }
+
+            return count;
         }
     }
 }

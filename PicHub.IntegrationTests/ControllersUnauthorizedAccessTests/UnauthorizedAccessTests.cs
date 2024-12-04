@@ -2,7 +2,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit.Abstractions;
 
-namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
+namespace PicHub.IntegrationTests.ControllersUnauthorizedAccessTests
 {
     public class UnauthorizedAccessTests : IClassFixture<WebApplicationFactory<Program>>
     {
@@ -31,10 +31,10 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
         [InlineData($"follows/is-followed/{userId}")]
         [InlineData("group-chats")]
         [InlineData($"group-chats/{groupChatId}")]
-        [InlineData($"chat-lines/group-chats/{groupChatId}")]
+        [InlineData($"chat-lines/from-group-chat/{groupChatId}")]
         [InlineData("private-chats")]
         [InlineData($"private-chats/{userId}")]
-        [InlineData($"chat-lines/private-chats/{userId}")]
+        [InlineData($"chat-lines/from-private-chat/{userId}")]
         [InlineData($"posts/{postId}/is-saved")]
         [InlineData($"posts/{postId}/is-liked")]
         [InlineData($"posts/likes")]
@@ -108,7 +108,7 @@ namespace PicHub.UnitTests.ControllersUnauthorizedAccessTests
             MemberType = typeof(TestDataGenerator)
         )]
         [MemberData(
-            nameof(TestDataGenerator.HttpPatch_Users_EditProfileAsync_EndpointData),
+            nameof(TestDataGenerator.HttpPatch_Posts_UpdatePostAsync_EndpointData),
             MemberType = typeof(TestDataGenerator)
         )]
         [MemberData(

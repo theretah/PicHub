@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +20,16 @@ namespace PicHub.IntegrationTests
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
-            builder.ConfigureServices(services =>
+            builder.ConfigureServices(async services =>
             {
                 // Remove the main database context in Program.cs
                 var descriptor = services.SingleOrDefault(d =>
                     d.ServiceType == typeof(DbContextOptions<PicHubContext>)
                 );
-                services.Remove(descriptor);
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
 
                 // Replace it with a test database context
                 services.AddDbContext<PicHubContext>(options =>
@@ -33,14 +37,14 @@ namespace PicHub.IntegrationTests
                     options.UseSqlServer(ConnectionString);
                 });
 
+                // Wrap the test context with UnitOfWork
+                services.AddTransient<IUnitOfWork, UnitOfWork>();
+
                 // Initialize the test database
-                var sp = services.BuildServiceProvider();
-                using (var scope = sp.CreateScope())
-                {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<PicHubContext>();
-                    dbContext.Database.EnsureCreated();
-                    Utilities.InitializeDatabase(dbContext);
-                }
+                using var scope = services.BuildServiceProvider().CreateScope();
+                var unit = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+                // unit.EnsureCreated();
+                await Utilities.InitializeDatabaseAsync(unit);
             });
         }
 

@@ -1,14 +1,12 @@
 using System.Security.Claims;
 using AutoMapper;
-using CMSReactDotNet.Server.Data.IRepositories;
-using Microsoft.AspNetCore.Authorization;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PicHub.Server.DTOs;
 using PicHub.Server.Entities;
-using PicHub.Server.Utilities;
 
 namespace PicHub.Server.Controllers
 {
@@ -48,14 +46,13 @@ namespace PicHub.Server.Controllers
 
             var users = usersQuery.OrderBy(u => u.UserName).ToList();
 
-            return Ok(mapper.Map<UserDTO[]>(users));
+            return Ok(mapper.Map<IEnumerable<UserDTO>>(users));
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<UserDTO>> GetAll()
         {
             var users = userManager.Users;
-
             var mapped = mapper.Map<IEnumerable<UserDTO>>(users);
             return Ok(mapped);
         }

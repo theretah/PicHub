@@ -2,15 +2,12 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using AutoMapper;
-using CMSReactDotNet.Server.Data.IRepositories;
-using CMSReactDotNet.Server.Data.Repositories;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PicHub.Server.Controllers;
@@ -77,8 +74,6 @@ public partial class Program
                 }
             );
         });
-        builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
-        builder.Services.AddSingleton<IValidationService, ValidationService>();
         var mappingConfig = new MapperConfiguration(cfg =>
         {
             cfg.CreateMap<AppUser, UserDTO>();
@@ -87,6 +82,7 @@ public partial class Program
             cfg.CreateMap<ChatLine, ChatLineDTO>();
         });
         builder.Services.AddSingleton(mappingConfig.CreateMapper());
+
         builder.Services.AddDbContext<PicHubContext>(
             (optionsBuilder) =>
             {
@@ -97,6 +93,10 @@ public partial class Program
                 optionsBuilder.LogTo(Console.WriteLine);
             }
         );
+        builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+        builder.Services.AddSingleton<IValidationService, ValidationService>();
+
         builder
             .Services.AddIdentityCore<AppUser>(options =>
             {

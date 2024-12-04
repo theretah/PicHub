@@ -1,12 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using PicHub.Server.Data;
+using CMSReactDotNet.Server.Data.UnitOfWork;
 using PicHub.Server.Entities;
 
 namespace PicHub.IntegrationTests
 {
     public static class Utilities
     {
-        private static void SeedDatabase(PicHubContext context)
+        private static async Task SeedDatabaseAsync(IUnitOfWork unit)
         {
             var id = "userIdentification";
             var id2 = "userIdentification2";
@@ -47,10 +46,10 @@ namespace PicHub.IntegrationTests
             );
             user3.Id = id3;
 
-            context.AppUsers.AddRange(user, user2, user3);
-            context.SaveChanges();
+            await unit.AppUsers.AddRangeAsync(user, user2, user3);
+            unit.Complete();
 
-            context.Posts.Add(
+            await unit.Posts.AddAsync(
                 new Post
                 {
                     AuthorId = id,
@@ -60,25 +59,25 @@ namespace PicHub.IntegrationTests
                     CreateDate = DateTime.Now,
                 }
             );
-            context.SaveChanges();
+            unit.Complete();
 
-            context.Blocks.Add(new Block { BlockerId = id, BlockedId = id3 });
-            context.SaveChanges();
+            await unit.Blocks.AddAsync(new Block { BlockerId = id, BlockedId = id3 });
+            unit.Complete();
         }
 
-        public static void InitializeDatabase(PicHubContext context)
+        public static async Task InitializeDatabaseAsync(IUnitOfWork unit)
         {
-            context.Database.EnsureDeleted();
-            context.Database.EnsureCreated();
-            SeedDatabase(context);
+            unit.EnsureDeleted();
+            unit.EnsureCreated();
+            await SeedDatabaseAsync(unit);
         }
 
-        public static void Cleanup(PicHubContext context)
+        public static async Task CleanupAsync(IUnitOfWork unit)
         {
-            context.AppUsers.ExecuteDelete();
-            context.Posts.ExecuteDelete();
-            context.SaveChanges();
-            SeedDatabase(context);
+            unit.AppUsers.ExecuteDelete();
+            unit.Posts.ExecuteDelete();
+            unit.Complete();
+            await SeedDatabaseAsync(unit);
         }
     }
 }
